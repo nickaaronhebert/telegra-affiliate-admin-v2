@@ -1,0 +1,13 @@
+telegraEnv: dev
+
+affiliateAdminV2Service:
+  type: ClusterIP
+  externalPort: 80
+  internalPort: 5173
+  name: dev-telegramd-affiliate-v2
+  imageName: dev-telemd/affiliate-admin-v2
+env:
+  # Frontend environment variables
+  affiliateAdminV2Service:
+    VITE_BASE_BACKEND_URL: "https://dev-core-ias-rest.telegramd.com"
+    VITE_RECAPTCHA_V3_SITE_KEY: "6LdJ3J0rAAAAAFd6_vfXHPaAgtWQy6XbnI-D4rV_"

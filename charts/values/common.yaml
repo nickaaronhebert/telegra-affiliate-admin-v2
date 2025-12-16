@@ -1,0 +1,58 @@
+telegraEnv: dev
+namespace: telemdnow-local
+replicaCount: 1
+domainName: telegramd.com
+affiliateAdminV2Service:
+  type: ClusterIP
+  externalPort: 80
+  internalPort: 5173
+  name: dev-telegramd-affiliate-v2
+  imageName: dev-telemd/affiliate-admin-v2
+  resources:
+    limits:
+      cpu: 300m
+      memory: 300Mi
+    requests:
+      cpu: 100m
+      memory: 150Mi
+  # Probe defaults (can be overridden in environment-specific values)
+  livenessProbe:
+    path: "/"
+    initialDelaySeconds: 30
+    periodSeconds: 10
+    timeoutSeconds: 5
+    failureThreshold: 3
+  readinessProbe:
+    path: "/"
+    initialDelaySeconds: 5
+    periodSeconds: 10
+    timeoutSeconds: 3
+    failureThreshold: 3
+  startupProbe:
+    path: "/"
+    initialDelaySeconds: 10
+    periodSeconds: 10
+    failureThreshold: 30
+  autoscaling:
+    # HPA defaults (enable by setting min/max appropriately in env values)
+    minReplicas: 2
+    maxReplicas: 5
+    targetCPUUtilizationPercentage: 60
+  pdb:
+    # minimum available pods during voluntary disruptions
+    minAvailable: 1
+
+env:
+  # Frontend environment variables
+  affiliateAdminV2Service:
+    VITE_BASE_BACKEND_URL: "https://dev-core-ias-rest.telegramd.com"
+    VITE_RECAPTCHA_V3_SITE_KEY: "6LdJ3J0rAAAAAFd6_vfXHPaAgtWQy6XbnI-D4rV_"
+
+# AWS repo
+repo: '901120114376.dkr.ecr.us-east-2.amazonaws.com'
+imageTag: "latest"
+# AWS
+aws:
+  certificates:
+    # *.telegramd.com
+    - arn:aws:acm:us-east-2:901120114376:certificate/763ec17a-18f5-409f-8776-4fa9d77917f8

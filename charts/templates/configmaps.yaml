@@ -1,0 +1,7 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+    name: {{ .Values.affiliateAdminV2Service.name }}-config
+data:
+{{ tpl (toYaml .Values.env.affiliateAdminV2Service | indent 4) . }}

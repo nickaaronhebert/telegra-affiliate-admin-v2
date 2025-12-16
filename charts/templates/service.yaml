@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+    name: {{ .Values.affiliateAdminV2Service.name }}-svc
+    labels:
+        chart: '{{ template "name" . }}-{{ .Chart.Version | replace "+" "_" }}'
+    annotations:
+        alb.ingress.kubernetes.io/healthcheck-port: "{{ .Values.affiliateAdminV2Service.internalPort }}"
+spec:
+    type: {{ .Values.affiliateAdminV2Service.type }}
+    ports:
+        -
+            port: {{ .Values.affiliateAdminV2Service.externalPort }}
+            targetPort: {{ .Values.affiliateAdminV2Service.internalPort }}
+            name: http
+            protocol: TCP
+    selector:
+        app.kubernetes.io/name: app-{{ .Values.affiliateAdminV2Service.name }}
