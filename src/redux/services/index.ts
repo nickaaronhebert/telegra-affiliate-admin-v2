@@ -1,0 +1,89 @@
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import type { RootState } from "../reducers";
+import {
+  TAG_ACCESS,
+  TAG_GET_ACCESS_CONTROL,
+  TAG_GET_CARDS,
+  TAG_GET_CONNECTED_ORGANIZATION,
+  TAG_GET_COUPONS,
+  TAG_GET_INVITATIONS,
+  TAG_GET_INVOICES,
+  TAG_GET_ORDERS,
+  TAG_GET_ORGANIZATIONS,
+  TAG_GET_PATIENTS,
+  TAG_GET_PHARMACY,
+  TAG_GET_PHARMACY_CATALOGUE,
+  TAG_GET_PROVIDERS,
+  TAG_GET_SUB_ORGANIZATION,
+  TAG_GET_SUBSCRIPTIONS,
+  TAG_GET_USER_PROFILE,
+  TAG_GLOBAL_PHARMACIES,
+  TAG_GET_MEDICATIONS_CATALOGUE,
+  TAG_GET_CREDENTIALS,
+  TAG_GET_ENCOUNTERED,
+  TAG_GET_ENCOUNTER,
+  TAG_LINKED_ORG,
+  TAG_ORG_SUB_ORGS,
+  TAG_WEBHOOK,
+  TAG_GET_JOURNEYS,
+  TAG_GET_PRODUCTS,
+  TAG_GET_PRODUCT_VARIATIONS,
+  TAG_GET_QUESTIONNAIRES,
+  TAG_GET_COMMUNICATION_TEMPLATES,
+  TAG_GET_LAB_ORDER,
+  TAG_GET_NOTES
+} from "@/types/baseApiTags";
+
+export const baseApi = createApi({
+  reducerPath: "api",
+  tagTypes: [
+    TAG_GET_USER_PROFILE,
+    TAG_GET_PATIENTS,
+    TAG_GET_ACCESS_CONTROL,
+    TAG_GET_ORDERS,
+    TAG_GET_CARDS,
+    TAG_GET_PHARMACY_CATALOGUE,
+    TAG_ACCESS,
+    TAG_GET_ORGANIZATIONS,
+    TAG_GET_PHARMACY,
+    TAG_GET_PROVIDERS,
+    TAG_GET_INVITATIONS,
+    TAG_GLOBAL_PHARMACIES,
+    TAG_GET_CONNECTED_ORGANIZATION,
+    TAG_GET_INVOICES,
+    TAG_GET_SUB_ORGANIZATION,
+    TAG_GET_MEDICATIONS_CATALOGUE,
+    TAG_GET_CREDENTIALS,
+    TAG_GET_ENCOUNTERED,
+    TAG_GET_ENCOUNTER,
+    TAG_LINKED_ORG,
+    TAG_ORG_SUB_ORGS,
+    TAG_WEBHOOK,
+    TAG_GET_JOURNEYS,
+    TAG_GET_COUPONS,
+    TAG_GET_SUBSCRIPTIONS,
+    TAG_GET_PRODUCTS,
+    TAG_GET_PRODUCT_VARIATIONS,
+    TAG_GET_QUESTIONNAIRES,
+    TAG_GET_COMMUNICATION_TEMPLATES,
+    TAG_GET_LAB_ORDER,
+    TAG_GET_NOTES
+  ],
+  baseQuery: fetchBaseQuery({
+    baseUrl: import.meta.env.VITE_BASE_BACKEND_URL || "http://localhost:7009",
+    prepareHeaders: (headers, { getState }) => {
+      const masterKey = import.meta.env.VITE_MASTER_KEY;
+      const token = (getState() as RootState)?.auth?.token;
+      if (masterKey) {
+        headers.set("X-api-key", masterKey);
+      }
+
+      if (token) {
+        headers.set("authorization", `Bearer ${token}`);
+      }
+      headers.set("ngrok-skip-browser-warning", "123");
+      return headers;
+    },
+  }),
+  endpoints: () => ({}),
+});

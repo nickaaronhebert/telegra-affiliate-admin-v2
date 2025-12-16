@@ -1,0 +1,15 @@
+import { z } from "zod";
+import { addressSchema } from "./selectOrderAddress";
+
+const productVariations = z.object({
+  productVariation: z.string().min(1, "Product Variation is required"),
+  quantity: z.string().min(1, "Quantity is required"),
+});
+
+export const labOrderSchema = z.object({
+  prefill: z.string().optional(),
+  address: addressSchema,
+  lab: z.string().min(1, { message: "Lab is required." }),
+  labPanels: z.array(z.string()).optional(),
+  afterResultsOrderProductVariations: z.array(productVariations).optional(),
+});

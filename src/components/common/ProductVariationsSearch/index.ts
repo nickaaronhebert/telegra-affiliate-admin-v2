@@ -1,0 +1,1 @@
+export { ProductVariationsSearch } from './ProductVariationsSearch';
