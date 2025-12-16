@@ -56,7 +56,7 @@ timestamps {
                 stage('Setup Build Configs') {
                     withAWS(credentials: 'user-aws-rancher', region: 'us-east-2') {
                         sh """
-                            aws ssm get-parameter --name /common-telegramd/values.yaml --query "Parameter.Value" \
+                            aws ssm get-parameter --name /common-telegramd-v2/values.yaml --query "Parameter.Value" \
                             --output text > ./charts/common-values.yaml
                         """
                     }
