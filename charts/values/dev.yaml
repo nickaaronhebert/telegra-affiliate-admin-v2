@@ -1,4 +1,5 @@
 telegraEnv: dev
+nodeSelector: "lifecycle: Ec2Spot"
 
 affiliateAdminV2Service:
   type: ClusterIP
