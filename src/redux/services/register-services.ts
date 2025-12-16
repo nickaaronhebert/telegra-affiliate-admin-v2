@@ -9,6 +9,8 @@ import './productVariations';
 import './questionnaire';
 import './communicationTemplates';
 import './notes';
+import './states';
+import './projects';
 
 // Re-export the base API
 export { baseApi } from './index';

@@ -116,7 +116,7 @@ const LoginPage = () => {
             </div>
             {/* ReCaptcha component outside FormField to prevent re-renders */}
             <ReCaptchaV3
-              siteKey={"6LdJ3J0rAAAAAFd6_vfXHPaAgtWQy6XbnI-D4rV_"}
+              siteKey={import.meta.env.VITE_RECAPTCHA_V3_SITE_KEY || ""}
               action={"submit"}
               onVerify={handleRecaptchaVerify}
               onError={handleRecaptchaError}
