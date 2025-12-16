@@ -219,6 +219,7 @@ const OrderInformation = ({ patient }: UserInformationProps) => {
           isOpen={isOrderModalOpen}
           onClose={closeOrderModal}
           order={editingOrder}
+          patient={patient}
         />
 
         <SendInviteModal

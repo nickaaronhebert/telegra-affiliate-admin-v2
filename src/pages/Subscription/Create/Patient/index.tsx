@@ -46,7 +46,7 @@ export default function Patient() {
     },
   });
 
-  async function onSubmit(values: z.infer<typeof selectPatientSchema>) {
+  async function onSubmit() {
     dispatch(nextStep());
     // dispatch(updateInitialStep({ patient: values.patient }));
   }

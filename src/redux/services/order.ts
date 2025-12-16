@@ -3,7 +3,7 @@ import { baseApi } from ".";
 import type { ICreateOrderResponse } from "@/types/responses/order";
 import type { ICreateOrderRequest } from "@/types/requests/order";
 import type { IViewAllOrderInterface } from "@/types/responses/IViewAllOrder";
-import { TAG_GET_ORDERS } from "@/types/baseApiTags";
+import { TAG_GET_ORDERS, TAG_GET_PATIENTS } from "@/types/baseApiTags";
 import type { IViewOrderDetailsResponse } from "@/types/responses/IViewOrderDetails";
 import type { ICancelOrderResponse } from "@/types/responses/ICancelOrder";
 import type { IEditOrderResponse } from "@/types/responses/IEditOrder";
@@ -68,6 +68,18 @@ const orderApi = baseApi.injectEndpoints({
         result ? [{ type: TAG_GET_ORDERS, id: "LIST" }] : [],
     }),
 
+    createPatientOrder: builder.mutation<any, any>({
+      query: (body) => {
+        return {
+          url: `/orders`,
+          method: "POST",
+          body,
+        };
+      },
+      invalidatesTags: (result) =>
+        result ? [{ type: TAG_GET_ORDERS, id: "LIST" }, { type: TAG_GET_PATIENTS, id: "LIST" }] : [],
+    }),
+
     cancelOrder: builder.mutation<ICancelOrderResponse, string>({
       query: (id) => {
         return {
@@ -88,6 +100,7 @@ export const {
   useViewAllOrdersQuery,
   useViewOrderByIdQuery,
   useCreateOrderMutation,
+  useCreatePatientOrderMutation,
   useCancelOrderMutation,
   useEditOrderByIdMutation,
 } = orderApi;

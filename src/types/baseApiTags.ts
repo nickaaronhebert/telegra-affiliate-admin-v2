@@ -29,3 +29,5 @@ export const TAG_GET_PRODUCT_VARIATIONS = "ProductVariations" as const;
 export const TAG_GET_QUESTIONNAIRES = "Questionnaires" as const;
 export const TAG_GET_COMMUNICATION_TEMPLATES = "CommunicationTemplates" as const;
 export const TAG_GET_NOTES = "Notes" as const;
+export const TAG_GET_STATES = "States" as const;
+export const TAG_GET_PROJECTS = "Projects" as const;
