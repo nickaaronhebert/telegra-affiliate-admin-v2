@@ -1,6 +1,6 @@
 import { baseApi } from ".";
 import type { IViewAllPatientsRequest, IUpdatePatientMedicationsRequest, IUpdatePatientAllergiesRequest, ISendOrderInviteRequest, IUpdatePatientRequest, IViewPatientOrdersRequest, IUploadPatientFileRequest } from "@/types/requests/patient";
-import type { PatientsResponse, PatientDetail, PatientOrdersResponse } from "@/types/responses/patient";
+import type { PatientsResponse, PatientDetail, PatientOrdersResponse, PaymentMethod } from "@/types/responses/patient";
 import { TAG_GET_PATIENTS } from "@/types/baseApiTags";
 
 const patientApi = baseApi.injectEndpoints({
@@ -59,8 +59,22 @@ const patientApi = baseApi.injectEndpoints({
               })
             );
           }
+
+          // Fetch available payment methods after orders
+          const paymentResult = await dispatch(
+            patientApi.endpoints.getAvailablePaymentMethods.initiate({ patientId: id })
+          );
+
+          if (paymentResult.data) {
+            // Update the patient cache with payment methods data
+            dispatch(
+              patientApi.util.updateQueryData('viewPatientById', id, (draft) => {
+                draft.payment = paymentResult.data;
+              })
+            );
+          }
         } catch {
-          // If orders fetch fails, patient data will still be available
+          // If orders or payment fetch fails, patient data will still be available
         }
       },
     }),
@@ -76,6 +90,24 @@ const patientApi = baseApi.injectEndpoints({
           method: "GET",
         };
       },
+      providesTags: (_result, _error, { patientId }) => [
+        { type: TAG_GET_PATIENTS, id: `${patientId}-orders` },
+      ],
+    }),
+
+    getAvailablePaymentMethods: builder.query<PaymentMethod[], { patientId: string }>({
+      query: ({ patientId }) => {
+        const params = new URLSearchParams({
+          patient: patientId,
+        });
+        return {
+          url: `/billingDetails/actions/getAvailablePaymentMethods?${params.toString()}`,
+          method: "GET",
+        };
+      },
+      providesTags: (_result, _error, { patientId }) => [
+        { type: TAG_GET_PATIENTS, id: `${patientId}-payment` },
+      ],
     }),
 
     createPatient: builder.mutation<any, any>({
@@ -201,6 +233,7 @@ export const {
   useViewAllPatientsQuery,
   useViewPatientByIdQuery,
   useViewPatientOrdersQuery,
+  useGetAvailablePaymentMethodsQuery,
   useCreatePatientMutation,
   useUpdatePatientMutation,
   useUpdatePatientMedicationsMutation,
