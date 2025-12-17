@@ -37,6 +37,7 @@ import CreateSubscription from "@/pages/Subscription/Create";
 import SubscriptionDetail from "@/pages/Subscription/Detail";
 import ViewAllLabOrders from "@/pages/LabOrder";
 import LabOrderDetails from "@/pages/LabOrder/details";
+import NotFound from "@/pages/NotFound";
 
 export const router = createBrowserRouter([
   {
@@ -190,6 +191,10 @@ export const router = createBrowserRouter([
       {
         path: ROUTES.LAB_ORDER_DETAILS,
         element: <LabOrderDetails />,
+      },
+      {
+        path: ROUTES.NOT_FOUND,
+        element: <NotFound />,
       },
     ],
   },
