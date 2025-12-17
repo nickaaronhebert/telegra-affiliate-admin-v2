@@ -14,6 +14,9 @@ import { Button } from "@/components/ui/button";
 
 // import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useAppDispatch } from "@/redux/store";
+import { baseApi } from "@/redux/services";
+import { TAG_GET_PAYMENT_METHODS } from "@/types/baseApiTags";
 
 interface StripeWrapperProps {
   elementType: "number" | "expiry" | "cvc";
@@ -21,6 +24,10 @@ interface StripeWrapperProps {
   className?: string; // optional extra classes for wrapper
   options?: StripeCardElementOptions; // custom style options
   onChange?: (event: any) => void; // handle Stripe change events
+}
+
+interface CustomCardFormProps {
+  handleClose: (arg1: boolean) => void;
 }
 
 const StripeCardField: React.FC<StripeWrapperProps> = ({
@@ -72,9 +79,9 @@ const StripeCardField: React.FC<StripeWrapperProps> = ({
   );
 };
 
-const CustomCardForm = () => {
+const CustomCardForm = ({ handleClose }: CustomCardFormProps) => {
   //   const navigate = useNavigate();
-
+  const dispatch = useAppDispatch();
   const stripe = useStripe();
   const elements = useElements();
 
@@ -125,6 +132,7 @@ const CustomCardForm = () => {
       }
 
       if (paymentMethod?.id) {
+        dispatch(baseApi.util.invalidateTags([TAG_GET_PAYMENT_METHODS]));
         setCardholderName("");
         setZip("");
         elements.getElement(CardNumberElement)?.clear();
@@ -133,6 +141,7 @@ const CustomCardForm = () => {
         toast.success("Card Added Successfully", {
           duration: 1500,
         });
+        handleClose(false);
         // onSubmit(paymentMethod.id);
         // handleClose();
       }
@@ -225,6 +234,8 @@ const CustomCardForm = () => {
       {/* Submit Button */}
       <div className="flex justify-end items-center gap-4">
         <Button
+          type="button"
+          onClick={() => handleClose(false)}
           variant={"transparent"}
           //   size={"xl"}
           //   onClick={handleCancelOrBack}

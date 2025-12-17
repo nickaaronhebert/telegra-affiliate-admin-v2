@@ -1,5 +1,6 @@
 import type { IViewPaymentProcessorResponse } from "@/types/responses/IPaymentProcessor";
 import { baseApi } from ".";
+import { TAG_GET_PAYMENT_METHODS } from "@/types/baseApiTags";
 
 const paymentMethodApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -23,6 +24,7 @@ const paymentMethodApi = baseApi.injectEndpoints({
           method: "GET",
         };
       },
+      providesTags: [TAG_GET_PAYMENT_METHODS],
     }),
 
     paymentProcessors: builder.query<IViewPaymentProcessorResponse, void>({

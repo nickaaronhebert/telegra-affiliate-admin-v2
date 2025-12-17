@@ -4,7 +4,10 @@ import { useEffect, useState } from "react";
 import CustomCardForm from "./PaymentForm";
 import { usePaymentProcessorsQuery } from "@/redux/services/paymentMethod";
 
-export default function AddStripeCard() {
+interface AddStripeCardProps {
+  handleClose: (arg: boolean) => void;
+}
+export default function AddStripeCard({ handleClose }: AddStripeCardProps) {
   const [stripePromise, setStripePromise] =
     useState<Promise<Stripe | null> | null>(null);
 
@@ -27,7 +30,7 @@ export default function AddStripeCard() {
 
   return (
     <Elements stripe={stripePromise}>
-      <CustomCardForm />
+      <CustomCardForm handleClose={handleClose} />
     </Elements>
   );
 }
