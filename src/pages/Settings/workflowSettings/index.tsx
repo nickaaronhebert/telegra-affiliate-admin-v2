@@ -6,16 +6,21 @@ import {
 import type { ICreateTagRequest } from "@/types/requests/tag";
 import TagManagementSection from "./TagManagement";
 import ProjectSettingsSection from "./ProjectSettings";
+import WebhookManagementSection from "./WebhookManagement";
 import HelpInformationSidebar from "./sidebar";
 
-const COLOR_OPTIONS: { label: string; value: string }[] = [
-    { label: "Magento Red", value: "#f5222d" },
-    { label: "Volcano Orange", value: "#fa541c" },
-    { label: "Gold", value: "#faad14" },
-    { label: "Lime Green", value: "#a0d911" },
-    { label: "Cyan", value: "#13c2c2" },
-    { label: "Blue", value: "#1890ff" },
+
+const COLOR_OPTIONS = [
+    { label: "Red", text: "#C41E3A", background: "#FFA39E" },
+    { label: "Volcano", text: "#DE6441", background: "#FFBB96" },
+    { label: "Orange", text: "#D67315", background: "#FFD591" },
+    { label: "Gold", text: "#D68D12", background: "#FFE89A" },
+    { label: "Lime", text: "#7FB40A", background: "#EAFF8F" },
+    { label: "Green", text: "#5BA43B", background: "#C7F0A7" },
+    { label: "Cyan", text: "#35ACAF", background: "#87E8DE" },
+    { label: "Blue", text: "#0C6FDA", background: "#DCF3FF" },
 ];
+
 
 export default function WorkflowSettingsPage() {
     const tagsRef = useRef<HTMLDivElement | null>(null);
@@ -29,7 +34,7 @@ export default function WorkflowSettingsPage() {
     const [form, setForm] = useState<ICreateTagRequest>({
         name: "",
         description: "",
-        color: COLOR_OPTIONS[0].value,
+        color: COLOR_OPTIONS[0].text,
         scope: {
             targetModel: "Order",
             owner: {
@@ -122,7 +127,7 @@ export default function WorkflowSettingsPage() {
                 {/* Main content */}
                 <div ref={contentRef} className="flex-1 min-w-0 p-6">
                     <TagManagementSection sectionRef={tagsRef} />
-                    {/* <WebhookManagementSection webhookRef={webhookRef} /> */}
+                    <WebhookManagementSection webhookRef={webhookRef} />
                     <ProjectSettingsSection sectionRef={projectsRef} />
                 </div>
 

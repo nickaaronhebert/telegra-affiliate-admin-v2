@@ -1,7 +1,9 @@
 export interface IWebhookRequest {
+  name: string;
   url: string;
-  events: string[];
-  isActive?: boolean;
+  authentication: boolean;
+  credentials?: string;
+  webhookInterests: string[];
 }
 
 export interface IUpdateWebhookRequest {
