@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { Info, Link, Plus, X } from "lucide-react";
+import { Info, Plus } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-// import { Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -148,8 +148,8 @@ export function ProductVariationsSearch({
         <div className="flex justify-between items-center">
           <h3 className="text-xl font-semibold">Product variations</h3>
           <Link
+          to="#"
             type="button"
-            size="sm"
             onClick={addProductVariationRow}
             className="text-blue-500 border-none bg-white flex items-center hover:underline hover:bg-white"
           >
@@ -175,9 +175,9 @@ export function ProductVariationsSearch({
                   variant="ghost"
                   size="sm"
                   onClick={() => removeProductVariationRow(item.id)}
-                  className="absolute top-2 right-2 text-red-500 hover:text-red-700 hover:bg-red-50"
+                  className="absolute top-8 right-5 text-red-500 hover:text-red-700 pointer"
                 >
-                  <X className="h-4 w-4" />
+                  Delete
                 </Button>
               )}
 
