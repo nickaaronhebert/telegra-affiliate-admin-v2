@@ -5,20 +5,37 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { createOrderSchema, type CreateOrderFormData } from "@/schemas/createOrderSchema";
+import {
+  createOrderSchema,
+  type CreateOrderFormData,
+} from "@/schemas/createOrderSchema";
 import { useGetStatesQuery } from "@/redux/services/states";
 import { useGetProjectsQuery } from "@/redux/services/projects";
 import { useCreatePatientOrderMutation } from "@/redux/services/order";
 import { useGetAllProductVariationsQuery } from "@/redux/services/productVariations";
 import { X } from "lucide-react";
 import type { PatientOrder, PatientDetail } from "@/types/responses/patient";
+import ProductVariationSVG from "@/assets/icons/ProductVariation";
 
 interface PatientOrderModalProps {
   isOpen: boolean;
@@ -33,9 +50,10 @@ export function PatientOrderModal({
   order,
   patient,
 }: PatientOrderModalProps) {
-
   const isEditing = !!order;
-  const [selectedProductVariations, setSelectedProductVariations] = useState<any[]>([]);
+  const [selectedProductVariations, setSelectedProductVariations] = useState<
+    any[]
+  >([]);
   const [selectedProductId, setSelectedProductId] = useState<string>("");
 
   const form = useForm<CreateOrderFormData>({
@@ -53,28 +71,40 @@ export function PatientOrderModal({
   });
 
   const { data: states = [], isLoading: isLoadingStates } = useGetStatesQuery();
-  const { data: projects = [], isLoading: isLoadingProjects } = useGetProjectsQuery();
-  const [createPatientOrder, { isLoading: isCreatingOrder }] = useCreatePatientOrderMutation();
-  const { data: productVariationsData, isLoading: isLoadingProducts } = useGetAllProductVariationsQuery({
-    page: 1,
-    limit: 500,
-    q: "",
-    withoutProducts: ""
-  });
+  const { data: projects = [], isLoading: isLoadingProjects } =
+    useGetProjectsQuery();
+  const [createPatientOrder, { isLoading: isCreatingOrder }] =
+    useCreatePatientOrderMutation();
+  const { data: productVariationsData, isLoading: isLoadingProducts } =
+    useGetAllProductVariationsQuery({
+      page: 1,
+      limit: 500,
+      q: "",
+      withoutProducts: "",
+    });
 
   const productVariations = productVariationsData?.productVariations || [];
 
   // Filter out already selected products from dropdown
-  const availableProducts = productVariations.filter(product =>
-    !selectedProductVariations.some(selected => selected.productVariation?.id === product.id)
+  const availableProducts = productVariations.filter(
+    (product) =>
+      !selectedProductVariations.some(
+        (selected) => selected.productVariation?.id === product.id
+      )
   );
 
   const watchedUserAddress = form.watch("userAddress");
 
   // Auto-populate address fields when user selects an address
   useEffect(() => {
-    if (watchedUserAddress && watchedUserAddress !== "none" && patient?.addresses) {
-      const selectedAddress = patient.addresses.find(addr => addr.id === watchedUserAddress);
+    if (
+      watchedUserAddress &&
+      watchedUserAddress !== "none" &&
+      patient?.addresses
+    ) {
+      const selectedAddress = patient.addresses.find(
+        (addr) => addr.id === watchedUserAddress
+      );
       if (selectedAddress) {
         form.setValue("address1", selectedAddress.billing?.address1 || "");
         form.setValue("address2", selectedAddress.billing?.address2 || "");
@@ -115,7 +145,7 @@ export function PatientOrderModal({
       return;
     }
 
-    const product = productVariations.find(pv => pv.id === productId);
+    const product = productVariations.find((pv) => pv.id === productId);
     if (!product) return;
 
     const newProductVariation = {
@@ -125,20 +155,25 @@ export function PatientOrderModal({
       pricePerUnitOverride: product.pricePerUnit,
     };
 
-    const updatedVariations = [...selectedProductVariations, newProductVariation];
+    const updatedVariations = [
+      ...selectedProductVariations,
+      newProductVariation,
+    ];
     setSelectedProductVariations(updatedVariations);
     form.setValue("productVariations", updatedVariations);
     setSelectedProductId("");
   };
 
   const handleRemoveProduct = (id: string) => {
-    const updatedVariations = selectedProductVariations.filter(pv => pv.id !== id);
+    const updatedVariations = selectedProductVariations.filter(
+      (pv) => pv.id !== id
+    );
     setSelectedProductVariations(updatedVariations);
     form.setValue("productVariations", updatedVariations);
   };
 
   const handleQuantityChange = (id: string, quantity: number) => {
-    const updatedVariations = selectedProductVariations.map(pv =>
+    const updatedVariations = selectedProductVariations.map((pv) =>
       pv.id === id ? { ...pv, quantity: Math.max(1, quantity) } : pv
     );
     setSelectedProductVariations(updatedVariations);
@@ -166,7 +201,7 @@ export function PatientOrderModal({
         },
         patient: patient.id,
         project: data.project || undefined,
-        productVariations: data.productVariations.map(pv => ({
+        productVariations: data.productVariations.map((pv) => ({
           productVariation: pv.productVariation?.id,
           quantity: pv.quantity,
         })),
@@ -199,8 +234,8 @@ export function PatientOrderModal({
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose} >
-      <DialogContent className="max-w-[900px] max-h-[90vh] overflow-y-auto">
+    <Dialog open={isOpen} onOpenChange={handleClose}>
+      <DialogContent className="w-full !max-w-[900px] max-h-[90vh] overflow-y-auto">
         <DialogHeader className="flex-col border-b border-[#D9D9D9] p-4">
           <DialogTitle className="text-lg font-semibold">
             {isEditing ? "Edit Order" : "Add Order"}
@@ -223,15 +258,26 @@ export function PatientOrderModal({
                         <FormItem>
                           <FormLabel>Use Address *</FormLabel>
                           <FormControl>
-                            <Select onValueChange={field.onChange} value={field.value}>
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value}
+                            >
                               <SelectTrigger>
                                 <SelectValue placeholder="Choose Address" />
                               </SelectTrigger>
                               <SelectContent>
-                                <SelectItem value="none">None - Enter manually</SelectItem>
+                                <SelectItem value="none">
+                                  None - Enter manually
+                                </SelectItem>
                                 {patient.addresses.map((address) => (
-                                  <SelectItem key={address.id} value={address.id}>
-                                    {address.billing?.address1}, {address.billing?.city}, {address.billing?.state?.abbreviation} {address.billing?.zipcode}
+                                  <SelectItem
+                                    key={address.id}
+                                    value={address.id}
+                                  >
+                                    {address.billing?.address1},{" "}
+                                    {address.billing?.city},{" "}
+                                    {address.billing?.state?.abbreviation}{" "}
+                                    {address.billing?.zipcode}
                                   </SelectItem>
                                 ))}
                               </SelectContent>
@@ -272,10 +318,7 @@ export function PatientOrderModal({
                           <FormItem>
                             <FormLabel>Address Line 2</FormLabel>
                             <FormControl>
-                              <Input
-                                placeholder="Eg. Suite 302"
-                                {...field}
-                              />
+                              <Input placeholder="Eg. Suite 302" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -289,10 +332,7 @@ export function PatientOrderModal({
                           <FormItem>
                             <FormLabel>City *</FormLabel>
                             <FormControl>
-                              <Input
-                                placeholder="Eg. Los Angeles"
-                                {...field}
-                              />
+                              <Input placeholder="Eg. Los Angeles" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -335,10 +375,7 @@ export function PatientOrderModal({
                           <FormItem>
                             <FormLabel>Zip Code *</FormLabel>
                             <FormControl>
-                              <Input
-                                placeholder="Enter Zip Code"
-                                {...field}
-                              />
+                              <Input placeholder="Enter Zip Code" {...field} />
                             </FormControl>
                             <FormMessage />
                           </FormItem>
@@ -376,7 +413,10 @@ export function PatientOrderModal({
                               </SelectTrigger>
                               <SelectContent>
                                 {projects.map((project) => (
-                                  <SelectItem key={project.id} value={project.id}>
+                                  <SelectItem
+                                    key={project.id}
+                                    value={project.id}
+                                  >
                                     {project.title}
                                   </SelectItem>
                                 ))}
@@ -429,7 +469,8 @@ export function PatientOrderModal({
                       <SelectContent>
                         {availableProducts.map((product) => (
                           <SelectItem key={product.id} value={product.id}>
-                            {product.product?.title} - {product.strength} ({product.form})
+                            {product.product?.title} - {product.strength} (
+                            {product.form})
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -440,23 +481,24 @@ export function PatientOrderModal({
                   {selectedProductVariations.length > 0 && (
                     <div className="border border-gray-200 rounded-lg overflow-hidden">
                       <div className="bg-gray-50 px-4 py-3 border-b border-gray-200">
-                        <div className="grid grid-cols-12 gap-4 text-sm font-medium text-gray-700">
-                          <div className="col-span-6">Items</div>
-                          <div className="col-span-3">Price</div>
-                          <div className="col-span-2">Qty</div>
-                          <div className="col-span-1"></div>
+                        <div className="flex gap-4 text-sm font-medium text-gray-700">
+                          <div className="flex-[3]">Items</div>
+                          <div className="flex-[1.5]">Price</div>
+                          <div className="flex-1">Qty</div>
+                          <div className="flex-[0.5]"></div>
                         </div>
                       </div>
                       <div className="divide-y divide-gray-200">
                         {selectedProductVariations.map((item) => (
                           <div key={item.id} className="px-4 py-3">
-                            <div className="grid grid-cols-12 gap-4 items-center">
-                              <div className="col-span-6">
+                            <div className="flex gap-4 items-center">
+                              <div className="flex-[3]">
                                 <div className="flex items-center gap-2">
-                                  <div className="w-3 h-3 bg-blue-500 rounded-sm flex-shrink-0"></div>
+                                  <ProductVariationSVG />
                                   <div>
                                     <div className="text-sm font-medium text-gray-900">
-                                      {item.productVariation?.product?.title} - {item.productVariation?.strength}
+                                      {item.productVariation?.product?.title} -{" "}
+                                      {item.productVariation?.strength}
                                     </div>
                                     <div className="text-xs text-gray-500">
                                       {item.productVariation?.form}
@@ -464,27 +506,33 @@ export function PatientOrderModal({
                                   </div>
                                 </div>
                               </div>
-                              <div className="col-span-3">
+                              <div className="flex-[1.5]">
                                 <div className="text-sm font-medium text-gray-900">
-                                  ${item.productVariation?.pricePerUnit || 0}.00 <span className="text-gray-500">x</span>
+                                  ${item.productVariation?.pricePerUnit || 0}.00{" "}
+                                  <span className="text-gray-500">x</span>
                                 </div>
                               </div>
-                              <div className="col-span-2">
+                              <div className="flex-1">
                                 <Input
                                   type="number"
                                   min="1"
                                   value={item.quantity}
-                                  onChange={(e) => handleQuantityChange(item.id, parseInt(e.target.value) || 1)}
-                                  className="w-16 h-8 text-sm"
+                                  onChange={(e) =>
+                                    handleQuantityChange(
+                                      item.id,
+                                      parseInt(e.target.value) || 1
+                                    )
+                                  }
+                                  className="w-12 h-8 text-sm"
                                 />
                               </div>
-                              <div className="col-span-1 flex justify-end">
+                              <div className="flex-[0.5]">
                                 <Button
                                   type="button"
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => handleRemoveProduct(item.id)}
-                                  className="text-gray-400 hover:text-red-500 p-1"
+                                  className="text-gray-400 hover:text-red-500 p-1 cursor-pointer"
                                 >
                                   <X className="h-4 w-4" />
                                 </Button>

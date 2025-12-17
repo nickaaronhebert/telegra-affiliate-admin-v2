@@ -28,6 +28,7 @@ interface StripeWrapperProps {
 
 interface CustomCardFormProps {
   handleClose: (arg1: boolean) => void;
+  onPaymentMethodCreated?: (paymentMethod: any) => void;
 }
 
 const StripeCardField: React.FC<StripeWrapperProps> = ({
@@ -79,7 +80,7 @@ const StripeCardField: React.FC<StripeWrapperProps> = ({
   );
 };
 
-const CustomCardForm = ({ handleClose }: CustomCardFormProps) => {
+const CustomCardForm = ({ handleClose, onPaymentMethodCreated }: CustomCardFormProps) => {
   //   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const stripe = useStripe();
@@ -141,6 +142,10 @@ const CustomCardForm = ({ handleClose }: CustomCardFormProps) => {
         toast.success("Card Added Successfully", {
           duration: 1500,
         });
+
+        // Call the callback with the payment method data
+        onPaymentMethodCreated?.(paymentMethod);
+
         handleClose(false);
         // onSubmit(paymentMethod.id);
         // handleClose();

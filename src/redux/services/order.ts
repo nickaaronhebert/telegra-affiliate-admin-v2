@@ -76,8 +76,14 @@ const orderApi = baseApi.injectEndpoints({
           body,
         };
       },
-      invalidatesTags: (result) =>
-        result ? [{ type: TAG_GET_ORDERS, id: "LIST" }, { type: TAG_GET_PATIENTS, id: "LIST" }] : [],
+      invalidatesTags: (result, _error, body) =>
+        result ? [
+          { type: TAG_GET_ORDERS, id: "LIST" },
+          { type: TAG_GET_PATIENTS, id: "LIST" },
+          { type: TAG_GET_PATIENTS, id: body.patient },
+          { type: TAG_GET_PATIENTS, id: `${body.patient}-orders` },
+          { type: TAG_GET_PATIENTS, id: `${body.patient}-payment` }
+        ] : [],
     }),
 
     cancelOrder: builder.mutation<ICancelOrderResponse, string>({

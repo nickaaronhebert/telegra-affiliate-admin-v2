@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 export default function SidebarLayout() {
   const { pathname } = useLocation();
-  const noPaddingRoutes = ["/login", "/register", "/coupons/create", "/journeys/create", "/journeys/:id/edit"];
+  const noPaddingRoutes = ["/login", "/register", "/coupons/create", "/journeys/create", "/journeys/:id/edit", "/settings/product-list", "/settings/financial-management", "/settings/workflow-settings"];
   const editJourneyMatch = useMatch("/journeys/:id/edit");
   if (editJourneyMatch) {
     noPaddingRoutes.push(editJourneyMatch.pathname);
@@ -21,7 +21,7 @@ export default function SidebarLayout() {
       }}
     >
       <AppSidebar />
-      <main className="relative w-full ">
+      <main className="flex-1 min-w-0 transition-all duration-200 ease-linear">
         <Navbar />
         <div className={cn(shouldHavePadding && "p-7.5")}>
           <Outlet />
