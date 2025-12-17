@@ -73,8 +73,8 @@ timestamps {
                         wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O \$YQ_BIN
                         chmod +x \$YQ_BIN
 
-                        \$YQ_BIN '.env.frontend' ./charts/common-values.yaml > ./.env
-                        \$YQ_BIN '.env.frontend' ./charts/affiliate-admin-v2-values.yaml > ./.env.production
+                        \$YQ_BIN '.env.affiliateAdminV2Service' ./charts/common-values.yaml > ./.env
+                        \$YQ_BIN '.env.affiliateAdminV2Service' ./charts/affiliate-admin-v2-values.yaml > ./.env.production
 
                         rm -f \$YQ_BIN
                     """
