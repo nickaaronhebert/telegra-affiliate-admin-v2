@@ -6,6 +6,7 @@ import type {
 import type {
   IWebhookResponse,
   IGetWebhooksResponse,
+  IWebhookEvent,
 } from "@/types/responses/webhook";
 import { TAG_WEBHOOK } from "@/types/baseApiTags";
 
@@ -15,14 +16,14 @@ import { TAG_WEBHOOK } from "@/types/baseApiTags";
 
 export const webhooksApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    /* ---------- GET ---------- */
+    /* ---------- GET WEBHOOKS LIST ---------- */
     getWebhooksList: builder.query<IGetWebhooksResponse, void>({
       query: () => ({
         url: "/webhooks",
         method: "GET",
       }),
       providesTags: (result) => {
-        const webhooks = result?.result ?? [];
+        const webhooks = result?.webhooks ?? result?.result ?? [];
 
         return [
           ...webhooks.map((w: any) => ({
@@ -32,6 +33,14 @@ export const webhooksApi = baseApi.injectEndpoints({
           { type: TAG_WEBHOOK, id: "LIST" },
         ];
       },
+    }),
+
+    /* ---------- GET WEBHOOK EVENTS DICTIONARY ---------- */
+    getWebhookEventsDictionary: builder.query<IWebhookEvent[], void>({
+      query: () => ({
+        url: "/webhooks/actions/getDictionary",
+        method: "GET",
+      }),
     }),
 
     /* ---------- CREATE ---------- */
@@ -57,7 +66,7 @@ export const webhooksApi = baseApi.injectEndpoints({
       ],
     }),
 
-    /* ---------- DELETE (optional) ---------- */
+    /* ---------- DELETE ---------- */
     deleteWebhook: builder.mutation<void, string>({
       query: (id) => ({
         url: `/webhooks/${id}`,
@@ -73,6 +82,7 @@ export const webhooksApi = baseApi.injectEndpoints({
 
 export const {
   useGetWebhooksListQuery,
+  useGetWebhookEventsDictionaryQuery,
   useCreateWebhookMutation,
   useUpdateWebhookMutation,
   useDeleteWebhookMutation,

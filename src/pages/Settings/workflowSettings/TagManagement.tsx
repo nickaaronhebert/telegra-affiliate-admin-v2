@@ -35,14 +35,14 @@ import { Badge } from "@/components/ui/badge";
 import { Plus } from "lucide-react";
 
 const COLOR_OPTIONS = [
-    { label: "Red", text: "#C41E3A", background: "#FFA39E"},
-    { label: "Volcano", text: "#DE6441", background: "#FFBB96" },
+    { label: "Red", text: "#C41E3A", background: "#FFA39E" },
+    { label: "Volcano", text: "#f5222d", background: "#FFBB96" },
     { label: "Orange", text: "#D67315", background: "#FFD591" },
-    { label: "Gold", text: "#D68D12", background: "#FFE89A" },
+    { label: "Gold", text: "#faad14", background: "#FFE89A" },
     { label: "Lime", text: "#7FB40A", background: "#EAFF8F" },
     { label: "Green", text: "#5BA43B", background: "#C7F0A7" },
     { label: "Cyan", text: "#35ACAF", background: "#87E8DE" },
-    { label: "Blue", text: "#0C6FDA", background: "#DCF3FF" },
+    { label: "Blue", text: "#1890ff", background: "#DCF3FF" },
 ];
 
 export default function TagManagementSection({
@@ -57,6 +57,21 @@ export default function TagManagementSection({
 
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [editingTag, setEditingTag] = useState<ITag | null>(null);
+    const [deleteConfirmDialog, setDeleteConfirmDialog] = useState<{ isOpen: boolean; tag: ITag | null }>({
+        isOpen: false,
+        tag: null,
+    });
+
+    // Helper function to get id based on owner model
+    const getIdByOwnerModel = (model: string): string => {
+        if (model === "user" || model === "User") {
+            const userTag = tags.find(t => t.scope.owner.model === "User");
+            return userTag?.scope.owner.id || "";
+        } else {
+            const affiliateTag = tags.find(t => t.scope.owner.model === "Affiliate");
+            return affiliateTag?.scope.owner.id || "";
+        }
+    };
 
     const [form, setForm] = useState<ICreateTagRequest>({
         name: "",
@@ -71,9 +86,9 @@ export default function TagManagementSection({
         },
     });
 
-    /** Auto-fill owner id */
+    /** Auto-fill owner id only for create mode */
     useEffect(() => {
-        if (!form.scope.owner.id && tags.length > 0) {
+        if (!editingTag && !form.scope.owner.id && tags.length > 0) {
             setForm((f: ICreateTagRequest) => ({
                 ...f,
                 scope: {
@@ -85,7 +100,7 @@ export default function TagManagementSection({
                 },
             }));
         }
-    }, [tags]);
+    }, [tags, editingTag]);
 
     const openCreate = () => {
         setEditingTag(null);
@@ -110,18 +125,28 @@ export default function TagManagementSection({
             name: tag.name,
             description: tag.description || "",
             color: tag.color,
-            scope: tag.scope as any,
+            scope: {
+                ...tag.scope,
+                owner: {
+                    ...tag.scope.owner,
+                    model: tag.scope.owner.model.toLowerCase(),
+                },
+            },
         });
         setIsDialogOpen(true);
     };
-
     const handleDelete = async (tag: ITag) => {
-        if (!tag.id) return;
-        if (!window.confirm(`Delete tag "${tag.name}"?`)) return;
+        setDeleteConfirmDialog({ isOpen: true, tag });
+    };
+
+    const confirmDelete = async () => {
+        const tag = deleteConfirmDialog.tag;
+        if (!tag?.id) return;
 
         try {
             await deleteTag(tag.id).unwrap();
             toast.success("Tag deleted");
+            setDeleteConfirmDialog({ isOpen: false, tag: null });
         } catch {
             toast.error("Failed to delete tag");
         }
@@ -135,11 +160,28 @@ export default function TagManagementSection({
                     name: form.name,
                     color: form.color,
                     description: form.description,
+                    scope: {
+                        ...form.scope,
+                        owner: {
+                            ...form.scope.owner,
+                            model: form.scope.owner.model === "affiliate" ? "Affiliate" : "User",
+                        },
+                    },
                 };
                 await updateTag(payload).unwrap();
                 toast.success("Tag updated");
             } else {
-                await createTag(form).unwrap();
+                const createPayload: ICreateTagRequest = {
+                    ...form,
+                    scope: {
+                        ...form.scope,
+                        owner: {
+                            ...form.scope.owner,
+                            model: form.scope.owner.model === "affiliate" ? "Affiliate" : "User",
+                        },
+                    },
+                };
+                await createTag(createPayload).unwrap();
                 toast.success("Tag created");
             }
 
@@ -275,19 +317,118 @@ export default function TagManagementSection({
                                 }
                             >
                                 <SelectTrigger className="pointer w-full">
-                                    <SelectValue placeholder="Select a color" className="pointer"/>
+                                    {form.color ? (
+                                        (() => {
+                                            const selected = COLOR_OPTIONS.find(c => c.text === form.color);
+                                            return selected ? (
+                                                <div
+                                                    className="flex items-center w-full rounded gap-2"
+                                                >
+                                                    <span
+                                                        className="text-xs font-semibold border rounded px-2 py-0.5"
+                                                        style={{
+                                                            color: selected.text,
+                                                            borderColor: selected.text,
+                                                        }}
+                                                    >
+                                                        Sample
+                                                    </span>
+                                                    <span className="text-sm font-medium">{selected.label}</span>
+                                                </div>
+                                            ) : (
+                                                <SelectValue placeholder="Select a color" className="pointer" />
+                                            );
+                                        })()
+                                    ) : (
+                                        <SelectValue placeholder="Select a color" className="pointer" />
+                                    )}
                                 </SelectTrigger>
                                 <SelectContent className="pointer">
                                     {COLOR_OPTIONS.map((c) => (
-                                        <div key={c.text} className="flex items-center gap-2 px-2 py-1">
-                                            <SelectItem key={c.text} value={c.text}>
-                                                
-                                            <div className="text-xs border p-1 rounded" style={{ color: c.text, borderColor: c.text, backgroundColor: c.background }}>Sample</div>{c.label}
-                                            </SelectItem>
-                                        </div>
+                                        <SelectItem
+                                            key={c.text}
+                                            value={c.text}
+                                            className="w-full p-0"
+                                        >
+                                            <div
+                                                className="flex items-center justify-between w-full px-3 py-2 rounded gap-2"
+                                                style={{
+                                                    // backgroundColor: c.background,
+                                                    // color: c.text,
+                                                }}
+                                            >
+
+                                                <span
+                                                    className="text-xs font-semibold border rounded px-2 py-0.5"
+                                                    style={{
+                                                        color: c.text,
+                                                        borderColor: c.text,
+                                                        backgroundColor: c.background,
+                                                    }}
+                                                >
+                                                    Sample
+                                                </span>
+                                                <span className="text-sm font-medium">{c.label}</span>
+                                            </div>
+                                        </SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
+                        </div>
+
+                        {/* Owner Model */}
+                        <div className="space-y-2">
+                            <Label className="text-sm font-medium">Owner Model {editingTag && "(Cannot be changed)"}</Label>
+                            <div className="flex items-center gap-4">
+                                <button
+                                    type="button"
+                                    disabled={!!editingTag}
+                                    onClick={() => {
+                                        const affiliateId = getIdByOwnerModel("affiliate");
+                                        setForm((s: ICreateTagRequest) => ({
+                                            ...s,
+                                            scope: {
+                                                ...s.scope,
+                                                owner: {
+                                                    model: "affiliate",
+                                                    id: affiliateId,
+                                                },
+                                            },
+                                        }));
+                                    }}
+                                    className={`px-4 py-2 rounded border-2 font-medium transition-all ${
+                                        form.scope.owner.model === "affiliate"
+                                            ? "border-black bg-black text-white"
+                                            : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"
+                                    } ${editingTag ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                                >
+                                    Affiliate
+                                </button>
+                                <button
+                                    type="button"
+                                    disabled={!!editingTag}
+                                    onClick={() => {
+                                        const userId = getIdByOwnerModel("user");
+                                        setForm((s: ICreateTagRequest) => ({
+                                            ...s,
+                                            scope: {
+                                                ...s.scope,
+                                                owner: {
+                                                    model: "user",
+                                                    id: userId,
+                                                },
+                                            },
+                                        }));
+                                    }}
+                                    className={`px-4 py-2 rounded border-2 font-medium transition-all ${
+                                        form.scope.owner.model === "user"
+                                            ? "border-black bg-black text-white"
+                                            : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"
+                                    } ${editingTag ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
+                                >
+                                    User
+                                </button>
+                            </div>
                         </div>
 
                         {/* Description */}
@@ -324,6 +465,44 @@ export default function TagManagementSection({
                             </Button>
                         </div>
                     </form>
+                </DialogContent>
+            </Dialog>
+
+            {/* Delete Confirmation Dialog */}
+            <Dialog open={deleteConfirmDialog.isOpen} onOpenChange={(isOpen) => 
+                setDeleteConfirmDialog({ ...deleteConfirmDialog, isOpen })
+            }>
+                <DialogContent className="sm:max-w-md p-6 bg-white">
+                    <DialogHeader>
+                        <DialogTitle className="text-lg font-semibold">
+                            Delete Tag
+                        </DialogTitle>
+                    </DialogHeader>
+
+                    <div className="space-y-4">
+                        <p className="text-sm text-gray-600">
+                            Are you sure you want to delete the tag <span className="font-semibold">"{deleteConfirmDialog.tag?.name}"</span>? This action cannot be undone.
+                        </p>
+
+                        <div className="flex justify-end gap-3">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                className="border-gray-300 text-gray-700 hover:bg-gray-50"
+                                onClick={() => setDeleteConfirmDialog({ isOpen: false, tag: null })}
+                            >
+                                Cancel
+                            </Button>
+
+                            <Button
+                                type="button"
+                                className="bg-red-600 text-white hover:bg-red-700"
+                                onClick={confirmDelete}
+                            >
+                                Delete
+                            </Button>
+                        </div>
+                    </div>
                 </DialogContent>
             </Dialog>
         </>
