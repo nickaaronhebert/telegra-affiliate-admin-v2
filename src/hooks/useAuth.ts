@@ -1,3 +1,5 @@
+import { LOCAL_STORAGE_KEYS } from '@/constants';
+import { removeLocalStorage } from '@/lib/utils';
 import { useState, useEffect } from 'react';
 
 // Simple auth hook for demo purposes
@@ -28,7 +30,9 @@ export const useAuth = () => {
   };
 
   const logout = () => {
-    localStorage.removeItem('auth-token');
+    removeLocalStorage(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
+    removeLocalStorage(LOCAL_STORAGE_KEYS.USER);
+    sessionStorage.removeItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
     setIsAuthenticated(false);
   };
 

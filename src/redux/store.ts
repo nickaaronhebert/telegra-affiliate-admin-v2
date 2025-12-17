@@ -1,4 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
+import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+
 import { baseApi } from "./services";
 import "./services/register-services"; // Ensure all services are registered
 import orderReducer from "@/redux/slices/create-order";
@@ -13,6 +15,7 @@ import {
   useSelector,
   type TypedUseSelectorHook,
 } from "react-redux";
+import { LOCAL_STORAGE_KEYS } from "@/constants";
 
 export const store = configureStore({
   reducer: {
@@ -33,3 +36,16 @@ export type AppDispatch = typeof store.dispatch;
 export const useAppDispatch = () => useDispatch<AppDispatch>();
 
 export const useTypedSelector: TypedUseSelectorHook<RootState> = useSelector;
+export const api = createApi({
+  baseQuery: fetchBaseQuery({
+    baseUrl: import.meta.env.VITE_API_URL,
+    prepareHeaders: (headers) => {
+      const token = localStorage.getItem(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
+      if (token) {
+        headers.set("authorization", `Bearer ${token}`);
+      }
+      return headers;
+    },
+  }),
+  endpoints: () => ({}),
+});
