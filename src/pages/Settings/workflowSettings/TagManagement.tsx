@@ -61,7 +61,7 @@ export default function TagManagementSection({
     const [form, setForm] = useState<ICreateTagRequest>({
         name: "",
         description: "",
-        color: COLOR_OPTIONS[0].value,
+        color: COLOR_OPTIONS[0].text,
         scope: {
             targetModel: "Order",
             owner: {
@@ -92,7 +92,7 @@ export default function TagManagementSection({
         setForm({
             name: "",
             description: "",
-            color: COLOR_OPTIONS[0].value,
+            color: COLOR_OPTIONS[0].text,
             scope: {
                 targetModel: "Order",
                 owner: {
