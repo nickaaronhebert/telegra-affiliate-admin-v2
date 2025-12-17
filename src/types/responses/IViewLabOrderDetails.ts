@@ -22,7 +22,8 @@ export interface LabOrderDetails {
       address1: string;
       address2: string;
       city: string;
-      state: { name: string };
+      zipcode: string;
+      state: { name: string; id: string };
     };
   };
 

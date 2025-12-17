@@ -1,8 +1,10 @@
+import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 interface DetailCardProps {
   title: string;
   id: string;
+  isLoading?: boolean;
   fields: {
     label: string;
     value: string;
@@ -12,10 +14,11 @@ interface DetailCardProps {
   }[];
 }
 
-export function DetailsCard({ title, fields, id }: DetailCardProps) {
+export function DetailsCard({ title, fields, id, isLoading }: DetailCardProps) {
   console.log("fields", fields);
   return (
     <div
+      className="min-w-196.5"
       //   className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014]"
       id={id}
     >
@@ -36,11 +39,11 @@ export function DetailsCard({ title, fields, id }: DetailCardProps) {
             </h4>
 
             <span
-              className={`text-sm font-semibold text-primary-foreground mt-2 ${
+              className={`text-sm font-semibold text-primary-foreground mt-3 ${
                 capitalize ? "capitalize" : ""
               }`}
             >
-              {value}
+              {isLoading ? <Skeleton className="h-4 w-32 mt-3" /> : value}
             </span>
           </div>
         ))}
