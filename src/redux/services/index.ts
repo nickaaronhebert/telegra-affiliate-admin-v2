@@ -74,7 +74,7 @@ export const baseApi = createApi({
     TAG_GET_PROJECTS
   ],
   baseQuery: fetchBaseQuery({
-    baseUrl:  "http://localhost:7009",
+    baseUrl: import.meta.env.VITE_BASE_BACKEND_URL,
     prepareHeaders: (headers, { getState }) => {
       const masterKey = import.meta.env.VITE_MASTER_KEY;
       const token = (getState() as RootState)?.auth?.token;
