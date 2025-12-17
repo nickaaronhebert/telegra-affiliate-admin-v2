@@ -34,6 +34,9 @@ import {
   TAG_GET_NOTES,
   TAG_GET_STATES,
   TAG_GET_PROJECTS,
+  TAG_GET_PRODUCT_VARIATIONS_LIST,
+  TAG_PAYMENT_PROCESSOR,
+  TAG_GET_TAGS,
   TAG_GET_PAYMENT_METHODS,
 } from "@/types/baseApiTags";
 
@@ -73,6 +76,9 @@ export const baseApi = createApi({
     TAG_GET_NOTES,
     TAG_GET_STATES,
     TAG_GET_PROJECTS,
+    TAG_GET_PRODUCT_VARIATIONS_LIST,
+    TAG_PAYMENT_PROCESSOR,
+    TAG_GET_TAGS,
     TAG_GET_PAYMENT_METHODS,
   ],
   baseQuery: fetchBaseQuery({

@@ -37,6 +37,15 @@ const badgeVariants = cva(
           "border-transparent bg-[#FEF9C3] text-[#854D0E] [a&]:hover:bg-gray-300",
         subscriptionVariable:
           "border-transparent bg-[#F3E8FF] text-[#5456AD] [a&]:hover:bg-yellow-300",
+        user:
+          "border-transparent bg-[#DCFCE7] text-[#15803D] [a&]:hover:bg-green-200",
+        affiliate:
+          "border-transparent bg-[#FEF9C3] text-[#854D0E] [a&]:hover:bg-gray-300",
+        patient:
+          "border-transparent bg-[#DCFCE7] text-[#15803D] [a&]:hover:bg-green-200 text-[10px]",
+        defaultSecondary:
+          "border-transparent bg-[#F4F4F4] text-[#3E4D61] [a&]:hover:bg-red-200 text-[10px]",
+
       },
     },
     defaultVariants: {

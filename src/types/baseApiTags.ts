@@ -33,3 +33,6 @@ export const TAG_GET_COMMUNICATION_TEMPLATES =
 export const TAG_GET_NOTES = "Notes" as const;
 export const TAG_GET_STATES = "States" as const;
 export const TAG_GET_PROJECTS = "Projects" as const;
+export const TAG_GET_PRODUCT_VARIATIONS_LIST = "ProductVariationsList" as const;
+export const TAG_PAYMENT_PROCESSOR = "PaymentProcessor" as const;
+export const TAG_GET_TAGS = "Tags" as const;
