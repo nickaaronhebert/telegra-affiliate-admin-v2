@@ -6,8 +6,9 @@ import { usePaymentProcessorsQuery } from "@/redux/services/paymentMethod";
 
 interface AddStripeCardProps {
   handleClose: (arg: boolean) => void;
+  onPaymentMethodCreated?: (paymentMethod: any) => void;
 }
-export default function AddStripeCard({ handleClose }: AddStripeCardProps) {
+export default function AddStripeCard({ handleClose, onPaymentMethodCreated }: AddStripeCardProps) {
   const [stripePromise, setStripePromise] =
     useState<Promise<Stripe | null> | null>(null);
 
@@ -30,7 +31,7 @@ export default function AddStripeCard({ handleClose }: AddStripeCardProps) {
 
   return (
     <Elements stripe={stripePromise}>
-      <CustomCardForm handleClose={handleClose} />
+      <CustomCardForm handleClose={handleClose} onPaymentMethodCreated={onPaymentMethodCreated} />
     </Elements>
   );
 }

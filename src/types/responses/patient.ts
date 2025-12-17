@@ -134,6 +134,17 @@ export interface PatientLabOrder {
   createdAt: string;
   updatedAt: string;
 }
+export interface PaymentMethod {
+  paymentId: string;
+  cardBrand: string;
+  last4: string;
+  expMonth: string;
+  expYear: string;
+  isDefault: boolean;
+  name: string;
+  postalCode: string;
+}
+
 export interface PatientDetail {
   id: string;
   email: string;
@@ -166,6 +177,7 @@ export interface PatientDetail {
   medicationAllergies: MedicationAllergy[];
   medicationsConfirmationDate?: string;
   allergiesConfirmationDate?: string;
+  payment?: PaymentMethod[];
 }
 
 export interface PatientDetailResponse {

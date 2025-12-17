@@ -45,7 +45,7 @@ export const ROUTES = {
   PRODUCTS_EDIT: 'products/edit',
   JOURNEYS_PATH: '/journeys',
   JOURNEYS_EDIT: '/journeys/:id/edit',
-  PATIENTS_PATH: 'patients',
+  PATIENTS_PATH: '/patients',
   PATIENTS_CREATE: '/patients/create',
   ENCOUNTERS_PATH: 'encounters',
   LAB_ORDERS_PATH: 'lab-orders',
