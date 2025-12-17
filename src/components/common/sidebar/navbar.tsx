@@ -11,9 +11,13 @@ import { getLocalStorage, removeLocalStorage } from "@/lib/utils";
 import { LOCAL_STORAGE_KEYS } from "@/constants";
 import { useNavigate } from "react-router-dom";
 import { ROUTES } from "@/constants/routes";
+import { api, useAppDispatch } from "@/redux/store";
+import { logout } from "@/redux/slices/auth";
 
 export default function Navbar() {
   const navigate = useNavigate();
+
+  const dispatch = useAppDispatch();
 
   const user = getLocalStorage(LOCAL_STORAGE_KEYS.USER);
 
@@ -28,7 +32,11 @@ export default function Navbar() {
   const handleLogout = () => {
     removeLocalStorage(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
     removeLocalStorage(LOCAL_STORAGE_KEYS.USER);
-    navigate(ROUTES.LOGIN, { replace: true });
+    dispatch(api.util.resetApiState());
+    dispatch(logout()); // your authSlice action
+    setTimeout(() => {
+      navigate(ROUTES.LOGIN);
+    }, 2000);
   };
 
   return (
@@ -51,12 +59,15 @@ export default function Navbar() {
               {user?.role || "Affiliate admin"}
             </h6>
           </div>
-          <DropdownMenu >
+          <DropdownMenu>
             <DropdownMenuTrigger>
               <ChevronDown stroke="black" />
             </DropdownMenuTrigger>
             <DropdownMenuContent className="p-2 w-[174px]">
-              <DropdownMenuItem onClick={handleLogout} className="cursor-pointer">
+              <DropdownMenuItem
+                onClick={handleLogout}
+                className="cursor-pointer"
+              >
                 <LogoutSVG />
                 Logout
               </DropdownMenuItem>
