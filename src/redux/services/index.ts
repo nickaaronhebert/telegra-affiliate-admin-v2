@@ -33,7 +33,10 @@ import {
   TAG_GET_LAB_ORDER,
   TAG_GET_NOTES,
   TAG_GET_STATES,
-  TAG_GET_PROJECTS
+  TAG_GET_PROJECTS,
+  TAG_GET_PRODUCT_VARIATIONS_LIST,
+  TAG_PAYMENT_PROCESSOR,
+  TAG_GET_TAGS,
 } from "@/types/baseApiTags";
 
 export const baseApi = createApi({
@@ -71,7 +74,10 @@ export const baseApi = createApi({
     TAG_GET_LAB_ORDER,
     TAG_GET_NOTES,
     TAG_GET_STATES,
-    TAG_GET_PROJECTS
+    TAG_GET_PROJECTS,
+    TAG_GET_PRODUCT_VARIATIONS_LIST,
+    TAG_PAYMENT_PROCESSOR,
+    TAG_GET_TAGS,
   ],
   baseQuery: fetchBaseQuery({
     baseUrl:  "http://localhost:7009",

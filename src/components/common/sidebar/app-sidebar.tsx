@@ -35,11 +35,11 @@ import TeamManagementSVG from "@/assets/icons/TeamManagement";
 
 const dashboardItem = { title: "Dashboard", url: "/dashboard", icon: DashboardSVG };
 const commerce = [
-  { title: "Orders", url: "/orders", icon: OrdersSVG },
-  { title: "Subscriptions", url: "/subscriptions", icon: SubscriptionsSVG },
-  { title: "Coupons", url: "/coupons", icon: CouponsSVG },
-  { title: "Products", url: "/products", icon: ProductsSVG },
-  { title: "Journeys", url: "/journeys", icon: JourneySVG },
+    { title: "Orders", url: "/orders", icon: OrdersSVG },
+    { title: "Subscriptions", url: "/subscriptions", icon: SubscriptionsSVG },
+    { title: "Coupons", url: "/coupons", icon: CouponsSVG },
+    { title: "Products", url: "/products", icon: ProductsSVG },
+    { title: "Journeys", url: "/journeys", icon: JourneySVG },
 ];
 
 const clinical = [
@@ -53,14 +53,10 @@ const general = [
 ];
 
 const settingsSubItems = [
-    { title: "Company Details", url: "/settings/company-details" },
-    { title: "User Management", url: "/settings/user-management" },
-    { title: "Tag Management", url: "/settings/tag-management" },
-    { title: "Brand Identity", url: "/settings/brand-identity" },
-    { title: "Projects", url: "/settings/projects" },
-    { title: "Patient Communications", url: "/settings/patient-communications" },
+    { title: "Organization Identity", url: "/settings/organization-identity" },
+    { title: "Workflow Settings", url: "/settings/workflow-settings" },
+    { title: "Financial Management", url: "/settings/financial-management" },
     { title: "Product List", url: "/settings/product-list" },
-    { title: "Payment Processor", url: "/settings/payment-processor" },
 ];
 
 export function AppSidebar() {
@@ -73,31 +69,29 @@ export function AppSidebar() {
     }
 
     const renderMenu = (items: any[]) =>
-    items.map((item) => (
-        <SidebarMenuItem key={item.title}>
-            <SidebarMenuButton asChild isActive={isActive(item)}>
-                <Link
-                    to={item.url}
-                    className={`flex items-center gap-2 px-3 py-0 rounded-md transition-colors ${
-                        isActive(item)
-                            ? "bg-[#F7F1FD] !text-[#5456AD]"
-                            : "!text-[#000] hover:!text-[#5456AD] hover:bg-[#F7F1FD]"
-                    }`}
-                >
-                    <item.icon
-                        className={`w-[26px] h-[26px] ${
-                            isActive(item) ? "text-[#5456AD]" : "group-hover:text-[#5456AD]"
-                        }`}
-                    />
-                    {open && (
-                        <span className="font-['Inter'] font-medium text-[15px] leading-[22px] tracking-[-0.2px] align-middle">
-                            {item.title}
-                        </span>
-                    )}
-                </Link>
-            </SidebarMenuButton>
-        </SidebarMenuItem>
-    ));
+        items.map((item) => (
+            <SidebarMenuItem key={item.title}>
+                <SidebarMenuButton asChild isActive={isActive(item)}>
+                    <Link
+                        to={item.url}
+                        className={`flex items-center gap-2 px-3 py-0 rounded-md transition-colors ${isActive(item)
+                                ? "bg-[#F7F1FD] !text-[#5456AD]"
+                                : "!text-[#000] hover:!text-[#5456AD] hover:bg-[#F7F1FD]"
+                            }`}
+                    >
+                        <item.icon
+                            className={`w-[26px] h-[26px] ${isActive(item) ? "text-[#5456AD]" : "group-hover:text-[#5456AD]"
+                                }`}
+                        />
+                        {open && (
+                            <span className="font-['Inter'] font-medium text-[15px] leading-[22px] tracking-[-0.2px] align-middle">
+                                {item.title}
+                            </span>
+                        )}
+                    </Link>
+                </SidebarMenuButton>
+            </SidebarMenuItem>
+        ));
 
 
 
@@ -170,47 +164,45 @@ export function AppSidebar() {
                                 <SidebarMenuItem>
                                     <CollapsibleTrigger asChild>
                                         <SidebarMenuButton
-    className={`flex items-center gap-2 px-3 py-0 rounded-md transition-colors ${
-        location.pathname.startsWith('/settings')
-            ? "bg-[#F7F1FD] !text-[#5456AD]"
-            : "!text-[#000] hover:!text-[#5456AD] hover:bg-[#F7F1FD]"
-    }`}
->
-    <SettingsSVG className={`w-[26px] h-[26px] ${location.pathname.startsWith('/settings') ? "text-[#5456AD]" : "group-hover:text-[#5456AD]"}`} />
-    {open && (
-        <>
-            <span className="font-['Inter'] font-medium text-[15px] leading-[22px] tracking-[-0.2px] flex-1">
-                Settings
-            </span>
-            <ChevronDown className={`ml-auto h-4 w-4 transition-transform duration-200 ${settingsOpen ? "rotate-90" : ""}`} />
-        </>
-    )}
-</SidebarMenuButton>
+                                            className={`flex items-center gap-2 px-3 py-0 rounded-md transition-colors ${location.pathname.startsWith('/settings')
+                                                    ? "bg-[#F7F1FD] !text-[#5456AD]"
+                                                    : "!text-[#000] hover:!text-[#5456AD] hover:bg-[#F7F1FD]"
+                                                }`}
+                                        >
+                                            <SettingsSVG className={`w-[26px] h-[26px] ${location.pathname.startsWith('/settings') ? "text-[#5456AD]" : "group-hover:text-[#5456AD]"}`} />
+                                            {open && (
+                                                <>
+                                                    <span className="font-['Inter'] font-medium text-[15px] leading-[22px] tracking-[-0.2px] flex-1">
+                                                        Settings
+                                                    </span>
+                                                    <ChevronDown className={`ml-auto h-4 w-4 transition-transform duration-200 ${settingsOpen ? "rotate-90" : ""}`} />
+                                                </>
+                                            )}
+                                        </SidebarMenuButton>
 
 
                                     </CollapsibleTrigger>
                                     {open && (
                                         <CollapsibleContent>
                                             <SidebarMenuSub>
-    {settingsSubItems.map((subItem) => (
-        <SidebarMenuSubItem key={subItem.title}>
-            <SidebarMenuSubButton asChild>
-                <Link
-                    to={subItem.url}
-                    className={`flex items-center px-3 py-1.5 rounded-md transition-colors ${
-                        location.pathname === subItem.url
-                            ? "bg-[#F7F1FD] !text-[#5456AD]"
-                            : "!text-[#000] hover:!text-[#5456AD] hover:bg-[#F7F1FD]"
-                    }`}
-                >
-                    <span className={`font-['Inter'] font-medium text-[15px] leading-[22px] tracking-[-0.2px] align-middle`}>
-                        {subItem.title}
-                    </span>
-                </Link>
-            </SidebarMenuSubButton>
-        </SidebarMenuSubItem>
-    ))}
-</SidebarMenuSub>
+                                                {settingsSubItems.map((subItem) => (
+                                                    <SidebarMenuSubItem key={subItem.title}>
+                                                        <SidebarMenuSubButton asChild>
+                                                            <Link
+                                                                to={subItem.url}
+                                                                className={`flex items-center text-sm font-normal px-3 py-1.5 rounded-md transition-colors ${location.pathname === subItem.url
+                                                                        ? "bg-[#F7F1FD] !text-[#5456AD]"
+                                                                        : "!text-[#000] hover:!text-[#5456AD] hover:bg-[#F7F1FD]"
+                                                                    }`}
+                                                            >
+                                                                <span>
+                                                                    {subItem.title}
+                                                                </span>
+                                                            </Link>
+                                                        </SidebarMenuSubButton>
+                                                    </SidebarMenuSubItem>
+                                                ))}
+                                            </SidebarMenuSub>
 
                                         </CollapsibleContent>
                                     )}
