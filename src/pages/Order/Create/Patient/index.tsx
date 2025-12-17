@@ -34,10 +34,10 @@ export default function SelectPatient({
   disabled?: boolean;
 }) {
   const dispatch = useAppDispatch();
-  const { data } = useViewAllPatientsQuery(
+  const { data, isLoading } = useViewAllPatientsQuery(
     {},
     {
-      selectFromResult: ({ data }) => ({
+      selectFromResult: ({ data, isLoading }) => ({
         data: data?.result?.map((patient) => {
           return {
             label: `${patient.firstName} ${patient.lastName}, ${
@@ -58,6 +58,7 @@ export default function SelectPatient({
               : "-",
           };
         }),
+        isLoading,
       }),
     }
   );
@@ -103,10 +104,12 @@ export default function SelectPatient({
           <div>
             <div className="mt-3.5">
               <SelectElement
+                isLoading={isLoading}
+                loadingTitle={"Loading patients record..."}
                 disabled={disabled}
                 name="patient"
                 options={data || []}
-                className=" min-h-14 max-w-[500px] min-w-[500px]"
+                className=" min-h-14 max-w-125 min-w-125"
                 placeholder="Select patient..."
               />
             </div>
@@ -114,7 +117,7 @@ export default function SelectPatient({
             {patientDetails && (
               <>
                 {/* Patient Details */}
-                <div className="my-5 min-w-[500px]">
+                <div className="my-5 min-w-125">
                   <h3 className="font-semibold text-gray-900 mb-4">
                     Patient Details
                   </h3>
@@ -213,7 +216,7 @@ export default function SelectPatient({
               <Button
                 type="submit"
                 disabled={!form.formState.isValid}
-                className="rounded-full min-h-12 min-w-[130px] text-[14px] font-semibold text-white cursor-pointer"
+                className="rounded-full min-h-12 min-w-32.5 text-[14px] font-semibold text-white cursor-pointer"
               >
                 Next
               </Button>

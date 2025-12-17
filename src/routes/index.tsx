@@ -29,6 +29,10 @@ import PatientDetailsPage from "@/pages/Patient/details";
 import EditJourneyPage from "@/pages/Journey/edit";
 import ViewEcommerceOrderDetails from "@/pages/Order/details";
 import EditCommerceOrder from "@/pages/Order/Edit";
+import { OrganizationIdentityPage } from "@/pages/Settings/organizationIdentity";
+import ProductVariations from "@/pages/Settings/ProductVariations";
+import WorkflowSettingsPage from "@/pages/Settings/workflowSettings";
+import FinancialManagementPage from "@/pages/Settings/FinancialManagement";
 import CreateSubscription from "@/pages/Subscription/Create";
 import SubscriptionDetail from "@/pages/Subscription/Detail";
 import ViewAllLabOrders from "@/pages/LabOrder";
@@ -110,6 +114,14 @@ export const router = createBrowserRouter([
         path: ROUTES.PRODUCTS_PATH,
         element: <Products />,
       },
+      {
+        path: ROUTES.PRODUCT_VARIATIONS_PATH,
+        element: <ProductVariations />,
+      },
+      {
+        path: ROUTES.WORKFLOW_SETTINGS_PATH,
+        element: <WorkflowSettingsPage />,
+      },
 
       {
         path: ROUTES.COUPONS_EDIT,
@@ -154,6 +166,14 @@ export const router = createBrowserRouter([
       {
         path: ROUTES.SETTINGS_PATH,
         element: <SettingsPage />,
+      },
+      {
+        path: ROUTES.ORGANIZATION_IDENTITY_PATH,
+        element: <OrganizationIdentityPage />,
+      },
+      {
+        path: ROUTES.FINANCIAL_MANAGEMENT_PATH,
+        element: <FinancialManagementPage />,
       },
       {
         path: ROUTES.CREATE_SUBSCRIPTION,
