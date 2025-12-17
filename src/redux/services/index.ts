@@ -37,6 +37,7 @@ import {
   TAG_GET_PRODUCT_VARIATIONS_LIST,
   TAG_PAYMENT_PROCESSOR,
   TAG_GET_TAGS,
+  TAG_GET_PAYMENT_METHODS,
 } from "@/types/baseApiTags";
 
 export const baseApi = createApi({
@@ -78,9 +79,10 @@ export const baseApi = createApi({
     TAG_GET_PRODUCT_VARIATIONS_LIST,
     TAG_PAYMENT_PROCESSOR,
     TAG_GET_TAGS,
+    TAG_GET_PAYMENT_METHODS,
   ],
   baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_BASE_BACKEND_URL,
+    baseUrl: import.meta.env.VITE_BASE_BACKEND_URL || "http://localhost:7009",
     prepareHeaders: (headers, { getState }) => {
       const masterKey = import.meta.env.VITE_MASTER_KEY;
       const token = (getState() as RootState)?.auth?.token;

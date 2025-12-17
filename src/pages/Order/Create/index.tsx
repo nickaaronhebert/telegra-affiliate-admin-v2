@@ -22,7 +22,7 @@ export default function CreateCommerceOrder() {
         <h1 className="text-2xl font-bold mt-1">Create Commerce Order </h1>
       </div>
       <div
-        className="mt-10  rounded-[15px] max-w-[815px] mx-auto p-6 bg-white"
+        className="mt-10  rounded-[15px] max-w-203.75 mx-auto p-6 bg-white"
         style={{
           boxShadow: "0px 8px 10px 0px hsla(0, 0%, 0%, 0.08)",
         }}

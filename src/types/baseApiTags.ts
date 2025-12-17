@@ -1,6 +1,7 @@
 export const TAG_GET_USER_PROFILE = "getUserProfile" as const;
 export const TAG_GET_LAB_ORDER = "LabOrder" as const;
 export const TAG_GET_PATIENTS = "Patients" as const;
+export const TAG_GET_PAYMENT_METHODS = "PaymentMethods" as const;
 export const TAG_GET_ACCESS_CONTROL = "AccessControl" as const;
 export const TAG_GET_ORDERS = "Orders" as const;
 export const TAG_GET_CARDS = "Cards" as const;
@@ -27,7 +28,8 @@ export const TAG_GET_JOURNEYS = "Journeys" as const;
 export const TAG_GET_PRODUCTS = "Products" as const;
 export const TAG_GET_PRODUCT_VARIATIONS = "ProductVariations" as const;
 export const TAG_GET_QUESTIONNAIRES = "Questionnaires" as const;
-export const TAG_GET_COMMUNICATION_TEMPLATES = "CommunicationTemplates" as const;
+export const TAG_GET_COMMUNICATION_TEMPLATES =
+  "CommunicationTemplates" as const;
 export const TAG_GET_NOTES = "Notes" as const;
 export const TAG_GET_STATES = "States" as const;
 export const TAG_GET_PROJECTS = "Projects" as const;
