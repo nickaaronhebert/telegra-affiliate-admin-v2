@@ -1,3 +1,4 @@
+import type { IViewPaymentProcessorResponse } from "@/types/responses/IPaymentProcessor";
 import { baseApi } from ".";
 
 const paymentMethodApi = baseApi.injectEndpoints({
@@ -23,9 +24,20 @@ const paymentMethodApi = baseApi.injectEndpoints({
         };
       },
     }),
+
+    paymentProcessors: builder.query<IViewPaymentProcessorResponse, void>({
+      query: () => {
+        return {
+          url: `/billingDetails/actions/paymentProcessor`,
+          method: "GET",
+        };
+      },
+      // providesTags: (_result, _error, id) => [{ type: TAG_GET_LAB_ORDER, id }],
+    }),
   }),
 });
 
-export const { useViewPatientPaymentMethodQuery } = paymentMethodApi;
+export const { useViewPatientPaymentMethodQuery, usePaymentProcessorsQuery } =
+  paymentMethodApi;
 
 export default paymentMethodApi;
