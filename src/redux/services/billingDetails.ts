@@ -1,5 +1,5 @@
 import { baseApi } from "./index";
-import { TAG_PAYMENT_PROCESSOR, TAG_GET_PAYMENT_METHODS } from "@/types/baseApiTags";
+import { TAG_PAYMENT_PROCESSOR, TAG_GET_PAYMENT_METHODS, TAG_GET_PATIENTS } from "@/types/baseApiTags";
 
 export interface PaymentProcessorData {
   PROCESSOR_TYPE: string;
@@ -79,7 +79,11 @@ const billingDetailsApi = baseApi.injectEndpoints({
         method: "DELETE",
         body: data,
       }),
-      invalidatesTags: [TAG_GET_PAYMENT_METHODS],
+      invalidatesTags: (_result, _error, { patientId }) => [
+        { type: TAG_GET_PATIENTS, id: patientId },
+        { type: TAG_GET_PATIENTS, id: `${patientId}-payment` },
+        TAG_GET_PAYMENT_METHODS,
+      ],
     }),
   }),
 });
