@@ -35,7 +35,7 @@ if (env.BRANCH_NAME == 'main') {
 timestamps {
     ansiColor('xterm') {
         node (AGENT) {
-            def parentSlackMessage = notifySlack('Starting Build')
+            def parentSlackMessage = notifySlack('STARTING')
             notifyDiscord('Starting Build')
             try {
                 stage('Checkout') {
@@ -138,8 +138,6 @@ timestamps {
                 echo "DONE"
                 notifySlack(currentBuild.result, parentSlackMessage)
                 notifyDiscord(currentBuild.result)
-
-                parentSlackMessage.addReaction("thumbsup")
             }
 
         }
@@ -154,18 +152,20 @@ def notifySlack(String buildStatus, parentSlackMessage = null) {
         SLACK_CHANNEL = '#jenkins-build-notifications'
     }
 
-    def message = "Deployment for ${ENV_KIND} `${env.JOB_NAME}` ${buildStatus}: #${env.BUILD_NUMBER}:\n Details: ${env.BUILD_URL}"
+    def message = "${buildStatus} : #${env.BUILD_NUMBER}\n for *${ENV_KIND}* `${env.JOB_NAME}`:\n more details: ${env.BUILD_URL}"
     def color
-    if (buildStatus == 'STARTED') {
-        color = '#D4DADF'
+    if (buildStatus == 'STARTING') {
+        color = '#A2D5FD'
     } else if (buildStatus == 'SUCCESS') {
         color = 'good'
+        parentSlackMessage.addReaction("white_check_mark")
     } else if (buildStatus == 'UNSTABLE') {
         color = 'bad'
         message = '@channel '+message;
+        parentSlackMessage.addReaction("no_entry_sign")
     } else {
         message = '@channel '+message;
-        color = '#FF9FA1'
+        color = '#FFF18A'
     }
 
     if (parentSlackMessage != null && parentSlackMessage.threadId != null) {
