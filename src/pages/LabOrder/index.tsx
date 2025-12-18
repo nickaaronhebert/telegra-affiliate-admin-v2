@@ -99,7 +99,7 @@ export default function ViewAllLabOrders() {
           <span
             onClick={() => setStatus("pending")}
             className={cn(
-              "cursor-pointer min-w-[185px] rounded-tl-[10px] rounded-tr-[10px] py-3 px-4 text-center text-sm font-medium",
+              "cursor-pointer min-w-46.25 rounded-tl-[10px] rounded-tr-[10px] py-3 px-4 text-center text-sm font-medium",
               status === "pending"
                 ? "bg-primary text-white"
                 : "bg-slate-background text-black"
@@ -111,7 +111,7 @@ export default function ViewAllLabOrders() {
           <span
             onClick={() => setStatus("in_progress")}
             className={cn(
-              "cursor-pointer min-w-[185px] rounded-tl-[10px] rounded-tr-[10px] py-3 px-4 text-center text-sm font-medium",
+              "cursor-pointer min-w-46.25 rounded-tl-[10px] rounded-tr-[10px] py-3 px-4 text-center text-sm font-medium",
               status === "in_progress"
                 ? "bg-primary text-white"
                 : "bg-slate-background text-black"
@@ -123,7 +123,7 @@ export default function ViewAllLabOrders() {
           <span
             onClick={() => setStatus("complete")}
             className={cn(
-              "cursor-pointer min-w-[185px] rounded-tl-[10px] rounded-tr-[10px] py-3 px-4 text-center text-sm font-medium",
+              "cursor-pointer min-w-46.25 rounded-tl-[10px] rounded-tr-[10px] py-3 px-4 text-center text-sm font-medium",
               status === "complete"
                 ? "bg-primary text-white"
                 : "bg-slate-background text-black"

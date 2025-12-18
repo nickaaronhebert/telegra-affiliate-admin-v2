@@ -45,7 +45,7 @@ export function labOrderColumns(): ColumnDef<LabOrderInterface>[] {
 
         return status === "pending" ? (
           <Badge className="text-[10px] font-semibold bg-[#CCE5FF] px-2 py-1 rounded-[5px] text-[#004085] min-w-16">
-            Progress
+            Pending
           </Badge>
         ) : status === "in_progress" ? (
           <Badge className="text-[10px] font-semibold bg-[#FEF9C3] px-2 py-1 rounded-[5px] text-[#854D0E] min-w-16">
