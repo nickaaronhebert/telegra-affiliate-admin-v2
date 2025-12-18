@@ -35,8 +35,8 @@ if (env.BRANCH_NAME == 'main') {
 timestamps {
     ansiColor('xterm') {
         node (AGENT) {
-            def parentSlackMessage = notifySlack('STARTING')
-            notifyDiscord('Starting Build')
+            def parentSlackMessage = notifySlack('STARTED')
+            notifyDiscord('STARTED Build')
             try {
                 stage('Checkout') {
                     step([$class: 'WsCleanup'])
@@ -95,7 +95,7 @@ timestamps {
                         '''.stripIndent()
                     }
 
-                    notifySlack("Image Built", parentSlackMessage)
+                    notifySlack("BUILT the Images", parentSlackMessage)
                 }
 
                 // Pushes images to image repositories
@@ -103,7 +103,7 @@ timestamps {
                     pushImages("${imageNamespace}/affiliate-admin-v2", registry, "${ENV_KIND}", env.BUILD_NUMBER)
                     pushImages("${imageNamespace}/affiliate-admin-v2", registry, "${ENV_KIND}", "latest")
 
-                    notifySlack("Image Pushed to ECR", parentSlackMessage)
+                    notifySlack("PUSHED the Images to ECR", parentSlackMessage)
                 }
 
                 // Deploys service in Kubernetes cluster
@@ -129,6 +129,8 @@ timestamps {
 
                     sh 'rm ./charts/common-values.yaml'
                     sh 'rm ./charts/affiliate-admin-v2-values.yaml'
+
+                    notifySlack("DEPLOYED", parentSlackMessage)
                 }
 
             } catch (Exception ex) {
@@ -145,18 +147,18 @@ timestamps {
 }
 
 def notifySlack(String buildStatus, parentSlackMessage = null) {
-    buildStatus = buildStatus ?: 'SUCCESS' // build status of null means success
+    buildStatus = buildStatus ?: 'SUCCEEDED' // build status of null means success
     if (ENV_KIND == 'prod') {
         SLACK_CHANNEL = '#jenkins-build-notifications'
     } else {
         SLACK_CHANNEL = '#jenkins-build-notifications'
     }
 
-    def message = "_Job #${env.BUILD_NUMBER}_\n for `${ENV_KIND}` *${env.JOB_NAME}*:\n is ${buildStatus} \n\n more details: ${env.BUILD_URL}"
+    def message = "_Job #${env.BUILD_NUMBER}_\nhas *${buildStatus}*\nfor *${env.JOB_NAME}* `${ENV_KIND}` \n\n more details: ${env.BUILD_URL}"
     def color
-    if (buildStatus == 'STARTING') {
+    if (buildStatus == 'STARTED') {
         color = '#A2D5FD'
-    } else if (buildStatus == 'SUCCESS') {
+    } else if (buildStatus == 'SUCCEEDED') {
         color = 'good'
         parentSlackMessage.addReaction("white_check_mark")
     } else if (buildStatus == 'UNSTABLE') {
