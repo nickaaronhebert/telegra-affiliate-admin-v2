@@ -38,6 +38,7 @@ import {
   TAG_PAYMENT_PROCESSOR,
   TAG_GET_TAGS,
   TAG_GET_PAYMENT_METHODS,
+  TAG_AFFILIATE_DETAILS,
 } from "@/types/baseApiTags";
 
 export const baseApi = createApi({
@@ -80,6 +81,7 @@ export const baseApi = createApi({
     TAG_PAYMENT_PROCESSOR,
     TAG_GET_TAGS,
     TAG_GET_PAYMENT_METHODS,
+    TAG_AFFILIATE_DETAILS,
   ],
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_BASE_BACKEND_URL || "http://localhost:7009",

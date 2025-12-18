@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 export default function SidebarLayout() {
   const { pathname } = useLocation();
-  const noPaddingRoutes = ["/login", "/register", "/coupons/create", "/journeys/create", "/journeys/:id/edit", "/settings/product-list", "/settings/financial-management", "/settings/workflow-settings"];
+  const noPaddingRoutes = ["/login", "/register", "/coupons/create", "/journeys/create", "/journeys/:id/edit", "/settings/product-list", "/settings/financial-management", "/settings/workflow-settings", "/settings/organization-identity"];
   const editJourneyMatch = useMatch("/journeys/:id/edit");
   if (editJourneyMatch) {
     noPaddingRoutes.push(editJourneyMatch.pathname);
