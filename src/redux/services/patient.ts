@@ -56,6 +56,8 @@ const patientApi = baseApi.injectEndpoints({
             dispatch(
               patientApi.util.updateQueryData('viewPatientById', id, (draft) => {
                 draft.orders = ordersResult.data!.result;
+                console.log("Updated patient datasss:", draft.orders);
+
               })
             );
           }
@@ -69,7 +71,9 @@ const patientApi = baseApi.injectEndpoints({
             // Update the patient cache with payment methods data
             dispatch(
               patientApi.util.updateQueryData('viewPatientById', id, (draft) => {
+                console.log("Updating patient payment data in cache:", paymentResult.data);
                 draft.payment = paymentResult.data;
+                console.log("Updated patient data:",  draft.payment);
               })
             );
           }

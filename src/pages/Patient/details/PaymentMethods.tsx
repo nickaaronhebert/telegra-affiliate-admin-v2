@@ -4,15 +4,23 @@ import { ConfirmDialog } from "@/components/common/Dialog";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { useState } from "react";
-import { useAttachPaymentMethodMutation } from "@/redux/services/billingDetails";
+import { useAttachPaymentMethodMutation, useRemovePaymentMethodMutation } from "@/redux/services/billingDetails";
 import { getLocalStorage } from "@/lib/utils";
 import { LOCAL_STORAGE_KEYS } from "@/constants";
 import { toast } from "sonner";
+import type { PatientDetail } from "@/types/responses/patient";
+import PaymentMethodCard from "@/components/common/PaymentMethodCard/PaymentMethodCard";
 
-const PaymentMethods = () => {
+interface PaymentMethodsProps {
+  patient: PatientDetail;
+}
+
+const PaymentMethods = ({ patient }: PaymentMethodsProps) => {
   const [addCardModal, setAddCardModal] = useState(false);
-  const [attachPaymentMethod, { isLoading: isAttaching }] =
-    useAttachPaymentMethodMutation();
+  const [deleteConfirmModal, setDeleteConfirmModal] = useState(false);
+  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<any>(null);
+  const [attachPaymentMethod, { isLoading: isAttaching }] = useAttachPaymentMethodMutation();
+  const [removePaymentMethod] = useRemovePaymentMethodMutation();
 
   const handlePaymentMethodCreated = async (paymentMethod: any) => {
     try {
@@ -33,7 +41,7 @@ const PaymentMethods = () => {
       }
 
       // Call attachPaymentMethod API
-       await attachPaymentMethod({
+      await attachPaymentMethod({
         paymentMethodData: { paymentMethodId },
         userId: userData.id,
       }).unwrap();
@@ -42,6 +50,31 @@ const PaymentMethods = () => {
     } catch (error: any) {
       console.error("Failed to attach payment method:", error);
       toast.error(error?.data?.message || "Failed to attach payment method");
+    }
+  };
+
+  const handleDeleteClick = (paymentMethod: any) => {
+    setSelectedPaymentMethod(paymentMethod);
+    setDeleteConfirmModal(true);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedPaymentMethod) return;
+
+    try {
+      await removePaymentMethod({
+        paymentMethodId: selectedPaymentMethod.paymentId,
+        patientId: patient.id,
+      }).unwrap();
+
+      toast.success("Payment method deleted successfully!");
+    } catch (error: any) {
+      console.error("Failed to delete payment method:", error);
+      toast.error(error?.data?.message || "Failed to delete payment method");
+    } finally {
+      // Close the popup regardless of success or error
+      setDeleteConfirmModal(false);
+      setSelectedPaymentMethod(null);
     }
   };
 
@@ -65,6 +98,16 @@ const PaymentMethods = () => {
         </Button>
       </div>
       <div className="mt-3">
+        {patient?.payment?.map((payment) => (
+          <PaymentMethodCard
+            key={payment.paymentId}
+            paymentInfo={payment}
+            onSelect={(data) => {
+              console.log("Selected payment method ID:", data);
+            }}
+            OnDelete={() => handleDeleteClick(payment)}
+          />
+        ))}
         <ConfirmDialog
           open={addCardModal}
           onOpenChange={setAddCardModal}
@@ -77,6 +120,18 @@ const PaymentMethods = () => {
             onPaymentMethodCreated={handlePaymentMethodCreated}
           />
         </ConfirmDialog>
+
+        <ConfirmDialog
+          open={deleteConfirmModal}
+          onOpenChange={setDeleteConfirmModal}
+          title="Delete payment method?"
+          description="Are you sure you want to delete this patient's payment method? You cannot undo this action."
+          onConfirm={handleConfirmDelete}
+          confirmText="Delete payment method"
+          cancelText="Cancel"
+          confirmTextVariant="destructive"
+          cancelTextVariant="outline"
+        />
       </div>
     </div>
   );

@@ -34,6 +34,17 @@ export interface AttachPaymentMethodResponse {
   data?: any;
 }
 
+export interface RemovePaymentMethodRequest {
+  paymentMethodId: string;
+  patientId: string;
+}
+
+export interface RemovePaymentMethodResponse {
+  success: boolean;
+  message?: string;
+  data?: any;
+}
+
 const billingDetailsApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getPaymentProcessor: builder.query<PaymentProcessorResponse, void>({
@@ -61,6 +72,15 @@ const billingDetailsApi = baseApi.injectEndpoints({
       }),
       invalidatesTags: [TAG_GET_PAYMENT_METHODS],
     }),
+
+    removePaymentMethod: builder.mutation<RemovePaymentMethodResponse, RemovePaymentMethodRequest>({
+      query: (data) => ({
+        url: "/billingDetails/actions/removeCard",
+        method: "DELETE",
+        body: data,
+      }),
+      invalidatesTags: [TAG_GET_PAYMENT_METHODS],
+    }),
   }),
 });
 
@@ -68,4 +88,5 @@ export const {
   useGetPaymentProcessorQuery,
   useUpdatePaymentProcessorMutation,
   useAttachPaymentMethodMutation,
+  useRemovePaymentMethodMutation,
 } = billingDetailsApi;

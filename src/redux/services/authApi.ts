@@ -19,7 +19,7 @@ export const authApi = baseApi.injectEndpoints({
           method: "POST",
           headers: {
             Authorization: basicAuthHeader,
-            "x-bypass-recaptcha": import.meta.env.VITE_RECAPTCHA_TOKEN,
+            // "x-bypass-recaptcha": import.meta.env.VITE_RECAPTCHA_TOKEN,
           },
           // auth: { username, password },
           body: { recaptcha_token: recaptcha_token, },
