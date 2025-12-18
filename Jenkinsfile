@@ -152,7 +152,7 @@ def notifySlack(String buildStatus, parentSlackMessage = null) {
         SLACK_CHANNEL = '#jenkins-build-notifications'
     }
 
-    def message = "${buildStatus} : #${env.BUILD_NUMBER}\n for *${ENV_KIND}* `${env.JOB_NAME}`:\n more details: ${env.BUILD_URL}"
+    def message = "_Job #${env.BUILD_NUMBER}_\n for `${ENV_KIND}` *${env.JOB_NAME}*:\n is ${buildStatus} \n\n more details: ${env.BUILD_URL}"
     def color
     if (buildStatus == 'STARTING') {
         color = '#A2D5FD'
@@ -161,10 +161,10 @@ def notifySlack(String buildStatus, parentSlackMessage = null) {
         parentSlackMessage.addReaction("white_check_mark")
     } else if (buildStatus == 'UNSTABLE') {
         color = 'bad'
-        message = '@channel '+message;
+        message = message + '\n@channel';
         parentSlackMessage.addReaction("no_entry_sign")
     } else {
-        message = '@channel '+message;
+        message = message
         color = '#FFF18A'
     }
 
