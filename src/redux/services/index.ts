@@ -38,6 +38,7 @@ import {
   TAG_PAYMENT_PROCESSOR,
   TAG_GET_TAGS,
   TAG_GET_PAYMENT_METHODS,
+  TAG_AFFILIATE_DETAILS,
   TAG_GET_TEMPLATES,
 } from "@/types/baseApiTags";
 
@@ -81,6 +82,7 @@ export const baseApi = createApi({
     TAG_PAYMENT_PROCESSOR,
     TAG_GET_TAGS,
     TAG_GET_PAYMENT_METHODS,
+    TAG_AFFILIATE_DETAILS,
     TAG_GET_TEMPLATES,
   ],
   baseQuery: fetchBaseQuery({

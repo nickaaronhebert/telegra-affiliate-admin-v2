@@ -26,3 +26,5 @@ export interface ResendOtpResponse {
 
 export * from "./coupon";
 export * from "./subscription";
+export * from "./organizationIdentity";
+export * from "./communicationTemplates";
