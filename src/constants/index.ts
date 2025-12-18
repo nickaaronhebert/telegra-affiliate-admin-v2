@@ -237,3 +237,11 @@ export const CommunicationTemplateKeys = {
 } as const;
 
 export type CommunicationTemplateKeys = typeof CommunicationTemplateKeys;
+
+
+export const PAYMENT_BRANDS = {
+  Visa: "Visa",
+  Mastercard: "Mastercard",
+  Amex: "Amex",
+  Discover: "Discover",
+} as const;

@@ -35,8 +35,8 @@ if (env.BRANCH_NAME == 'main') {
 timestamps {
     ansiColor('xterm') {
         node (AGENT) {
-            notifySlack('STARTED')
-            notifyDiscord('STARTED')
+            def parentSlackMessage = notifySlack('STARTED')
+            notifyDiscord('STARTED Build')
             try {
                 stage('Checkout') {
                     step([$class: 'WsCleanup'])
@@ -94,12 +94,16 @@ timestamps {
                             -t ${REGISTRY}/${ENV_KIND}-${IMAGE_NAME}:latest
                         '''.stripIndent()
                     }
+
+                    notifySlack("BUILT the Images", parentSlackMessage)
                 }
 
                 // Pushes images to image repositories
                 stage('Push images') {
                     pushImages("${imageNamespace}/affiliate-admin-v2", registry, "${ENV_KIND}", env.BUILD_NUMBER)
                     pushImages("${imageNamespace}/affiliate-admin-v2", registry, "${ENV_KIND}", "latest")
+
+                    notifySlack("PUSHED the Images to ECR", parentSlackMessage)
                 }
 
                 // Deploys service in Kubernetes cluster
@@ -125,6 +129,8 @@ timestamps {
 
                     sh 'rm ./charts/common-values.yaml'
                     sh 'rm ./charts/affiliate-admin-v2-values.yaml'
+
+                    notifySlack("DEPLOYED", parentSlackMessage)
                 }
 
             } catch (Exception ex) {
@@ -132,7 +138,7 @@ timestamps {
                 throw ex
             } finally {
                 echo "DONE"
-                notifySlack(currentBuild.result)
+                notifySlack(currentBuild.result, parentSlackMessage)
                 notifyDiscord(currentBuild.result)
             }
 
@@ -140,29 +146,36 @@ timestamps {
     }
 }
 
-def notifySlack(String buildStatus) {
-    buildStatus = buildStatus ?: 'SUCCESS' // build status of null means success
+def notifySlack(String buildStatus, parentSlackMessage = null) {
+    buildStatus = buildStatus ?: 'SUCCEEDED' // build status of null means success
     if (ENV_KIND == 'prod') {
-        SLACK_CHANNEL = '#telega_affiliate_v2_builds_prod'
+        SLACK_CHANNEL = '#jenkins-build-notifications'
     } else {
-        SLACK_CHANNEL = '#telega_affiliate_v2_builds_dev'
+        SLACK_CHANNEL = '#jenkins-build-notifications'
     }
 
-    def message = "Deployment for ${ENV_KIND} `${env.JOB_NAME}` ${buildStatus}: #${env.BUILD_NUMBER}:\n Details: ${env.BUILD_URL}"
+    def message = "_Job #${env.BUILD_NUMBER}_\nhas *${buildStatus}*\nfor *${env.JOB_NAME}* `${ENV_KIND}` \n\n more details: ${env.BUILD_URL}"
     def color
     if (buildStatus == 'STARTED') {
-        color = '#D4DADF'
-    } else if (buildStatus == 'SUCCESS') {
+        color = '#A2D5FD'
+    } else if (buildStatus == 'SUCCEEDED') {
         color = 'good'
+        parentSlackMessage.addReaction("white_check_mark")
     } else if (buildStatus == 'UNSTABLE') {
         color = 'bad'
-        message = '@channel '+message;
+        message = message + '\n@channel';
+        parentSlackMessage.addReaction("no_entry_sign")
     } else {
-        message = '@channel '+message;
-        color = '#FF9FA1'
+        message = message
+        color = '#FFF18A'
     }
-    // we pause on slack for current builds system before finalizing which notification setup to use.
-    // slackSend(channel: SLACK_CHANNEL, color: color, message: message)
+
+    if (parentSlackMessage != null && parentSlackMessage.threadId != null) {
+        slackSend(channel: parentSlackMessage.threadId, color: color, message: message)
+        return parentSlackMessage
+    } else {
+        return slackSend(channel: SLACK_CHANNEL, color: color, message: message)
+    }
 }
 
 def notifyDiscord(String buildStatus) {

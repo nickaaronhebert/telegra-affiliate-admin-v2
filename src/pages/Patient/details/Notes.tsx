@@ -36,7 +36,9 @@ const Notes = ({ patient }: NotesProps) => {
     try {
       await deleteNote(deleteNoteId).unwrap();
       // Remove the note from local state
-      setNotes(prevNotes => prevNotes.filter(note => note._id !== deleteNoteId));
+      setNotes((prevNotes) =>
+        prevNotes.filter((note) => note._id !== deleteNoteId)
+      );
       toast.success("Note deleted successfully!");
       setDeleteNoteId(null);
     } catch (error: any) {
@@ -55,7 +57,7 @@ const Notes = ({ patient }: NotesProps) => {
   };
 
   const stripHtml = (html: string) => {
-    const doc = new DOMParser().parseFromString(html, 'text/html');
+    const doc = new DOMParser().parseFromString(html, "text/html");
     return doc.body.textContent || "";
   };
 
@@ -90,12 +92,14 @@ const Notes = ({ patient }: NotesProps) => {
               className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 relative"
             >
               <div className="flex justify-between items-start mb-2">
-                <div className="flex items-center gap-2">
-                  <div className="w-6 h-6 rounded flex items-center justify-center">
+                <div className="flex items-center gap-1">
+                  <div className="rounded flex items-center justify-center">
                     <NotesSvg color="#854D0E" width={14} height={14} />
                   </div>
-                  <span className="font-medium text-sm text-gray-900">
-                    {note.owner.fullName || `${note.owner.firstName} ${note.owner.lastName}`}
+                  <span className="font-medium text-xl text-gray-900">
+                    {note.owner.name ||
+                      note.owner.fullName ||
+                      `${note.owner.firstName} ${note.owner.lastName}`}
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
@@ -141,7 +145,7 @@ const Notes = ({ patient }: NotesProps) => {
                   </AlertDialog>
                 </div>
               </div>
-              <div className="text-sm text-gray-700 leading-relaxed">
+              <div className="text-sm text-gray-700 leading-relaxed pl-4">
                 {stripHtml(note.content.standardText)}
               </div>
             </div>

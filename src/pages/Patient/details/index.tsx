@@ -203,7 +203,7 @@ const PatientDetailsPage = () => {
           <Transaction patient={patient} />
           <PatientQuestionnaires patient={patient} />
           <PatientFiles patient={patient} />
-          <PaymentMethods />
+          <PaymentMethods patient={patient} />
           <Notes patient={patient} />
         </div>
       </div>
