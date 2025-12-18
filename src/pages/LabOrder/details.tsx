@@ -10,6 +10,7 @@ import { Activity, Pill, Users } from "lucide-react";
 import { DetailMenuSidebar } from "@/components/common/Scroller";
 import CubeSVG from "@/assets/icons/Cube";
 import dayjs from "dayjs";
+import AddNotes from "@/components/AddNotes";
 
 const menuItems = [
   {
@@ -41,7 +42,7 @@ export default function LabOrderDetails() {
   });
 
   const [openEditLabOrder, setOpenEditLabOrder] = useState(false);
-
+  const [openAddNotes, setOpenAddNotes] = useState(false);
   return (
     <>
       <Header
@@ -156,6 +157,12 @@ export default function LabOrderDetails() {
               })}
             </div>
           </div>
+
+          <div className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014]">
+            <DetailsCard id="notesOverview" title="Notes" fields={[]} />
+
+            <Button onClick={() => setOpenAddNotes(true)}>Add Notes</Button>
+          </div>
         </div>
       </div>
 
@@ -184,6 +191,19 @@ export default function LabOrderDetails() {
               zipcode: data?.address?.shipping?.zipcode || "",
             }}
           />
+        </ConfirmDialog>
+      )}
+      {openAddNotes && (
+        <ConfirmDialog
+          open={openAddNotes}
+          onOpenChange={setOpenAddNotes}
+          title="Add a Note"
+          description="This will be visible for any admin, not for the patient.You can edit it anytime from the Consultation screen."
+          onConfirm={() => {}}
+          showFooter={false}
+          containerWidth="min-w-[600px] "
+        >
+          <AddNotes />
         </ConfirmDialog>
       )}
     </>
