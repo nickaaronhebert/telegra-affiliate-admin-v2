@@ -7,11 +7,11 @@ import PractitionersSvg from "@/assets/icons/Practitioners";
 import DoctorSvg from "@/assets/icons/Doctor";
 import NoData from "@/assets/icons/NoData";
 
-interface UserInformationProps {
+interface PractitionersProps {
   patient: PatientDetail;
 }
 
-const Practitioners = ({ patient }: UserInformationProps) => {
+const Practitioners = ({ patient }: PractitionersProps) => {
   const practitioners: PatientPractitioner[] = useMemo(() => {
     const prescriptionFulfillments = patient?.orders
       .map((order) => order?.prescriptionFulfillments)
