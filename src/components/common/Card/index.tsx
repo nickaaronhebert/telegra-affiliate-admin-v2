@@ -15,7 +15,6 @@ interface DetailCardProps {
 }
 
 export function DetailsCard({ title, fields, id, isLoading }: DetailCardProps) {
-  console.log("fields", fields);
   return (
     <div
       className="min-w-196.5"

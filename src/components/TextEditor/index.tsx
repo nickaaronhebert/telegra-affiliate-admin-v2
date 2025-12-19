@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 interface EditorProps {
   value: string;
   setValue: (arg: string) => void;
-  title: string;
+  title?: string;
   titleClass?: string;
 }
 const Editor = ({ value, setValue, title, titleClass = "" }: EditorProps) => {
@@ -67,8 +67,9 @@ const Editor = ({ value, setValue, title, titleClass = "" }: EditorProps) => {
   ];
 
   return (
-    <div>
-      <label className={cn("", titleClass)}>{title}</label>
+    <div className="bg-white ">
+      {title && <label className={cn("", titleClass)}>{title}</label>}
+
       <QuillEditor
         ref={(el) => {
           quill.current = el;

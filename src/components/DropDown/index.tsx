@@ -37,7 +37,7 @@ export function Dropdown({
           setOpen((prev) => !prev);
         }}
         className={cn(
-          "flex h-10 w-full items-center justify-between rounded-md border px-3 text-sm",
+          "flex h-10 w-full items-center justify-between rounded-md border border-gray-300 px-3 text-sm",
           "bg-background hover:bg-accent focus:outline-none"
         )}
       >

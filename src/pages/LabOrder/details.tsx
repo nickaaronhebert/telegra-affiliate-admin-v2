@@ -6,11 +6,19 @@ import { useParams } from "react-router-dom";
 import EditLabOrders from "./Edit";
 import Header from "@/components/common/Header";
 import { Button } from "@/components/ui/button";
-import { Activity, Pill, Users } from "lucide-react";
+import { Activity, Pill, Users, Notebook } from "lucide-react";
 import { DetailMenuSidebar } from "@/components/common/Scroller";
 import CubeSVG from "@/assets/icons/Cube";
 import dayjs from "dayjs";
 import AddNotes from "@/components/AddNotes";
+import { useDeleteNoteMutation, type Note } from "@/redux/services/notes";
+import NoteDetailCard from "@/components/common/NoteDetailCard/NoteDetailCard";
+import { stripHtml } from "@/lib/stripHtml";
+import { toast } from "sonner";
+import { baseApi } from "@/redux/services";
+import { TAG_GET_LAB_ORDER } from "@/types/baseApiTags";
+import { useAppDispatch } from "@/redux/store";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 
 const menuItems = [
   {
@@ -29,20 +37,48 @@ const menuItems = [
     scrollToId: "labPanelsOverview",
     icon: <Pill />,
   },
+  {
+    title: "Notes",
+    scrollToId: "notesOverview",
+    icon: <Notebook />,
+  },
 ];
 
 export default function LabOrderDetails() {
   const { id } = useParams();
-  const [activeTab, setActiveTab] = useState<string>("labOrderOverview");
+  const dispatch = useAppDispatch();
 
+  const [activeTab, setActiveTab] = useState<string>("labOrderOverview");
+  const [deleteNote, { isLoading: isDeleting }] = useDeleteNoteMutation();
+  const [deleteNoteId, setDeleteNoteId] = useState<string | null>(null);
   const user = localStorage.getItem("user");
   const affiliate = user ? JSON.parse(user)?.affiliate : "";
-  const { data, isLoading } = useViewLabOrderDetailsQuery(id as string, {
-    skip: !id,
-  });
+  const { data, isLoading, isFetching } = useViewLabOrderDetailsQuery(
+    id as string,
+    {
+      skip: !id,
+    }
+  );
 
   const [openEditLabOrder, setOpenEditLabOrder] = useState(false);
   const [openAddNotes, setOpenAddNotes] = useState(false);
+  const handleDeleteNote = async () => {
+    if (!deleteNoteId) return;
+
+    try {
+      await deleteNote(deleteNoteId).unwrap();
+      dispatch(
+        baseApi.util.invalidateTags([
+          { type: TAG_GET_LAB_ORDER, id: data?.id as string },
+        ])
+      );
+
+      toast.success("Note deleted successfully!");
+      setDeleteNoteId(null);
+    } catch (error: any) {
+      toast.error(error?.data?.message || "Failed to delete note");
+    }
+  };
   return (
     <>
       <Header
@@ -71,10 +107,14 @@ export default function LabOrderDetails() {
         />
 
         <div className="space-y-6 lg:w-[70%]">
-          <div className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014]">
+          <div
+            id="labOrderOverview"
+            className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014]"
+          >
             <DetailsCard
               isLoading={isLoading}
-              id="labOrderOverview"
+              id="#"
+              // id="labOrderOverview"
               title="Lab Order Overview"
               fields={[
                 {
@@ -158,10 +198,41 @@ export default function LabOrderDetails() {
             </div>
           </div>
 
-          <div className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014]">
+          <div className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014] relative">
             <DetailsCard id="notesOverview" title="Notes" fields={[]} />
 
-            <Button onClick={() => setOpenAddNotes(true)}>Add Notes</Button>
+            <Button
+              onClick={() => setOpenAddNotes(true)}
+              className="absolute right-6 top-4 z-50 cursor-pointer rounded-[50px] bg-black text-white"
+            >
+              + Add Notes
+            </Button>
+
+            <div className="mt-4 space-y-3 p-6">
+              {isLoading || isDeleting || isFetching ? (
+                <div className="flex justify-center py-8">
+                  <LoadingSpinner />{" "}
+                  {/* Assuming LoadingSpinner is a component you already have */}
+                </div>
+              ) : data?.notes.length === 0 ? (
+                <div className="flex justify-center py-8">
+                  <div className="text-sm text-gray-500">
+                    No notes available
+                  </div>
+                </div>
+              ) : (
+                data?.notes.map((note: Note) => (
+                  <NoteDetailCard
+                    key={note._id}
+                    note={note}
+                    setDeleteNoteId={setDeleteNoteId}
+                    handleDeleteNote={handleDeleteNote}
+                    isDeleting={isDeleting}
+                    stripHtml={stripHtml}
+                  />
+                ))
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -203,7 +274,7 @@ export default function LabOrderDetails() {
           showFooter={false}
           containerWidth="min-w-[600px] "
         >
-          <AddNotes />
+          <AddNotes labOrderId={data?.id || ""} closeAction={setOpenAddNotes} />
         </ConfirmDialog>
       )}
     </>
