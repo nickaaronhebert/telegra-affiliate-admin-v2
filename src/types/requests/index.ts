@@ -16,3 +16,4 @@ export interface ResetPasswordRequest {
 
 export * from "./coupon";
 export * from "./subscription";
+export * from "./organizationIdentity";
