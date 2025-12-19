@@ -125,7 +125,6 @@ export default function EditLabOrders({
   });
 
   async function onSubmit(values: z.infer<typeof labOrderSchema>) {
-    console.log("Selected Patient:", values);
     const productVariations = values?.afterResultsOrderProductVariations?.map(
       (item) => {
         return {
