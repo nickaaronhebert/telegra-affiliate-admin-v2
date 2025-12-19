@@ -158,10 +158,15 @@ export default function LabOrderDetails() {
             </div>
           </div>
 
-          <div className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014]">
+          <div className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014] relative">
             <DetailsCard id="notesOverview" title="Notes" fields={[]} />
 
-            <Button onClick={() => setOpenAddNotes(true)}>Add Notes</Button>
+            <Button
+              onClick={() => setOpenAddNotes(true)}
+              className="absolute right-6 top-4 z-50 cursor-pointer rounded-[50px] bg-black text-white"
+            >
+              + Add Notes
+            </Button>
           </div>
         </div>
       </div>
@@ -203,7 +208,7 @@ export default function LabOrderDetails() {
           showFooter={false}
           containerWidth="min-w-[600px] "
         >
-          <AddNotes />
+          <AddNotes labOrderId={data?.id || ""} closeAction={setOpenAddNotes} />
         </ConfirmDialog>
       )}
     </>

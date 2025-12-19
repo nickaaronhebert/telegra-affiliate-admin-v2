@@ -1,4 +1,4 @@
-import { TAG_GET_TEMPLATES } from "@/types/baseApiTags";
+import { TAG_GET_LAB_ORDER, TAG_GET_TEMPLATES } from "@/types/baseApiTags";
 import { baseApi } from "./index";
 
 export interface Note {
@@ -36,7 +36,7 @@ export interface NotesResponse {
   total: number;
 }
 
-interface UserNotesTemplateResponse {
+export interface UserNotesTemplateResponse {
   id: string;
   noteTitle: string;
   noteType: string;
@@ -47,6 +47,34 @@ interface UserNotesTemplateResponse {
   variables: string[];
   createdAt: string;
   updatedAt: string;
+}
+
+interface AddNotesPayload {
+  relatedEntityModel: string;
+  isPrivate: boolean;
+  subject: string;
+  noteType: string;
+  content: {
+    standardText: string;
+  };
+  relatedEntity: string;
+}
+
+interface UpdateNoteTemplatePayload {
+  id: string;
+  noteTitle: string;
+  noteType: string;
+  noteContent: {
+    standardText: string;
+  };
+}
+
+interface CreateTemplatePayload {
+  noteTitle: string;
+  noteType: string;
+  noteContent: {
+    standardText: string;
+  };
 }
 export const notesApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -70,6 +98,44 @@ export const notesApi = baseApi.injectEndpoints({
       },
     }),
 
+    createNoteTemplate: builder.mutation<any, CreateTemplatePayload>({
+      query: (body) => {
+        return {
+          url: "/noteTemplates",
+          method: "POST",
+          body,
+        };
+      },
+      invalidatesTags: [{ type: TAG_GET_TEMPLATES, id: "LIST" }],
+    }),
+
+    updateNoteTemplate: builder.mutation<any, UpdateNoteTemplatePayload>({
+      query: (body) => {
+        return {
+          url: `/noteTemplates/${body.id}`,
+          method: "PUT",
+          body,
+        };
+      },
+
+      invalidatesTags: (_result, _error, data) => [
+        { type: TAG_GET_TEMPLATES, id: data.id },
+      ],
+    }),
+
+    addNotes: builder.mutation<any, AddNotesPayload>({
+      query: (body) => {
+        return {
+          url: "/notes",
+          method: "POST",
+          body,
+        };
+      },
+      invalidatesTags: (_result, _error, data) => [
+        { type: TAG_GET_LAB_ORDER, id: data.relatedEntity },
+      ],
+    }),
+
     deleteNote: builder.mutation<void, string>({
       query: (noteId) => ({
         url: `/notes/${noteId}`,
@@ -80,7 +146,12 @@ export const notesApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useDeleteNoteMutation, useViewUserNotesTemplatesQuery } =
-  notesApi;
+export const {
+  useDeleteNoteMutation,
+  useViewUserNotesTemplatesQuery,
+  useAddNotesMutation,
+  useUpdateNoteTemplateMutation,
+  useCreateNoteTemplateMutation,
+} = notesApi;
 
 export default notesApi;

@@ -46,6 +46,23 @@ export interface LabOrderDetails {
     };
     quantity: number;
   }[];
+
+  notes: {
+    id: string;
+    subject: string;
+    noteType: string;
+    content: {
+      standardText: string;
+    };
+    owner: {
+      name: string;
+      phone: string;
+      email: string;
+      role: string;
+    };
+    relatedEntityModel: string;
+    relatedEntity: string;
+  }[];
 }
 
 export interface IViewLabOrderDetails extends LabOrderDetails {}
