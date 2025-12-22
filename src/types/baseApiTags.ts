@@ -1,4 +1,5 @@
 export const TAG_GET_TEMPLATES = "getUserTemplates" as const;
+export const TAG_GET_TEAM_MANAGEMENT = "TeamManagement" as const;
 export const TAG_GET_USER_PROFILE = "getUserProfile" as const;
 export const TAG_GET_LAB_ORDER = "LabOrder" as const;
 export const TAG_GET_PATIENTS = "Patients" as const;

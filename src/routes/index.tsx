@@ -38,6 +38,7 @@ import SubscriptionDetail from "@/pages/Subscription/Detail";
 import ViewAllLabOrders from "@/pages/LabOrder";
 import LabOrderDetails from "@/pages/LabOrder/details";
 import NotFound from "@/pages/NotFound";
+import TeamManagement from "@/pages/TeamManagement";
 
 export const router = createBrowserRouter([
   {
@@ -167,6 +168,10 @@ export const router = createBrowserRouter([
       {
         path: ROUTES.SETTINGS_PATH,
         element: <SettingsPage />,
+      },
+      {
+        path: ROUTES.TEAM,
+        element: <TeamManagement />,
       },
       {
         path: ROUTES.ORGANIZATION_IDENTITY_PATH,
