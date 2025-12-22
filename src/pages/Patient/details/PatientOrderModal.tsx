@@ -66,6 +66,7 @@ export function PatientOrderModal({
       state: "",
       zipcode: "",
       project: "",
+      paymentMethod: "",
       productVariations: [],
     },
   });
@@ -132,6 +133,7 @@ export function PatientOrderModal({
         state: "",
         zipcode: "",
         project: "",
+        paymentMethod: "",
         productVariations: [],
       });
       setSelectedProductVariations([]);
@@ -182,6 +184,11 @@ export function PatientOrderModal({
 
   const onSubmit = async (data: CreateOrderFormData) => {
     try {
+      // Get the selected payment method ID (paymentId)
+      const selectedPaymentId =
+        data.paymentMethod && data.paymentMethod.trim()
+          ? data.paymentMethod
+          : null;
       const orderData = {
         address: {
           billing: {
@@ -205,10 +212,9 @@ export function PatientOrderModal({
           productVariation: pv.productVariation?.id,
           quantity: pv.quantity,
         })),
-        paymentMethod: null,
+        paymentMethod: selectedPaymentId,
         isAddressInSelect: data.userAddress !== "none",
       };
-
       await createPatientOrder(orderData).unwrap();
       toast.success("Order created successfully");
       onClose();
@@ -226,6 +232,7 @@ export function PatientOrderModal({
       state: "",
       zipcode: "",
       project: "",
+      paymentMethod: "",
       productVariations: [],
     });
     setSelectedProductVariations([]);
@@ -262,7 +269,7 @@ export function PatientOrderModal({
                               onValueChange={field.onChange}
                               value={field.value}
                             >
-                              <SelectTrigger>
+                              <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Choose Address" />
                               </SelectTrigger>
                               <SelectContent>
@@ -294,102 +301,120 @@ export function PatientOrderModal({
                     <h3 className="text-lg font-semibold">Add New Address</h3>
 
                     <div className="space-y-4">
-                      <FormField
-                        control={form.control}
-                        name="address1"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Address Line 1 *</FormLabel>
-                            <FormControl>
-                              <Input
-                                placeholder="Eg. 1247 Broadway Street"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                      {/* Address Line 1 and 2 */}
+                      <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="address1"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Address Line 1 *</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Eg. 1247 Broadway Street"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
-                      <FormField
-                        control={form.control}
-                        name="address2"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Address Line 2</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Eg. Suite 302" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                        <FormField
+                          control={form.control}
+                          name="address2"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Address Line 2</FormLabel>
+                              <FormControl>
+                                <Input placeholder="Eg. Suite 302" {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
 
-                      <FormField
-                        control={form.control}
-                        name="city"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>City *</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Eg. Los Angeles" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                      {/* City and State */}
+                      <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="city"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>City *</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Eg. Los Angeles"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
-                      <FormField
-                        control={form.control}
-                        name="state"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>State *</FormLabel>
-                            <FormControl>
-                              <Select
-                                onValueChange={field.onChange}
-                                value={field.value}
-                                disabled={isLoadingStates}
-                              >
-                                <SelectTrigger>
-                                  <SelectValue placeholder="Select State" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                  {states.map((state) => (
-                                    <SelectItem key={state.id} value={state.id}>
-                                      {state.name}
-                                    </SelectItem>
-                                  ))}
-                                </SelectContent>
-                              </Select>
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                        <FormField
+                          control={form.control}
+                          name="state"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>State *</FormLabel>
+                              <FormControl>
+                                <Select
+                                  onValueChange={field.onChange}
+                                  value={field.value}
+                                  disabled={isLoadingStates}
+                                >
+                                  <SelectTrigger className="w-full">
+                                    <SelectValue placeholder="Select State" />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    {states.map((state) => (
+                                      <SelectItem
+                                        key={state.id}
+                                        value={state.id}
+                                      >
+                                        {state.name}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectContent>
+                                </Select>
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
 
-                      <FormField
-                        control={form.control}
-                        name="zipcode"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Zip Code *</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Enter Zip Code" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                      {/* Zipcode and Country */}
+                      <div className="grid grid-cols-2 gap-4">
+                        <FormField
+                          control={form.control}
+                          name="zipcode"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel>Zip Code *</FormLabel>
+                              <FormControl>
+                                <Input
+                                  placeholder="Enter Zip Code"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
 
-                      <FormItem>
-                        <FormLabel>Country *</FormLabel>
-                        <FormControl>
-                          <div className="bg-gray-100 px-3 py-2 rounded-md text-gray-700">
-                            United States
-                          </div>
-                        </FormControl>
-                      </FormItem>
+                        <FormItem>
+                          <FormLabel>Country *</FormLabel>
+                          <FormControl>
+                            <div className="bg-gray-100 px-3 py-2 rounded-md text-gray-700">
+                              United States
+                            </div>
+                          </FormControl>
+                        </FormItem>
+                      </div>
                     </div>
                   </div>
 
@@ -408,7 +433,7 @@ export function PatientOrderModal({
                               value={field.value}
                               disabled={isLoadingProjects}
                             >
-                              <SelectTrigger>
+                              <SelectTrigger className="w-full">
                                 <SelectValue placeholder="Default Project" />
                               </SelectTrigger>
                               <SelectContent>
@@ -432,50 +457,78 @@ export function PatientOrderModal({
                   {/* Credit Card */}
                   <div className="space-y-4">
                     <h3 className="text-lg font-semibold">Credit Card</h3>
-                    <FormItem>
-                      <FormLabel>Project *</FormLabel>
-                      <FormControl>
-                        <Select defaultValue="visa-4242">
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="visa-4242">
-                              Visa ****4242 - Expire Dec 26
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </FormControl>
-                    </FormItem>
+                    <FormField
+                      control={form.control}
+                      name="paymentMethod"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Payment Method *</FormLabel>
+                          <FormControl>
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value || ""}
+                            >
+                              <SelectTrigger className="w-full">
+                                <SelectValue placeholder="Select Payment Method" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {patient?.payment &&
+                                patient.payment.length > 0 ? (
+                                  patient.payment.map((card: any) => (
+                                    <SelectItem
+                                      key={card.paymentId}
+                                      value={card.paymentId}
+                                    >
+                                      {card.cardBrand} ****{card.last4} - Expire{" "}
+                                      {card.expMonth}/{card.expYear}
+                                    </SelectItem>
+                                  ))
+                                ) : (
+                                  <SelectItem value="none" disabled>
+                                    No payment methods available
+                                  </SelectItem>
+                                )}
+                              </SelectContent>
+                            </Select>
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
                   </div>
                 </div>
 
                 {/* Right Column - Products */}
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">Add Products *</h3>
-                  </div>
-
-                  <div>
-                    <FormLabel>Choose product</FormLabel>
-                    <Select
-                      value={selectedProductId}
-                      onValueChange={handleProductSelect}
-                      disabled={isLoadingProducts}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Choose product" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {availableProducts.map((product) => (
-                          <SelectItem key={product.id} value={product.id}>
-                            {product.product?.title} - {product.strength} (
-                            {product.form})
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
+                <div className="space-y-6">
+                  <FormField
+                    control={form.control}
+                    name="productVariations"
+                    render={() => (
+                      <FormItem>
+                        <FormLabel>Add Products *</FormLabel>
+                        <FormControl>
+                          <Select
+                            value={selectedProductId}
+                            onValueChange={handleProductSelect}
+                            disabled={isLoadingProducts}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Choose product" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {availableProducts.map((product) => (
+                                <SelectItem key={product.id} value={product.id}>
+                                  {product.product?.title} - {product.strength}{" "}
+                                  ({product.form})
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
 
                   {/* Selected Products Table */}
                   {selectedProductVariations.length > 0 && (

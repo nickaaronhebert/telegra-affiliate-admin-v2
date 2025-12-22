@@ -1,5 +1,5 @@
 import { baseApi } from ".";
-import type { IViewAllPatientsRequest, IUpdatePatientMedicationsRequest, IUpdatePatientAllergiesRequest, ISendOrderInviteRequest, IUpdatePatientRequest, IViewPatientOrdersRequest, IUploadPatientFileRequest } from "@/types/requests/patient";
+import type { IViewAllPatientsRequest, IUpdatePatientMedicationsRequest, IUpdatePatientAllergiesRequest, ISendOrderInviteRequest, IUpdatePatientRequest, IViewPatientOrdersRequest } from "@/types/requests/patient";
 import type { PatientsResponse, PatientDetail, PatientOrdersResponse, PaymentMethod } from "@/types/responses/patient";
 import { TAG_GET_PATIENTS } from "@/types/baseApiTags";
 
