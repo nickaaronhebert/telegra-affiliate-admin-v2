@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { DataTable } from "@/components/data-table/data-table";
 import {
@@ -8,8 +8,7 @@ import {
 import type { PatientDetail, PatientLabOrder } from "@/types/responses/patient";
 import { Plus } from "lucide-react";
 import { type ColumnDef } from "@tanstack/react-table";
-// import { PatientOrderModal } from "./PatientOrderModal";
-// import { SendInviteModal } from "./SendInviteModal";
+import { PatientLabOrderModal } from "./PatientLabOrderModal";
 import LabOrderSvg from "@/assets/icons/LabOrder";
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
 
@@ -18,7 +17,10 @@ interface UserInformationProps {
 }
 
 const LabOrderInformation = ({ patient }: UserInformationProps) => {
-
+  const [isLabOrderModalOpen, setIsLabOrderModalOpen] = useState(false);
+  const [editingLabOrder, setEditingLabOrder] = useState<PatientLabOrder | null>(
+    null
+  );
 
   const columns = useMemo<ColumnDef<PatientLabOrder>[]>(
     () => [
@@ -117,7 +119,15 @@ const LabOrderInformation = ({ patient }: UserInformationProps) => {
     pageCount: 1,
   });
 
+  const openAddModal = () => {
+    setEditingLabOrder(null);
+    setIsLabOrderModalOpen(true);
+  };
 
+  const closeLabOrderModal = () => {
+    setIsLabOrderModalOpen(false);
+    setEditingLabOrder(null);
+  };
 
   return (
     <div
@@ -131,7 +141,7 @@ const LabOrderInformation = ({ patient }: UserInformationProps) => {
         </div>
         <div className="flex justify-between items-center mb-4">
           <Button
-            onClick={() => {}}
+            onClick={openAddModal}
             className="bg-black text-white hover:bg-gray-800 rounded-lg px-4 py-2 cursor-pointer"
           >
             <Plus className="w-4 h-4 mx-1" />
@@ -154,11 +164,12 @@ const LabOrderInformation = ({ patient }: UserInformationProps) => {
         {patient?.labOrders?.length > 1 && (
           <DataTablePagination table={table} />
         )}
-        {/* <PatientOrderModal
-          isOpen={isOrderModalOpen}
-          onClose={closeOrderModal}
-          order={editingOrder}
-        />  */}
+        <PatientLabOrderModal
+          isOpen={isLabOrderModalOpen}
+          onClose={closeLabOrderModal}
+          order={editingLabOrder}
+          patient={patient}
+        />
       </div>
     </div>
   );
