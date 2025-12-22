@@ -21,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
@@ -582,11 +583,9 @@ export function PatientLabOrderModal({
                           Create Post-Results Order
                         </FormLabel>
                         <FormControl>
-                          <input
-                            type="checkbox"
+                          <Switch
                             checked={field.value}
-                            onChange={field.onChange}
-                            className="w-5 h-5 rounded"
+                            onCheckedChange={field.onChange}
                           />
                         </FormControl>
                       </FormItem>
