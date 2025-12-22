@@ -164,13 +164,15 @@ const CreateJourneyPage = () => {
             : "Create Journey"}
         </h1>
       </div>
-      <div
-        className="mt-10  rounded-[15px]  mx-auto p-6 bg-white "
-        style={{
-          boxShadow: "0px 8px 10px 0px hsla(0, 0%, 0%, 0.08)",
-        }}
-      >
-        {renderCurrentStep()}
+      <div className="px-10">
+        <div
+          className="mt-10  rounded-[15px]  mx-auto p-6 "
+          // style={{
+          //   boxShadow: "0px 8px 10px 0px hsla(0, 0%, 0%, 0.08)",
+          // }}
+        >
+          {renderCurrentStep()}
+        </div>
       </div>
     </>
   );

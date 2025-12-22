@@ -13,7 +13,12 @@ interface JourneyNameProps {
 
 const JourneyName = ({ form, onSubmit }: JourneyNameProps) => {
   return (
-    <>
+    <div
+      className="bg-white p-8 rounded-[15px]"
+      style={{
+        boxShadow: "0px 8px 10px 0px hsla(0, 0%, 0%, 0.08)",
+      }}
+    >
       <div className="flex flex-col mb-6">
         <span className="text-lg font-semibold ">
           Customize your checkout process
@@ -53,7 +58,7 @@ const JourneyName = ({ form, onSubmit }: JourneyNameProps) => {
           </div>
         </form>
       </Form>
-    </>
+    </div>
   );
 };
 
