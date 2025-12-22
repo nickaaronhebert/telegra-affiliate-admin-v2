@@ -23,19 +23,32 @@ const PatientFiles = ({ patient }: PatientFilesProps) => {
     if (!file) return;
 
     try {
-      await uploadPatientFile({
-        patientId: patient.id,
-        data: { file },
-      }).unwrap();
+      // Read file as base64
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const fileData = e.target?.result as string;
+        try {
+          await uploadPatientFile({
+            patientId: patient.id,
+            data: {
+              fileData: fileData,
+              fileName: file.name,
+            },
+          }).unwrap();
 
-      toast.success("File uploaded successfully!");
+          toast.success("File uploaded successfully!");
 
-      // Reset file input
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
-      }
+          // Reset file input
+          if (fileInputRef.current) {
+            fileInputRef.current.value = "";
+          }
+        } catch (error: any) {
+          toast.error(error?.data?.message || "Failed to upload file");
+        }
+      };
+      reader.readAsDataURL(file);
     } catch (error: any) {
-      toast.error(error?.data?.message || "Failed to upload file");
+      toast.error("Failed to read file");
     }
   };
   const containerHeight = useMemo(() => {

@@ -1,4 +1,4 @@
-import { TAG_GET_LAB_ORDER, TAG_GET_TEMPLATES } from "@/types/baseApiTags";
+import { TAG_GET_LAB_ORDER, TAG_GET_TEMPLATES, TAG_GET_PATIENTS } from "@/types/baseApiTags";
 import { baseApi } from "./index";
 
 export interface Note {
@@ -58,6 +58,7 @@ interface AddNotesPayload {
     standardText: string;
   };
   relatedEntity: string;
+  patient?: string;
 }
 
 interface UpdateNoteTemplatePayload {
@@ -131,9 +132,16 @@ export const notesApi = baseApi.injectEndpoints({
           body,
         };
       },
-      invalidatesTags: (_result, _error, data) => [
-        { type: TAG_GET_LAB_ORDER, id: data.relatedEntity },
-      ],
+      invalidatesTags: (_result, _error, data) => {
+        const tags: any[] = [
+          { type: TAG_GET_LAB_ORDER, id: data.relatedEntity },
+        ];
+        // Also invalidate Patient tag if this is a patient note
+        if (data.patient) {
+          tags.push({ type: TAG_GET_PATIENTS, id: data.patient });
+        }
+        return tags;
+      },
     }),
 
     deleteNote: builder.mutation<void, string>({

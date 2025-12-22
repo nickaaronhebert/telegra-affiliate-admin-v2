@@ -207,15 +207,18 @@ const patientApi = baseApi.injectEndpoints({
       }),
     }),
 
-    uploadPatientFile: builder.mutation<any, { patientId: string; data: IUploadPatientFileRequest }>({
+    uploadPatientFile: builder.mutation<any, { patientId: string; data: { fileData: string; fileName: string } }>({
       query: ({ patientId, data }) => {
-        const formData = new FormData();
-        formData.append('file', data.file);
-
         return {
           url: `/patients/${patientId}/uploadFile`,
           method: "POST",
-          body: formData,
+          body: {
+            patientId,
+            data: {
+              fileData: data.fileData,
+              fileName: data.fileName,
+            },
+          },
         };
       },
       async onQueryStarted({ patientId }, { dispatch, queryFulfilled }) {

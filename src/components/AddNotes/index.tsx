@@ -15,7 +15,8 @@ import { Label } from "../ui/label";
 import { toast } from "sonner";
 
 interface AddNotesProps {
-  labOrderId: string;
+  labOrderId?: string;
+  patientId?: string;
   closeAction: (arg: boolean) => void;
 }
 type template_state = "create_new_template" | "edit_new_template";
@@ -24,8 +25,11 @@ type current_template = {
   id: string;
 };
 
-export default function AddNotes({ labOrderId, closeAction }: AddNotesProps) {
+export default function AddNotes({ labOrderId, patientId, closeAction }: AddNotesProps) {
   //   const [open, setOpen] = useState(false);
+
+  const relatedEntity = labOrderId || patientId || "";
+  const relatedEntityModel = labOrderId ? "LabOrder" : "Patient";
 
   const [createNewTemplate, { isLoading: isCreateNewTemplateLoader }] =
     useCreateNoteTemplateMutation();
@@ -112,16 +116,23 @@ export default function AddNotes({ labOrderId, closeAction }: AddNotesProps) {
   }, [value, templateContent, updateTemplate]);
 
   const createNote = useCallback(async () => {
-    await addNotes({
+    const notePayload: any = {
       content: {
         standardText: templateContent,
       },
       noteType: "standard",
-      subject: "Lab Order Note",
+      subject: labOrderId ? "Lab Order Note" : "Patient Note",
       isPrivate: true,
-      relatedEntityModel: "LabOrder",
-      relatedEntity: labOrderId,
-    })
+      relatedEntityModel: relatedEntityModel,
+      relatedEntity: relatedEntity,
+    };
+
+    // Add patient field for patient notes
+    if (patientId) {
+      notePayload.patient = patientId;
+    }
+
+    await addNotes(notePayload)
       .unwrap()
       .then(() => {
         toast.success("Note Added Successfully", {
@@ -135,7 +146,7 @@ export default function AddNotes({ labOrderId, closeAction }: AddNotesProps) {
           duration: 1500,
         });
       });
-  }, [value, templateContent, addNotes]);
+  }, [value, templateContent, addNotes, relatedEntity, relatedEntityModel, labOrderId, patientId]);
 
   return (
     <div>
@@ -260,7 +271,7 @@ export default function AddNotes({ labOrderId, closeAction }: AddNotesProps) {
               variant={"ctrl"}
               className="min-w-33 py-2.5 h-13 rounded-[50px] cursor-pointer"
               onClick={createNote}
-              disabled={isAddNotesLoader || !labOrderId || !templateContent}
+              disabled={isAddNotesLoader || !relatedEntity || !templateContent}
             >
               Save Note{" "}
             </Button>
