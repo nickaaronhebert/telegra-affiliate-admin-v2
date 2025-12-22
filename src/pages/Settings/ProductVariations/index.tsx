@@ -1,13 +1,12 @@
 import { productVariationsColumns } from "@/components/data-table/columns/product-variations";
 import { DataTable } from "@/components/data-table/data-table";
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
-import {
-  useDataTable,
-} from "@/hooks/use-data-table";
+import { useDataTable } from "@/hooks/use-data-table";
 import { useGetProductVariationsListQuery } from "@/redux/services/productVariationsList";
 import { useSearchParams } from "react-router-dom";
 import { useMemo } from "react";
 import ProductVariationsSidebar from "./sidebar";
+import { ArrowRight } from "lucide-react";
 
 export default function ProductVariations() {
   const [searchParams] = useSearchParams();
@@ -16,13 +15,12 @@ export default function ProductVariations() {
   const q = searchParams.get("q") ?? "";
   const withoutProducts = searchParams.get("withoutProducts") ?? "";
 
-  const { data, isLoading, isFetching } =
-    useGetProductVariationsListQuery({
-      page,
-      limit,
-      q,
-      withoutProducts,
-    });
+  const { data, isLoading, isFetching } = useGetProductVariationsListQuery({
+    page,
+    limit,
+    q,
+    withoutProducts,
+  });
 
   const columns = useMemo(() => productVariationsColumns(), []);
 
@@ -34,12 +32,22 @@ export default function ProductVariations() {
 
   return (
     <div className=" min-w-0 overflow-x-hidden">
-      <div className="flex flex-col lg:flex-row gap-4">
+      <div className="flex flex-col lg:flex-row w-full">
         {/* Main content */}
-        <div className="flex-1 min-w-0 p-6">
-          <div className="space-y-6 bg-white rounded-md shadow-sm" >
+        <div className="flex-1 min-w-0 py-6 px-10 space-y-4 my-5">
+          <div className="flex items-center gap-1.5">
+            <span className="text-[26px] font-semibold text-muted-foreground">
+              Settings
+            </span>
+            <ArrowRight stroke="#63627F" />
+            <span className="text-[26px] font-semibold">Product List</span>
+          </div>
+          <div className="space-y-6 bg-white rounded-md shadow-sm">
             {/* Header */}
-            <div className="bg-white rounded-t-md p-4 mb-4" style={{ borderBottom: "1px solid var(--card-border)" }}>
+            <div
+              className="bg-white rounded-t-md p-4 mb-4"
+              style={{ borderBottom: "1px solid var(--card-border)" }}
+            >
               <h1 className="text-base font-semibold">Product List</h1>
             </div>
             {/* Table */}
