@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
 // import { Trash2, Edit } from 'lucide-react';
 
 // Reusable Dialog Component
@@ -51,6 +52,7 @@ interface ReusableDialogProps {
   confirmTextClass?: string;
   cancelTextClass?: string;
   containerWidth?: string;
+  isLoading?: boolean;
 }
 
 export const ConfirmDialog: React.FC<ReusableDialogProps> = ({
@@ -68,6 +70,7 @@ export const ConfirmDialog: React.FC<ReusableDialogProps> = ({
   children,
   showFooter = true,
   containerWidth = "",
+  isLoading = false,
 }) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -94,8 +97,9 @@ export const ConfirmDialog: React.FC<ReusableDialogProps> = ({
               onClick={onConfirm}
               variant={confirmTextVariant}
               className={cn("", confirmTextClass)}
+              disabled={isLoading}
             >
-              {confirmText}
+              {isLoading ? <LoadingSpinner /> : confirmText}
             </Button>
           </DialogFooter>
         )}
