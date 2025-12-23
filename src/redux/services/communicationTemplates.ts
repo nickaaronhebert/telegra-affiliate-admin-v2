@@ -6,7 +6,7 @@ export const communicationTemplatesApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getCommunicationTemplates: builder.query<ICommunicationTemplate[], void>({
       query: () => ({
-        url: "/communication-templates",
+        url: "/communicationTemplates?communicationLevel=affiliate",
         method: "GET",
       }),
       providesTags: [TAG_GET_COMMUNICATION_TEMPLATES],

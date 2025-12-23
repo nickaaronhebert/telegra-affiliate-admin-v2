@@ -11,6 +11,7 @@ import './communicationTemplates';
 import './notes';
 import './states';
 import './projects';
+import './affiliate';
 
 // Re-export the base API
 export { baseApi } from './index';
