@@ -31,6 +31,12 @@ export interface ISendOrderInviteRequest {
   inviteType: 'email' | 'sms';
 }
 
+export interface ISendQuestionnaireInviteRequest {
+  id: string;
+  questionnaire: string;
+  inviteType: 'email' | 'sms';
+}
+
 export interface IUpdatePatientRequest {
   firstName: string;
   lastName: string;
