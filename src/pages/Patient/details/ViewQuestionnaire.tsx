@@ -16,10 +16,10 @@ export const ViewQuestionnaire = ({
         {questionnaireInstance.responses?.map((response, index) => (
           <div
             key={index}
-            className="border-b border-gray-100 pb-6 last:border-b-0"
+            className="border-b border-gray-100 pb-1 last:border-b-0"
           >
-            <div className="mb-4">
-              <h2 className="text-lg font-semibold mb-2">
+            <div className="mb-1">
+              <h2 className="text-lg font-semibold mb-1">
                 {response.location?.data?.label}
               </h2>
               {response.location?.data?.description && (

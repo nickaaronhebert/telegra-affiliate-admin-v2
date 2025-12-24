@@ -56,8 +56,6 @@ const patientApi = baseApi.injectEndpoints({
             dispatch(
               patientApi.util.updateQueryData('viewPatientById', id, (draft) => {
                 draft.orders = ordersResult.data!.result;
-                console.log("Updated patient datasss:", draft.orders);
-
               })
             );
           }
@@ -71,9 +69,7 @@ const patientApi = baseApi.injectEndpoints({
             // Update the patient cache with payment methods data
             dispatch(
               patientApi.util.updateQueryData('viewPatientById', id, (draft) => {
-                console.log("Updating patient payment data in cache:", paymentResult.data);
                 draft.payment = paymentResult.data;
-                console.log("Updated patient data:",  draft.payment);
               })
             );
           }
@@ -207,6 +203,18 @@ const patientApi = baseApi.injectEndpoints({
       }),
     }),
 
+    sendQuestionnaireInvite: builder.mutation<any, { patientId: string; questionnaireId: string; data: { inviteType: 'email' | 'sms' } }>({
+      query: ({ patientId, questionnaireId, data }) => ({
+        url: `/patients/${patientId}/inviteCompleteQuestionnaire`,
+        method: "POST",
+        body: {
+          id: patientId,
+          questionnaire: questionnaireId,
+          inviteType: data.inviteType,
+        },
+      }),
+    }),
+
     uploadPatientFile: builder.mutation<any, { patientId: string; data: { fileData: string; fileName: string } }>({
       query: ({ patientId, data }) => {
         return {
@@ -246,6 +254,7 @@ export const {
   useUpdatePatientMedicationsMutation,
   useUpdatePatientAllergiesMutation,
   useSendOrderInviteMutation,
+  useSendQuestionnaireInviteMutation,
   useUploadPatientFileMutation,
 } = patientApi;
 

@@ -3,9 +3,23 @@ import { AppSidebar } from "@/components/common/sidebar/app-sidebar";
 import Navbar from "./navbar";
 import { Outlet, useLocation, useMatch } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { useEffect } from "react";
+import { useGetAffiliateMeQuery } from "@/redux/services/affiliate";
+import { useAppDispatch } from "@/redux/store";
+import { setAffiliateData } from "@/redux/slices/affiliate";
 
 export default function SidebarLayout() {
   const { pathname } = useLocation();
+  const dispatch = useAppDispatch();
+  
+  // Fetch affiliate data on component mount (page refresh or after login)
+  const { data: affiliateData } = useGetAffiliateMeQuery();
+
+  useEffect(() => {
+    if (affiliateData) {
+      dispatch(setAffiliateData(affiliateData));
+    }
+  }, [affiliateData, dispatch]);
   const noPaddingRoutes = ["/login", "/register", "/coupons/create", "/journeys/create", "/journeys/:id/edit", "/settings/product-list", "/settings/financial-management", "/settings/workflow-settings", "/settings/organization-identity"];
   const editJourneyMatch = useMatch("/journeys/:id/edit");
   if (editJourneyMatch) {
