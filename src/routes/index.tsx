@@ -4,7 +4,6 @@ import {
   SubscriptionsPage,
   CouponsPage,
   CouponDetailsPage,
-  EncountersPage,
   SettingsPage,
 } from "@/pages";
 import SidebarLayout from "@/components/common/sidebar/sidebar-layout";
@@ -39,6 +38,7 @@ import ViewAllLabOrders from "@/pages/LabOrder";
 import LabOrderDetails from "@/pages/LabOrder/details";
 import NotFound from "@/pages/NotFound";
 import TeamManagement from "@/pages/TeamManagement";
+import EncounterList from "@/pages/Encounters";
 
 export const router = createBrowserRouter([
   {
@@ -159,7 +159,7 @@ export const router = createBrowserRouter([
       },
       {
         path: ROUTES.ENCOUNTERS_PATH,
-        element: <EncountersPage />,
+        element: <EncounterList />,
       },
       // {
       //   path: ROUTES.LAB_ORDERS_PATH,
