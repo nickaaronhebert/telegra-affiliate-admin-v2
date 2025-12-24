@@ -66,8 +66,8 @@ export const OrganizationIdentityPage = () => {
               Organization Identity
             </span>
           </div>
-          <div className="flex gap-3 ">
-            <aside className="w-55 shrink-0 sticky top-6">
+          <div className="flex gap-3">
+            <aside className="min-w-55 shrink-0 sticky top-6">
               <div
                 className="rounded-md space-y-4 sticky top-6 bg-white p-2 mx-6"
                 style={{ boxShadow: "0px 2px 40px 0px #00000014" }}

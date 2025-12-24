@@ -159,7 +159,12 @@ const JourneyStepper = ({
   };
 
   const renderStepperHeader = () => (
-    <div className="flex items-center justify-center mb-8">
+    <div
+      className="flex items-center justify-center mb-8 rounded-[15px] bg-white p-4"
+      style={{
+        boxShadow: "0px 8px 10px 0px hsla(0, 0%, 0%, 0.08)",
+      }}
+    >
       {[1, 2, 3, 4].map((step) => {
         const isCompleted = step < currentStepperStep;
         const isCurrent = step === currentStepperStep;
@@ -298,7 +303,14 @@ const JourneyStepper = ({
   return (
     <>
       {renderStepperHeader()}
-      {renderCurrentStep()}
+      <div
+        className="p-7.5 bg-white rounded-[15px]"
+        style={{
+          boxShadow: "0px 8px 10px 0px hsla(0, 0%, 0%, 0.08)",
+        }}
+      >
+        {renderCurrentStep()}
+      </div>
     </>
   );
 };
