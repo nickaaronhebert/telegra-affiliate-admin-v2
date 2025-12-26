@@ -87,6 +87,18 @@ export const encounterApi = baseApi.injectEndpoints({
           method: "GET",
         };
       },
+
+      providesTags: (result) => {
+        return result
+          ? [
+              ...result?.result?.map(({ id }) => ({
+                type: TAG_GET_ENCOUNTER,
+                id,
+              })),
+              { type: TAG_GET_ENCOUNTER, id: "LIST" },
+            ]
+          : [{ type: TAG_GET_ENCOUNTER, id: "LIST" }];
+      },
     }),
 
     viewEncounterById: builder.query<EncounterDetail, string>({
@@ -98,6 +110,40 @@ export const encounterApi = baseApi.injectEndpoints({
       },
       providesTags: (_result, _error, id) => [{ type: TAG_GET_ENCOUNTER, id }],
     }),
+
+    expediteEncounter: builder.mutation<
+      any,
+      {
+        id: string;
+        token: string;
+        expedited: boolean;
+      }
+    >({
+      query: ({ id, token, expedited }) => {
+        return {
+          url: `/orders/${id}/actions/expedite?access_token=${token}`,
+          method: "PUT",
+          body: {
+            expedited,
+          },
+        };
+      },
+      invalidatesTags: (_result, _error, data) => [
+        { type: TAG_GET_ENCOUNTER, id: data.id },
+      ],
+    }),
+
+    cancelEncounter: builder.mutation<any, string>({
+      query: (id) => {
+        return {
+          url: `/orders/${id}/actions/cancel`,
+          method: "POST",
+        };
+      },
+      invalidatesTags: (_result, _error, id) => [
+        { type: TAG_GET_ENCOUNTER, id: id },
+      ],
+    }),
   }),
 });
 
@@ -105,6 +151,8 @@ export const {
   useViewAllEncountersQuery,
   useViewEncounterByIdQuery,
   useLazyViewEncounterByIdQuery,
+  useExpediteEncounterMutation,
+  useCancelEncounterMutation,
 } = encounterApi;
 
 export default encounterApi;

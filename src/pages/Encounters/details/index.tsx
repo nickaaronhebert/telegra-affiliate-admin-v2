@@ -19,6 +19,9 @@ import EncounterNotes from "./EncounterNotes";
 import dayjs from "@/lib/dayjs";
 import GeneralOverviewSvg from "@/assets/icons/GeneralOverview";
 import EncounterGeneralOverview from "./EncounterGeneralOverview";
+import SendInviteLink from "./Action/InviteLink";
+import Expedite from "./Action/Expedite";
+import CancelEncounter from "./Action/Cancel";
 
 const menuItems = [
   {
@@ -97,7 +100,7 @@ const EncounterDetailsPage = () => {
       <div className="bg-lilac py-3 px-12 flex justify-between items-center">
         <div className="">
           <Link
-            to={ROUTES.PATIENTS_PATH}
+            to={ROUTES.ENCOUNTERS}
             className="font-normal text-sm text text-muted-foreground"
           >
             {"<- Back to Encounters"}
@@ -106,6 +109,12 @@ const EncounterDetailsPage = () => {
           <h1 className="text-2xl font-bold mt-1">
             View Encounter: #{encounter.orderNumber}
           </h1>
+        </div>
+
+        <div className="flex items-center justify-end gap-2.5">
+          <SendInviteLink id={encounter?.id} status={encounter?.status} />
+          <Expedite id={encounter?.id} status={encounter?.status} />
+          <CancelEncounter id={encounter?.id} status={encounter?.status} />
         </div>
       </div>
 
