@@ -252,3 +252,39 @@ export const PAYMENT_BRANDS = {
   Amex: "Amex",
   Discover: "Discover",
 } as const;
+
+
+export const PAYMENT_MECHANISMS_TITLE = {
+  patient_pay: "Patient",
+  affiliate_pay: "Affiliate",
+} as const;
+
+export const ORDER_STATUS = {
+  ON_HOLD: "on-hold",
+  COMPLETED: "completed",
+  CANCELLED: "cancelled",
+  PROCESSING: "processing",
+} as const;
+
+export const STATUS_COLORS = {
+  "on-hold": {
+    badge: "bg-yellow-100 text-yellow-800",
+    label: "On Hold",
+  },
+  completed: {
+    badge: "bg-green-100 text-green-800",
+    label: "Completed",
+  },
+  cancelled: {
+    badge: "bg-red-100 text-red-800",
+    label: "Cancelled",
+  },
+  processing: {
+    badge: "bg-blue-100 text-blue-800",
+    label: "Processing",
+  },
+  started: {
+    badge: "bg-blue-100 text-blue-800",
+    label: "Started",
+  },
+} as const;
