@@ -39,6 +39,7 @@ import LabOrderDetails from "@/pages/LabOrder/details";
 import NotFound from "@/pages/NotFound";
 import TeamManagement from "@/pages/TeamManagement";
 import EncounterList from "@/pages/Encounters";
+import EncounterDetailsPage from "@/pages/Encounters/details";
 
 export const router = createBrowserRouter([
   {
@@ -154,12 +155,16 @@ export const router = createBrowserRouter([
         element: <PatientsPage />,
       },
       {
-        path: "patients/:id",
+        path: ROUTES.PATIENT_DETAIL,
         element: <PatientDetailsPage />,
       },
       {
-        path: ROUTES.ENCOUNTERS_PATH,
+        path: ROUTES.ENCOUNTERS,
         element: <EncounterList />,
+      },
+        {
+        path: ROUTES.ENCOUNTERS_DETAIL,
+        element: <EncounterDetailsPage />,
       },
       // {
       //   path: ROUTES.LAB_ORDERS_PATH,

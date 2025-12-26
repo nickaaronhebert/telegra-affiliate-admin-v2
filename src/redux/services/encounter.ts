@@ -1,4 +1,6 @@
 import { baseApi } from "@/redux/services";
+import type { EncounterDetail } from "@/types/responses/encounter";
+import { TAG_GET_ENCOUNTER } from "@/types/baseApiTags";
 
 export type EncounterStatus =
   | "started"
@@ -85,51 +87,24 @@ export const encounterApi = baseApi.injectEndpoints({
           method: "GET",
         };
       },
-      //   providesTags: (result) => {
-      //     return result
-      //       ? [
-      //           ...result.map(({ id }) => ({
-      //             type: TAG_GET_TEAM_MANAGEMENT,
-      //             id,
-      //           })),
-      //           { type: TAG_GET_TEAM_MANAGEMENT, id: "LIST" },
-      //         ]
-      //       : [{ type: TAG_GET_TEAM_MANAGEMENT, id: "LIST" }];
-      //   },
     }),
 
-    // addAffiliateAdmin: builder.mutation<any, AddAffiliateAdminPaylaod>({
-    //   query: (body) => {
-    //     return {
-    //       url: "/users",
-    //       method: "POST",
-    //       body,
-    //     };
-    //   },
-    //   invalidatesTags: [{ type: TAG_GET_TEAM_MANAGEMENT, id: "LIST" }],
-    // }),
-
-    // updateTeamManagement: builder.mutation<any, UpdateAffiliateAdminPayload>({
-    //   query: (body) => {
-    //     return {
-    //       url: `/users/${body.id}`,
-    //       method: "PUT",
-    //       body,
-    //     };
-    //   },
-
-    //   invalidatesTags: (_result, _error, data) => [
-    //     { type: TAG_GET_TEAM_MANAGEMENT, id: data.id },
-    //   ],
-    // }),
+    viewEncounterById: builder.query<EncounterDetail, string>({
+      query: (id) => {
+        return {
+          url: `/orders/${id}`,
+          method: "GET",
+        };
+      },
+      providesTags: (_result, _error, id) => [{ type: TAG_GET_ENCOUNTER, id }],
+    }),
   }),
 });
 
 export const {
   useViewAllEncountersQuery,
-  //   useViewAffiliateAdminQuery,
-  //   useAddAffiliateAdminMutation,
-  //   useUpdateTeamManagementMutation,
+  useViewEncounterByIdQuery,
+  useLazyViewEncounterByIdQuery,
 } = encounterApi;
 
 export default encounterApi;
