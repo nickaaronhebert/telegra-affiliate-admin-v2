@@ -25,7 +25,11 @@ type current_template = {
   id: string;
 };
 
-export default function AddNotes({ labOrderId, patientId, closeAction }: AddNotesProps) {
+export default function AddNotes({
+  labOrderId,
+  patientId,
+  closeAction,
+}: AddNotesProps) {
   //   const [open, setOpen] = useState(false);
 
   const relatedEntity = labOrderId || patientId || "";
@@ -146,7 +150,17 @@ export default function AddNotes({ labOrderId, patientId, closeAction }: AddNote
           duration: 1500,
         });
       });
-  }, [value, templateContent, addNotes, relatedEntity, relatedEntityModel, labOrderId, patientId]);
+  }, [
+    value,
+    templateContent,
+    addNotes,
+    relatedEntity,
+    relatedEntityModel,
+    labOrderId,
+    patientId,
+  ]);
+
+  console.log("vvv", value);
 
   return (
     <div>
@@ -214,6 +228,7 @@ export default function AddNotes({ labOrderId, patientId, closeAction }: AddNote
                       name: e.target.value, // Update only the `name` property
                     }));
                   }}
+                  value={value?.name || ""}
                   defaultValue={value?.name || ""}
                   placeholder="Enter Template Name"
                   className="bg-white min-h-11.5 border border-gray-300"
