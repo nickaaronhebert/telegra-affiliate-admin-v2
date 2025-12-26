@@ -287,4 +287,21 @@ export const STATUS_COLORS = {
     badge: "bg-blue-100 text-blue-800",
     label: "Started",
   },
+  payment_intent_pending:{
+    badge: "bg-yellow-100 text-yellow-800",
+    label: "Payment Intent Pending",
+  },
+  payment_intent_succeeded:{
+    badge: "bg-green-100 text-green-800",
+    label: "Payment Intent Succeeded",
+  },
+  payment_intent_failed:{
+    badge: "bg-red-100 text-red-800",
+    label: "Payment Intent Failed",
+  },
+  payment_intent_canceled:{
+    badge: "bg-red-100 text-red-800",
+    label: "Payment Intent Canceled",
+  },
+
 } as const;

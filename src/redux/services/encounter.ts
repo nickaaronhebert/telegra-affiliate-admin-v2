@@ -1,5 +1,9 @@
 import { baseApi } from "@/redux/services";
 import type { EncounterDetail } from "@/types/responses/encounter";
+import type {
+  Transaction,
+  PaymentMethodDetails,
+} from "@/types/responses/transaction";
 import { TAG_GET_ENCOUNTER } from "@/types/baseApiTags";
 
 export type EncounterStatus =
@@ -144,6 +148,31 @@ export const encounterApi = baseApi.injectEndpoints({
         { type: TAG_GET_ENCOUNTER, id: id },
       ],
     }),
+
+    getEncounterTransaction: builder.query<Transaction, string>({
+      query: (transactionId) => {
+        return {
+          url: `/transactions/${transactionId}`,
+          method: "GET",
+        };
+      },
+      providesTags: (_result, _error, id) => [{ type: TAG_GET_ENCOUNTER, id }],
+    }),
+
+    getPaymentMethodDetails: builder.query<
+      PaymentMethodDetails,
+      { paymentId: string; patientId: string }
+    >({
+      query: ({ paymentId, patientId }) => {
+        return {
+          url: `/billingDetails/actions/getPaymentMethod/${paymentId}?id=${paymentId}&patient=${patientId}`,
+          method: "GET",
+        };
+      },
+      providesTags: (_result, _error, { paymentId }) => [
+        { type: TAG_GET_ENCOUNTER, id: paymentId },
+      ],
+    }),
   }),
 });
 
@@ -153,6 +182,9 @@ export const {
   useLazyViewEncounterByIdQuery,
   useExpediteEncounterMutation,
   useCancelEncounterMutation,
+  useGetEncounterTransactionQuery,
+  useLazyGetEncounterTransactionQuery,
+  useGetPaymentMethodDetailsQuery,
 } = encounterApi;
 
 export default encounterApi;

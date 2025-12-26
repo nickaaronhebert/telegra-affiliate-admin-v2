@@ -1,5 +1,9 @@
 import UserInformationSvg from "@/assets/icons/UserInformation";
+import { Button } from "@/components/ui/button";
 import type { EncounterDetail } from "@/types/responses/encounter";
+import { Link } from "react-router-dom";
+import { useState } from "react";
+import { TransactionDetailsModal } from "./TransactionDetailsModal";
 
 interface EncounterPatientDetailsProps {
   encounter: EncounterDetail;
@@ -8,6 +12,16 @@ interface EncounterPatientDetailsProps {
 const EncounterPatientDetails = ({
   encounter,
 }: EncounterPatientDetailsProps) => {
+  const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
+
+  const handleOpenTransaction = () => {
+    setIsTransactionModalOpen(true);
+  };
+
+  const handleCloseTransaction = () => {
+    setIsTransactionModalOpen(false);
+  };
+
   return (
     <div
       id="patientDetails"
@@ -17,6 +31,25 @@ const EncounterPatientDetails = ({
         <div className="flex gap-2 ">
           <UserInformationSvg color="#000000" width={18} height={18} />
           <h1 className="text-base font-bold ">Patient Details</h1>
+        </div>
+        <div className="flex justify-center items-center gap-3">
+          <Link
+            to={`/patients/${encounter?.patient?.id}`}
+            className="text-sm font-medium text-blue-600 hover:underline"
+            target="_blank"
+          >
+            View Patient
+          </Link>
+          {encounter?.consultationPaymentIntent?.id && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="cursor-pointer"
+              onClick={handleOpenTransaction}
+            >
+              TRANSACTION
+            </Button>
+          )}
         </div>
       </div>
 
@@ -84,6 +117,11 @@ const EncounterPatientDetails = ({
           </div>
         </div>
       </div>
+      <TransactionDetailsModal
+        isOpen={isTransactionModalOpen}
+        onClose={handleCloseTransaction}
+        transactionId={encounter?.consultationPaymentIntent?.id}
+      />
     </div>
   );
 };
