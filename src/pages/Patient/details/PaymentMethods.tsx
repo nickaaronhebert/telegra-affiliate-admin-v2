@@ -1,10 +1,11 @@
 import PaymentSvg from "@/assets/icons/Payment";
-import AddStripeCard from "@/components/AddPaymentCard";
+import AddCardButtonWithForm from "@/components/AddCardButtonWithForm";
 import { ConfirmDialog } from "@/components/common/Dialog";
-import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
 import { useState } from "react";
-import { useAttachPaymentMethodMutation, useRemovePaymentMethodMutation } from "@/redux/services/billingDetails";
+import {
+  useAttachPaymentMethodMutation,
+  useRemovePaymentMethodMutation,
+} from "@/redux/services/billingDetails";
 import { getLocalStorage } from "@/lib/utils";
 import { LOCAL_STORAGE_KEYS } from "@/constants";
 import { toast } from "sonner";
@@ -16,10 +17,10 @@ interface PaymentMethodsProps {
 }
 
 const PaymentMethods = ({ patient }: PaymentMethodsProps) => {
-  const [addCardModal, setAddCardModal] = useState(false);
   const [deleteConfirmModal, setDeleteConfirmModal] = useState(false);
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<any>(null);
-  const [attachPaymentMethod, { isLoading: isAttaching }] = useAttachPaymentMethodMutation();
+  const [attachPaymentMethod, { isLoading: _isAttaching }] =
+    useAttachPaymentMethodMutation();
   const [removePaymentMethod] = useRemovePaymentMethodMutation();
 
   const handlePaymentMethodCreated = async (paymentMethod: any) => {
@@ -31,19 +32,22 @@ const PaymentMethods = ({ patient }: PaymentMethodsProps) => {
         toast.error("User information not found. Please log in again.");
         return;
       }
+      // Support both Stripe (paymentMethodId) and AuthNet (opaqueData) formats
+      const paymentMethodId =
+        paymentMethod?.id || paymentMethod?.opaqueData?.dataValue;
 
-      // Extract payment method ID from Stripe response
-      const paymentMethodId = paymentMethod.id;
-
-      if (!paymentMethodId) {
-        toast.error("Payment method ID not found.");
+      if (!paymentMethodId && !paymentMethod?.opaqueData) {
+        toast.error("Payment method data not found.");
         return;
       }
 
-      // Call attachPaymentMethod API
+      // Call attachPaymentMethod API with flexible payload
       await attachPaymentMethod({
-        paymentMethodData: { paymentMethodId },
-        userId: userData.id,
+        paymentMethodData: paymentMethod?.opaqueData
+          ? paymentMethod
+          : { paymentMethodId },
+        userId: patient.user,
+        patientId: patient.id,
       }).unwrap();
 
       toast.success("Payment method attached successfully!");
@@ -88,16 +92,13 @@ const PaymentMethods = ({ patient }: PaymentMethodsProps) => {
           <PaymentSvg color="#000000" width={18} height={18} />
           <h1 className="text-base font-bold">Payment Methods</h1>
         </div>
-        <Button
-          onClick={() => setAddCardModal(true)}
-          disabled={isAttaching}
-          className="bg-black text-white hover:bg-gray-800 rounded-lg px-4 py-2 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <Plus className="w-4 h-4 mx-1" />
-          {isAttaching ? "PROCESSING..." : "ADD"}
-        </Button>
+        <AddCardButtonWithForm
+          patient={patient}
+          buttonText="+  ADD"
+          onPaymentMethodCreated={handlePaymentMethodCreated}
+        />
       </div>
-      <div className="mt-3">
+      <div className="mt-4 space-y-3 overflow-y-auto rounded-lg h-[350px]">
         {patient?.payment?.map((payment) => (
           <PaymentMethodCard
             key={payment.paymentId}
@@ -108,18 +109,6 @@ const PaymentMethods = ({ patient }: PaymentMethodsProps) => {
             OnDelete={() => handleDeleteClick(payment)}
           />
         ))}
-        <ConfirmDialog
-          open={addCardModal}
-          onOpenChange={setAddCardModal}
-          title="Add Credit Card"
-          onConfirm={() => {}}
-          showFooter={false}
-        >
-          <AddStripeCard
-            handleClose={setAddCardModal}
-            onPaymentMethodCreated={handlePaymentMethodCreated}
-          />
-        </ConfirmDialog>
 
         <ConfirmDialog
           open={deleteConfirmModal}

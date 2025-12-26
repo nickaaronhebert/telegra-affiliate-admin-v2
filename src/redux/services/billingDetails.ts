@@ -1,5 +1,9 @@
 import { baseApi } from "./index";
-import { TAG_PAYMENT_PROCESSOR, TAG_GET_PAYMENT_METHODS, TAG_GET_PATIENTS } from "@/types/baseApiTags";
+import {
+  TAG_PAYMENT_PROCESSOR,
+  TAG_GET_PAYMENT_METHODS,
+  TAG_GET_PATIENTS,
+} from "@/types/baseApiTags";
 
 export interface PaymentProcessorData {
   PROCESSOR_TYPE: string;
@@ -26,6 +30,7 @@ export interface UpdatePaymentProcessorRequest {
 export interface AttachPaymentMethodRequest {
   paymentMethodData: any;
   userId: string;
+  patientId: string;
 }
 
 export interface AttachPaymentMethodResponse {
@@ -55,7 +60,10 @@ const billingDetailsApi = baseApi.injectEndpoints({
       providesTags: [TAG_PAYMENT_PROCESSOR],
     }),
 
-    updatePaymentProcessor: builder.mutation<PaymentProcessorResponse, UpdatePaymentProcessorRequest>({
+    updatePaymentProcessor: builder.mutation<
+      PaymentProcessorResponse,
+      UpdatePaymentProcessorRequest
+    >({
       query: (data) => ({
         url: "/billingDetails/actions/paymentProcessor",
         method: "PUT",
@@ -64,16 +72,26 @@ const billingDetailsApi = baseApi.injectEndpoints({
       invalidatesTags: [TAG_PAYMENT_PROCESSOR],
     }),
 
-    attachPaymentMethod: builder.mutation<AttachPaymentMethodResponse, AttachPaymentMethodRequest>({
+    attachPaymentMethod: builder.mutation<
+      AttachPaymentMethodResponse,
+      AttachPaymentMethodRequest
+    >({
       query: (data) => ({
         url: "/billingDetails/actions/attachPaymentMethod",
         method: "POST",
         body: data,
       }),
-      invalidatesTags: [TAG_GET_PAYMENT_METHODS],
+      invalidatesTags: (_result, _error, { patientId }) => [
+        { type: TAG_GET_PATIENTS, id: patientId },
+        { type: TAG_GET_PATIENTS, id: `${patientId}-payment` },
+        TAG_GET_PAYMENT_METHODS,
+      ],
     }),
 
-    removePaymentMethod: builder.mutation<RemovePaymentMethodResponse, RemovePaymentMethodRequest>({
+    removePaymentMethod: builder.mutation<
+      RemovePaymentMethodResponse,
+      RemovePaymentMethodRequest
+    >({
       query: (data) => ({
         url: "/billingDetails/actions/removeCard",
         method: "DELETE",
