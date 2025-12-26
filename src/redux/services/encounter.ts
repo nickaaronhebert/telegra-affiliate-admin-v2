@@ -1,4 +1,7 @@
 import { baseApi } from "@/redux/services";
+import type { EncounterDetail } from "@/types/responses/encounter";
+import type { Transaction, PaymentMethodDetails } from "@/types/responses/transaction";
+import { TAG_GET_ENCOUNTER } from "@/types/baseApiTags";
 
 export type EncounterStatus =
   | "started"
@@ -85,51 +88,53 @@ export const encounterApi = baseApi.injectEndpoints({
           method: "GET",
         };
       },
-      //   providesTags: (result) => {
-      //     return result
-      //       ? [
-      //           ...result.map(({ id }) => ({
-      //             type: TAG_GET_TEAM_MANAGEMENT,
-      //             id,
-      //           })),
-      //           { type: TAG_GET_TEAM_MANAGEMENT, id: "LIST" },
-      //         ]
-      //       : [{ type: TAG_GET_TEAM_MANAGEMENT, id: "LIST" }];
-      //   },
     }),
 
-    // addAffiliateAdmin: builder.mutation<any, AddAffiliateAdminPaylaod>({
-    //   query: (body) => {
-    //     return {
-    //       url: "/users",
-    //       method: "POST",
-    //       body,
-    //     };
-    //   },
-    //   invalidatesTags: [{ type: TAG_GET_TEAM_MANAGEMENT, id: "LIST" }],
-    // }),
+    viewEncounterById: builder.query<EncounterDetail, string>({
+      query: (id) => {
+        return {
+          url: `/orders/${id}`,
+          method: "GET",
+        };
+      },
+      providesTags: (_result, _error, id) => [{ type: TAG_GET_ENCOUNTER, id }],
+    }),
 
-    // updateTeamManagement: builder.mutation<any, UpdateAffiliateAdminPayload>({
-    //   query: (body) => {
-    //     return {
-    //       url: `/users/${body.id}`,
-    //       method: "PUT",
-    //       body,
-    //     };
-    //   },
+    getEncounterTransaction: builder.query<Transaction, string>({
+      query: (transactionId) => {
+        return {
+          url: `/transactions/${transactionId}`,
+          method: "GET",
+        };
+      },
+      providesTags: (_result, _error, id) => [{ type: TAG_GET_ENCOUNTER, id }],
+    }),
 
-    //   invalidatesTags: (_result, _error, data) => [
-    //     { type: TAG_GET_TEAM_MANAGEMENT, id: data.id },
-    //   ],
-    // }),
+    getPaymentMethodDetails: builder.query<
+      PaymentMethodDetails,
+      { paymentId: string; patientId: string }
+    >({
+      query: ({ paymentId, patientId }) => {
+        return {
+          url: `/billingDetails/actions/getPaymentMethod/${paymentId}?id=${paymentId}&patient=${patientId}`,
+          method: "GET",
+        };
+      },
+      providesTags: (_result, _error, { paymentId }) => [
+        { type: TAG_GET_ENCOUNTER, id: paymentId },
+      ],
+    }),
   }),
 });
 
 export const {
   useViewAllEncountersQuery,
-  //   useViewAffiliateAdminQuery,
-  //   useAddAffiliateAdminMutation,
-  //   useUpdateTeamManagementMutation,
+  useViewEncounterByIdQuery,
+  useLazyViewEncounterByIdQuery,
+  useGetEncounterTransactionQuery,
+  useLazyGetEncounterTransactionQuery,
+  useGetPaymentMethodDetailsQuery,
 } = encounterApi;
 
 export default encounterApi;
+
