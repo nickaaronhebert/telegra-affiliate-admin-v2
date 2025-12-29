@@ -23,6 +23,8 @@ import EncounterGeneralOverview from "./EncounterGeneralOverview";
 import SendInviteLink from "./Action/InviteLink";
 import Expedite from "./Action/Expedite";
 import CancelEncounter from "./Action/Cancel";
+import TimelineSvg from "@/assets/icons/Timeline";
+import EncounterTimeline from "./EncounterTimeline";
 
 const menuItems = [
   {
@@ -51,6 +53,11 @@ const menuItems = [
     icon: FilesSvg,
   },
   {
+    title: "Timeline",
+    scrollToId: "encounterTimelineInformation",
+    icon: TimelineSvg,
+  },
+  {
     title: "Notes",
     scrollToId: "encounterNotesInformation",
     icon: NotesSvg,
@@ -65,6 +72,7 @@ const EncounterDetailsPage = () => {
     | "labOrdersInformation"
     | "encounterQuestionnairesInformation"
     | "encounterFilesInformation"
+    | "encounterTimelineInformation"
     | "encounterNotesInformation"
   >("generalOverview");
 
@@ -74,12 +82,10 @@ const EncounterDetailsPage = () => {
     error,
   } = useViewEncounterByIdQuery(id as string);
 
-  const {
-    data: patient,
-    isLoading: isPatientLoading,
-  } = useViewPatientByIdQuery(encounter?.patient?.id as string, {
-    skip: !encounter?.patient?.id,
-  });
+  const { data: patient, isLoading: isPatientLoading } =
+    useViewPatientByIdQuery(encounter?.patient?.id as string, {
+      skip: !encounter?.patient?.id,
+    });
 
   if (isLoading || isPatientLoading) {
     return (
@@ -192,6 +198,7 @@ const EncounterDetailsPage = () => {
           <EncounterLabOrderInformation encounter={encounter} />
           <EncounterQuestionnaires encounter={encounter} />
           {patient && <PatientFiles patient={patient} />}
+          <EncounterTimeline encounter={encounter} />
           <EncounterNotes encounter={encounter} />
         </div>
       </div>
