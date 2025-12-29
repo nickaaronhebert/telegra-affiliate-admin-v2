@@ -1,10 +1,18 @@
 import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { z } from "zod";
+import { STATUS_COLORS } from "@/constants";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
+
+export const getStatusColors = (status: string): { badge: string; label: string } => {
+  return STATUS_COLORS[status as keyof typeof STATUS_COLORS] || {
+    badge: "bg-gray-100 text-gray-800",
+    label: status,
+  };
+};
 
 export const strongPassword = z
   .string()

@@ -1,6 +1,7 @@
 import React from "react";
 import { useGetProjectsQuery } from "@/redux/services/projects";
 import { Badge } from "@/components/ui/badge";
+import { PAYMENT_MECHANISMS } from "@/constants";
 
 export default function ProjectSettingsSection({
   sectionRef,
@@ -8,7 +9,6 @@ export default function ProjectSettingsSection({
   sectionRef?: React.RefObject<HTMLDivElement | null>;
 }) {
   const { data: projects = [], isLoading } = useGetProjectsQuery();
-  console.log("Projects data:", projects);
   // Get the default project or first project
   const project = projects.find((p) => p.default) || projects[0];
 
@@ -55,14 +55,20 @@ export default function ProjectSettingsSection({
       ref={sectionRef}
       id="projects"
       className="bg-white rounded-lg mb-8 overflow-hidden mt-6"
-      style={{boxShadow: "0px 2px 40px 0px hsla(0, 0%, 0%, 0.08)"}}
+      style={{ boxShadow: "0px 2px 40px 0px hsla(0, 0%, 0%, 0.08)" }}
     >
       <div className="px-6 py-4 border-b border-gray-200 flex items-center gap-4">
-        <div className="text-lg font-semibold">
-          Default Projects
-        </div>
-        {(project.paymentMechanism ?? "patient_pay") && <Badge variant="patient" className="p-1">PATIENT PAY</Badge>}
-        {(project.default ?? true) && <Badge variant="defaultSecondary" className="p-1">DEFAULT</Badge>}
+        <div className="text-lg font-semibold">Default Projects</div>
+        {(project.paymentMechanism ?? PAYMENT_MECHANISMS.PatientPay) && (
+          <Badge variant="patient" className="p-1">
+            PATIENT PAY
+          </Badge>
+        )}
+        {(project.default ?? true) && (
+          <Badge variant="defaultSecondary" className="p-1">
+            DEFAULT
+          </Badge>
+        )}
       </div>
 
       <div className="px-6 py-6 space-y-6 ">
@@ -76,7 +82,11 @@ export default function ProjectSettingsSection({
             />
             <SettingRow
               label="Process Order Payment for Affiliate"
-              value={project.paymentStrategy.processOrderPaymentForAffiliate ? "Yes" : "No"}
+              value={
+                project.paymentStrategy.processOrderPaymentForAffiliate
+                  ? "Yes"
+                  : "No"
+              }
               valueColor={
                 project.paymentStrategy.processOrderPaymentForAffiliate
                   ? "text-green-600"

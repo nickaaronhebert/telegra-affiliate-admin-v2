@@ -85,7 +85,7 @@ export const ConfirmDialog: React.FC<ReusableDialogProps> = ({
         </DialogHeader>
         {children}
         {showFooter && (
-          <DialogFooter>
+          <DialogFooter className="items-center">
             <Button
               variant={cancelTextVariant}
               onClick={() => onOpenChange(false)}

@@ -11,9 +11,11 @@ export function encounterColumns(): ColumnDef<EncounterList>[] {
       header: "Order ID",
       cell: ({ row }) => {
         const { orderNumber } = row.original;
+        const encounterId = row.original.id;
+
         return (
           <Link
-            to={`#`}
+            to={`/encounters/${encounterId}`}
             className="text-xs font-medium text-[#008CE3] underline underline-offset-2"
           >
             #{orderNumber}

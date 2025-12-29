@@ -98,7 +98,6 @@ export const pharmacyAdminItems = [
   { title: "Settings", url: "/pharmacy/settings", icon: SettingsMain },
 ];
 
-
 export const mockStats = {
   totalOrganizations: 247,
   totalPharmacies: 189,
@@ -160,25 +159,23 @@ export const quickActions = [
   },
 ];
 
-
-
 export const LOCAL_STORAGE_KEYS = {
-  ACCESS_TOKEN: 'accessToken',
-  USER: 'user',
+  ACCESS_TOKEN: "accessToken",
+  USER: "user",
 } as const;
 
 export const PRODUCT_TYPES = {
-  ONE_TIME: 'ONE_TIME',
-  SUBSCRIPTION_FIXED: 'SUBSCRIPTION_FIXED',
-  SUBSCRIPTION_VARIABLE: 'SUBSCRIPTION_VARIABLE',
+  ONE_TIME: "ONE_TIME",
+  SUBSCRIPTION_FIXED: "SUBSCRIPTION_FIXED",
+  SUBSCRIPTION_VARIABLE: "SUBSCRIPTION_VARIABLE",
 } as const;
 
-export type ProductType = typeof PRODUCT_TYPES[keyof typeof PRODUCT_TYPES];
+export type ProductType = (typeof PRODUCT_TYPES)[keyof typeof PRODUCT_TYPES];
 
 export const PRODUCT_TYPE_VARIANTS = {
-  "ONE_TIME": "oneTime",
-  "SUBSCRIPTION_FIXED": "subscriptionFixed",
-  "SUBSCRIPTION_VARIABLE": "subscriptionVariable",
+  ONE_TIME: "oneTime",
+  SUBSCRIPTION_FIXED: "subscriptionFixed",
+  SUBSCRIPTION_VARIABLE: "subscriptionVariable",
 } as const;
 
 // Legacy alias for backward compatibility
@@ -188,60 +185,123 @@ export const productVariationType = {
   ONE_TIME: "ONE_TIME",
 } as const;
 
-export type ProductVariationType = typeof productVariationType[keyof typeof productVariationType];
+export type ProductVariationType =
+  (typeof productVariationType)[keyof typeof productVariationType];
 
 export const GENDER_OPTIONS = {
-  MALE: { label: 'Male', value: 'male' },
-  FEMALE: { label: 'Female', value: 'female' },
+  MALE: { label: "Male", value: "male" },
+  FEMALE: { label: "Female", value: "female" },
 } as const;
 
-export type GenderOption = typeof GENDER_OPTIONS[keyof typeof GENDER_OPTIONS]['value'];
-
-
+export type GenderOption =
+  (typeof GENDER_OPTIONS)[keyof typeof GENDER_OPTIONS]["value"];
 
 export const PAYMENT_MECHANISMS = {
-  PatientPay: 'patient_pay',
-  AffiliatePay: 'affiliate_pay'
+  PatientPay: "patient_pay",
+  AffiliatePay: "affiliate_pay",
 } as const;
 
 export const ExternalQuestionnaireSources = {
-  TypeForm: 'typeform'
+  TypeForm: "typeform",
 } as const;
 
-export type ExternalQuestionnaireSourcesType = typeof ExternalQuestionnaireSources[keyof typeof ExternalQuestionnaireSources];
+export type ExternalQuestionnaireSourcesType =
+  (typeof ExternalQuestionnaireSources)[keyof typeof ExternalQuestionnaireSources];
 
 export const QuestionnaireInstanceStatuses = {
-  Filled: 'filled',
-  InProgress: 'inprogress',
-  ApprovedByProvider: 'approved_by_provider',
-  Stale: 'stale',
-  Expired: 'expired',
-  Completed: 'completed'
-}
-
+  Filled: "filled",
+  InProgress: "inprogress",
+  ApprovedByProvider: "approved_by_provider",
+  Stale: "stale",
+  Expired: "expired",
+  Completed: "completed",
+};
 
 export const CommunicationTemplateKeys = {
-  USER_INVITED: 'USER_INVITED',
-  AFFILIATE_ADDED: 'AFFILIATE_ADDED',
-  FORGOT_PASSWORD: 'FORGOT_PASSWORD',
-  TWO_FACTOR_VERIFICATION: 'TWO_FACTOR_VERIFICATION',
-  ORDER_LINK: 'ORDER_LINK',
-  INVITE_PATIENT_COMPLETE_QUESTIONNAIRE: 'INVITE_PATIENT_COMPLETE_QUESTIONNAIRE',
-  REQUEST_SUBMITTED: 'REQUEST_SUBMITTED',
-  BILLING_UPDATE_LINK: 'BILLING_UPDATE_LINK',
-  MESSAGE_RECEIVED: 'MESSAGE_RECEIVED',
-  PRESCRIPTION_APPROVED: 'PRESCRIPTION_APPROVED',
-  CONSULTATION_FEE_TAKEN: 'CONSULTATION_FEE_TAKEN',
-  PRESCRIPTION_SENT_TO_PHARMACY: 'PRESCRIPTION_SENT_TO_PHARMACY',
-  SHIPPING_DETAILS_SET: 'SHIPPING_DETAILS_SET'
+  USER_INVITED: "USER_INVITED",
+  AFFILIATE_ADDED: "AFFILIATE_ADDED",
+  FORGOT_PASSWORD: "FORGOT_PASSWORD",
+  TWO_FACTOR_VERIFICATION: "TWO_FACTOR_VERIFICATION",
+  ORDER_LINK: "ORDER_LINK",
+  INVITE_PATIENT_COMPLETE_QUESTIONNAIRE:
+    "INVITE_PATIENT_COMPLETE_QUESTIONNAIRE",
+  REQUEST_SUBMITTED: "REQUEST_SUBMITTED",
+  BILLING_UPDATE_LINK: "BILLING_UPDATE_LINK",
+  MESSAGE_RECEIVED: "MESSAGE_RECEIVED",
+  PRESCRIPTION_APPROVED: "PRESCRIPTION_APPROVED",
+  CONSULTATION_FEE_TAKEN: "CONSULTATION_FEE_TAKEN",
+  PRESCRIPTION_SENT_TO_PHARMACY: "PRESCRIPTION_SENT_TO_PHARMACY",
+  SHIPPING_DETAILS_SET: "SHIPPING_DETAILS_SET",
 } as const;
 
 export type CommunicationTemplateKeys = typeof CommunicationTemplateKeys;
 
+export const PaymentProcessors = {
+  Stripe: "stripe",
+  AuthNet: "authnet",
+};
+
+export const AuthNetEnvironment = {
+  Sandbox: "sandbox",
+  Production: "production",
+};
 
 export const PAYMENT_BRANDS = {
   Visa: "Visa",
   Mastercard: "Mastercard",
   Amex: "Amex",
   Discover: "Discover",
+} as const;
+
+
+export const PAYMENT_MECHANISMS_TITLE = {
+  patient_pay: "Patient",
+  affiliate_pay: "Affiliate",
+} as const;
+
+export const ORDER_STATUS = {
+  ON_HOLD: "on-hold",
+  COMPLETED: "completed",
+  CANCELLED: "cancelled",
+  PROCESSING: "processing",
+} as const;
+
+export const STATUS_COLORS = {
+  "on-hold": {
+    badge: "bg-yellow-100 text-yellow-800",
+    label: "On Hold",
+  },
+  completed: {
+    badge: "bg-green-100 text-green-800",
+    label: "Completed",
+  },
+  cancelled: {
+    badge: "bg-red-100 text-red-800",
+    label: "Cancelled",
+  },
+  processing: {
+    badge: "bg-blue-100 text-blue-800",
+    label: "Processing",
+  },
+  started: {
+    badge: "bg-blue-100 text-blue-800",
+    label: "Started",
+  },
+  payment_intent_pending:{
+    badge: "bg-yellow-100 text-yellow-800",
+    label: "Payment Intent Pending",
+  },
+  payment_intent_succeeded:{
+    badge: "bg-green-100 text-green-800",
+    label: "Payment Intent Succeeded",
+  },
+  payment_intent_failed:{
+    badge: "bg-red-100 text-red-800",
+    label: "Payment Intent Failed",
+  },
+  payment_intent_canceled:{
+    badge: "bg-red-100 text-red-800",
+    label: "Payment Intent Canceled",
+  },
+
 } as const;
