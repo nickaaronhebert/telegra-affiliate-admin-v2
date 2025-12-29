@@ -1,4 +1,4 @@
-import { TAG_GET_LAB_ORDER, TAG_GET_TEMPLATES, TAG_GET_PATIENTS } from "@/types/baseApiTags";
+import { TAG_GET_LAB_ORDER, TAG_GET_TEMPLATES, TAG_GET_PATIENTS, TAG_GET_ORDERS } from "@/types/baseApiTags";
 import { baseApi } from "./index";
 
 export interface Note {
@@ -99,6 +99,18 @@ export const notesApi = baseApi.injectEndpoints({
       },
     }),
 
+    getEncounterNotes: builder.query<Note[], string>({
+      query: (encounterId) => {
+        return {
+          url: `/notes/orders/${encounterId}`,
+          method: "GET",
+        };
+      },
+      providesTags: (_result, _error, encounterId) => [
+        { type: TAG_GET_ORDERS, id: encounterId },
+      ],
+    }),
+
     createNoteTemplate: builder.mutation<any, CreateTemplatePayload>({
       query: (body) => {
         return {
@@ -140,6 +152,10 @@ export const notesApi = baseApi.injectEndpoints({
         if (data.patient) {
           tags.push({ type: TAG_GET_PATIENTS, id: data.patient });
         }
+        // Also invalidate Orders tag if this is an encounter/order note
+        if (data.relatedEntityModel === "Order") {
+          tags.push({ type: TAG_GET_ORDERS, id: data.relatedEntity });
+        }
         return tags;
       },
     }),
@@ -160,6 +176,7 @@ export const {
   useAddNotesMutation,
   useUpdateNoteTemplateMutation,
   useCreateNoteTemplateMutation,
+  useGetEncounterNotesQuery,
 } = notesApi;
 
 export default notesApi;
