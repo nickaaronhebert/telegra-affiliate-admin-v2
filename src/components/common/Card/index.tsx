@@ -1,5 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import type { ReactNode } from "react";
 
 interface DetailCardProps {
   title: string;
@@ -12,9 +13,16 @@ interface DetailCardProps {
     isBadge?: boolean;
     isLink?: boolean;
   }[];
+  topChild?: ReactNode;
 }
 
-export function DetailsCard({ title, fields, id, isLoading }: DetailCardProps) {
+export function DetailsCard({
+  title,
+  fields,
+  id,
+  isLoading,
+  topChild = <></>,
+}: DetailCardProps) {
   return (
     <div
       className="min-w-196.5"
@@ -25,6 +33,8 @@ export function DetailsCard({ title, fields, id, isLoading }: DetailCardProps) {
         {/* <Profile color="black" width={16} height={16} /> */}
         {title}
       </h2>
+
+      {topChild}
       <div
         className={cn(
           "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7",
