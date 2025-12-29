@@ -49,11 +49,11 @@ const EncounterLabOrderInformation = ({ encounter }: EncounterLabOrderInformatio
           return (
             <span
               className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${
-                statusColors[status as keyof typeof statusColors] ||
+                status && statusColors[status as keyof typeof statusColors] ||
                 "bg-gray-100 text-gray-800"
               }`}
             >
-              {status}
+              {status || "-"}
             </span>
           );
         },
@@ -90,8 +90,12 @@ const EncounterLabOrderInformation = ({ encounter }: EncounterLabOrderInformatio
         accessorKey: "createdAt",
         header: "Date",
         cell: ({ row }) => {
+          const createdAt = row.getValue("createdAt");
+          if (!createdAt) {
+            return <p className="text-xs font-medium">-</p>;
+          }
           const formattedDate = new Date(
-            row.getValue("createdAt")
+            createdAt as string
           ).toLocaleDateString("en-US", {
             year: "numeric",
             month: "short",
@@ -113,7 +117,7 @@ const EncounterLabOrderInformation = ({ encounter }: EncounterLabOrderInformatio
   ];
 
   const { table } = useDataTable({
-    data: encounter?.labOrders || [],
+    data: encounter?.siblingLabOrders || [],
     columns,
     filterFields,
     pageCount: 1,
@@ -152,7 +156,7 @@ const EncounterLabOrderInformation = ({ encounter }: EncounterLabOrderInformatio
       <div className="mt-3">
         <div
           className={`bg-white shadow-[0px_2px_40px_0px_#00000014] pb-[12px] overflow-y-auto rounded-lg ${
-            encounter.labOrders && encounter.labOrders.length > 0 ? "h-[350px]" : "h-[200px]"
+            encounter?.siblingLabOrders?.length > 0 ? "h-[350px]" : "h-[200px]"
           }`}
         >
           <DataTable
@@ -161,7 +165,7 @@ const EncounterLabOrderInformation = ({ encounter }: EncounterLabOrderInformatio
             className="min-w-[220px]"
           />
         </div>
-        {encounter.labOrders && encounter.labOrders.length > 1 && (
+        {encounter?.siblingLabOrders?.length > 1 && (
           <DataTablePagination table={table} />
         )}
         <EncounterLabOrderModal

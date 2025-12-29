@@ -1,7 +1,7 @@
 import NotesSvg from "@/assets/icons/Notes";
 import { Button } from "@/components/ui/button";
 import type { EncounterDetail } from "@/types/responses/encounter";
-import { useDeleteNoteMutation, type Note } from "@/redux/services/notes";
+import { useDeleteNoteMutation, useGetEncounterNotesQuery, type Note } from "@/redux/services/notes";
 import { Plus } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
@@ -16,13 +16,18 @@ interface EncounterNotesProps {
 
 const EncounterNotes = ({ encounter }: EncounterNotesProps) => {
   const [deleteNoteId, setDeleteNoteId] = useState<string | null>(null);
-  const [notes, setNotes] = useState<Note[]>(encounter?.notes || []);
+  const [notes, setNotes] = useState<Note[]>([]);
   const [deleteNote, { isLoading: isDeleting }] = useDeleteNoteMutation();
   const [openAddNotes, setOpenAddNotes] = useState(false);
 
+  // Fetch encounter notes using the API
+  const { data: encounterNotes = [], isLoading: isLoadingNotes } = useGetEncounterNotesQuery(encounter?.id || "", {
+    skip: !encounter?.id,
+  });
+
   useEffect(() => {
-    setNotes(encounter?.notes || []);
-  }, [encounter?.notes]);
+    setNotes(encounterNotes);
+  }, [encounterNotes]);
 
   const handleAddNoteClose = (open: boolean) => {
     setOpenAddNotes(open);
@@ -40,7 +45,7 @@ const EncounterNotes = ({ encounter }: EncounterNotesProps) => {
       await deleteNote(deleteNoteId).unwrap();
       // Remove the note from local state
       setNotes((prevNotes) =>
-        prevNotes.filter((note) => note._id !== deleteNoteId)
+        prevNotes.filter((note) => note.id !== deleteNoteId)
       );
       toast.success("Note deleted successfully!");
       setDeleteNoteId(null);
@@ -70,7 +75,7 @@ const EncounterNotes = ({ encounter }: EncounterNotesProps) => {
         </div>
 
         <div className="mt-4 space-y-3 overflow-y-auto rounded-lg h-[350px]">
-          {isDeleting ? (
+          {isLoadingNotes || isDeleting ? (
             <div className="flex justify-center py-8">
               <LoadingSpinner />
             </div>
@@ -104,7 +109,7 @@ const EncounterNotes = ({ encounter }: EncounterNotesProps) => {
           containerWidth="min-w-[600px]"
         >
           <AddNotes
-            patientId={encounter?.id || ""}
+            encounterId={encounter?.id || ""}
             closeAction={handleAddNoteClose}
           />
         </ConfirmDialog>
