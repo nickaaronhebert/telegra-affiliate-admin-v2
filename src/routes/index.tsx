@@ -40,6 +40,7 @@ import NotFound from "@/pages/NotFound";
 import TeamManagement from "@/pages/TeamManagement";
 import EncounterList from "@/pages/Encounters";
 import EncounterDetailsPage from "@/pages/Encounters/details";
+import TwoFactorAuthPage from "@/pages/Auth/TwoFactorAuth";
 
 export const router = createBrowserRouter([
   {
@@ -65,6 +66,10 @@ export const router = createBrowserRouter([
       {
         path: ROUTES.RESET_PASSWORD_PATH,
         element: <ResetPassword />,
+      },
+      {
+        path: ROUTES.TWO_FA_PATH,
+        element: <TwoFactorAuthPage />,
       },
     ],
   },
