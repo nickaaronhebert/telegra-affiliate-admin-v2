@@ -27,15 +27,15 @@ const EncounterPatientDetails = ({
       id="patientDetails"
       className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014] p-6 mb-2.5"
     >
-      <div className="flex gap-2 items-center border-b border-card-border pb-4 mb-2 justify-between">
-        <div className="flex gap-2 ">
+      <div className="flex gap-2 items-center border-b border-card-border pb-4 justify-between">
+        <div className="flex gap-2 justify-center items-center">
           <UserInformationSvg color="#000000" width={18} height={18} />
           <h1 className="text-base font-bold ">Patient Details</h1>
         </div>
-        <div className="flex justify-center items-center gap-3">
+        <div className="flex justify-center items-center gap-4">
           <Link
             to={`/patients/${encounter?.patient?.id}`}
-            className="text-sm font-medium text-blue-600 hover:underline"
+            className="text-sm font-medium text-queued hover:underline"
             target="_blank"
           >
             View Patient

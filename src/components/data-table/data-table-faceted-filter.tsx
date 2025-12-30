@@ -1,7 +1,6 @@
 import type { Column } from "@tanstack/react-table";
 import { cn } from "@/lib/utils";
 
-import { Button } from "@/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -33,25 +32,23 @@ export function DataTableFacetedFilter<TData, TValue>({
   options,
   facetedClassName,
 }: DataTableFacetedFilterProps<TData, TValue>) {
-  const selectedValues = new Set(column?.getFilterValue() as string[]);
+  const filterValue = column?.getFilterValue();
+  const selectedValues = new Set(
+    Array.isArray(filterValue) ? filterValue : filterValue ? [filterValue as string] : []
+  );
   const selectedEntity = options.find((option) =>
     selectedValues.has(option.value)
   )?.label;
-
   return (
     <Popover>
-      <PopoverTrigger asChild>
-        <Button
-          variant="transparent"
-          className={cn(
-            "flex justify-between rounded-[6px] !p-3.5 h-11 min-w-[200px] !bg-white",
-            facetedClassName
-          )}
-        >
+      <PopoverTrigger className={cn(
+        "flex justify-between rounded-[6px] p-3.5 h-11 min-w-[200px] bg-white cursor-pointer border border-input hover:bg-accent text-sm",
+        facetedClassName
+      )}>
           {/* <CirclePlus className="mr-2 size-4" /> */}
           {selectedEntity ?? "All Type"}
 
-          <ChevronDown />
+          <ChevronDown className="size-4" />
           {/* {selectedValues?.size > 0 && (
             <>
               <Separator orientation="vertical" className="mx-2 h-4" />
@@ -85,7 +82,6 @@ export function DataTableFacetedFilter<TData, TValue>({
               </div>
             </>
           )} */}
-        </Button>
       </PopoverTrigger>
       <PopoverContent className="w-[12.5rem] p-0" align="start">
         <Command>

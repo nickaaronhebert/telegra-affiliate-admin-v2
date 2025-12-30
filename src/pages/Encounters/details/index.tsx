@@ -212,7 +212,7 @@ const EncounterDetailsPage = () => {
           <EncounterGeneralOverview encounter={encounter} />
           <EncounterPatientDetails encounter={encounter} />
           <EncounterLabOrderInformation encounter={encounter} />
-          <EncounterQuestionnaires encounter={encounter} />
+          <EncounterQuestionnaires encounter={encounter} patient={patient}/>
           {patient && <PatientFiles patient={patient} />}
           <EncounterTimeline encounter={encounter} />
           <EncounterNotes encounter={encounter} />

@@ -95,7 +95,7 @@ const QuestionnaireItem = ({
       className="p-3 border rounded-lg border-black-100 flex justify-between items-center"
     >
       <div className="flex items-center gap-2 ">
-        <div className="bg-[#F0F0F0] w-[42px] h-[42px] flex items-center justify-center">
+        <div className="bg-[#E3F1FF] w-[42px] h-[42px] flex items-center justify-center">
           <QuestionSvg />
         </div>
         <div className="flex gap-2 items-center">

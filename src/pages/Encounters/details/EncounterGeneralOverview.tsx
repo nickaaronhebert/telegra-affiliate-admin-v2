@@ -16,7 +16,7 @@ const EncounterGeneralOverview = ({
       id="generalOverview"
       className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014] p-6 mb-2.5"
     >
-      <div className="flex gap-2 items-center border-b border-card-border pb-4 mb-2 justify-between">
+      <div className="flex gap-2 items-center border-b border-card-border pb-4 justify-between">
         <div className="flex gap-2 ">
           <GeneralOverviewSvg color="#000000" width={18} height={18} />
           <h1 className="text-base font-bold ">General Overview</h1>
