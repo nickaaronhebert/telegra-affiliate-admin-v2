@@ -26,6 +26,7 @@ import CancelEncounter from "./Action/Cancel";
 import EditOrder from "./Action/Edit";
 import TimelineSvg from "@/assets/icons/Timeline";
 import EncounterTimeline from "./EncounterTimeline";
+import SendPerformVisitLink from "./Action/PerformVisit";
 
 const menuItems = [
   {
@@ -136,6 +137,10 @@ const EncounterDetailsPage = () => {
             defaultPaymentMethodId={
               encounter?.consultationPaymentIntent?.paymentMethod
             }
+          />
+          <SendPerformVisitLink
+            orderId={encounter?.id}
+            affiliateId={encounter?.affiliate?.id}
           />
           <SendInviteLink id={encounter?.id} status={encounter?.status} />
           <Expedite id={encounter?.id} status={encounter?.status} />
