@@ -23,12 +23,14 @@ interface DropdownProps {
   value?: AddressOption | null;
   onChange: (option: AddressOption) => void;
   placeholder?: string;
+  optionClass?: string;
 }
 
 export function AddressDropdown({
   options,
   value,
   onChange,
+  optionClass,
   placeholder = "Select option",
 }: DropdownProps) {
   const [open, setOpen] = useState(false);
@@ -61,7 +63,7 @@ export function AddressDropdown({
       {open && (
         <div
           className={cn(
-            "absolute z-50 mt-1 w-full rounded-md border bg-popover shadow-md"
+            "absolute z-50 mt-1 w-full rounded-md border bg-popover shadow-md p-2"
           )}
           onPointerDown={(e) => e.stopPropagation()}
         >
@@ -71,18 +73,20 @@ export function AddressDropdown({
             </div>
           )}
 
-          {options.map((option) => (
-            <div
-              key={option.id}
-              onClick={() => handleSelect(option)}
-              className={cn(
-                "cursor-pointer px-3 py-2 text-sm hover:bg-accent",
-                value?.id === option.id && "bg-accent"
-              )}
-            >
-              {`${option.address1},${option.city},${option.state.name}, ${option.zipcode}`}
-            </div>
-          ))}
+          <div className={cn("", optionClass)}>
+            {options.map((option) => (
+              <div
+                key={option.id}
+                onClick={() => handleSelect(option)}
+                className={cn(
+                  "cursor-pointer px-3 py-2 text-sm hover:bg-accent",
+                  value?.id === option.id && "bg-accent"
+                )}
+              >
+                {`${option.address1},${option.city},${option.state.name}, ${option.zipcode}`}
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
