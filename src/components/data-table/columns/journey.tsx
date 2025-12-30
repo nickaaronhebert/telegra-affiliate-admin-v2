@@ -113,7 +113,7 @@ export function organizationJourneyColumns(): ColumnDef<JourneyDetails>[] {
       accessorKey: "id",
       header: "Action",
       cell: ({ row }) => {
-        const name = row.getValue("name");
+        const name = row.getValue("id");
 
         return (
           <div className="flex items-center space-x-3 pt-3">
