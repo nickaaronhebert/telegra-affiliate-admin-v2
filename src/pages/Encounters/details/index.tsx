@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { ROUTES } from "@/constants/routes";
 import { useViewEncounterByIdQuery } from "@/redux/services/encounter";
+import { useViewPatientByIdQuery } from "@/redux/services/patient";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import ErrorComponent from "@/components/Error";
@@ -13,8 +14,8 @@ import QuestionnaireSvg from "@/assets/icons/Questionnaire";
 import FilesSvg from "@/assets/icons/Files";
 import NotesSvg from "@/assets/icons/Notes";
 import EncounterLabOrderInformation from "./EncounterLabOrderInformation";
+import PatientFiles from "@/pages/Patient/details/PatientFiles";
 import EncounterQuestionnaires from "./EncounterQuestionnaires";
-import EncounterFiles from "./EncounterFiles";
 import EncounterNotes from "./EncounterNotes";
 import dayjs from "@/lib/dayjs";
 import GeneralOverviewSvg from "@/assets/icons/GeneralOverview";
@@ -22,6 +23,8 @@ import EncounterGeneralOverview from "./EncounterGeneralOverview";
 import SendInviteLink from "./Action/InviteLink";
 import Expedite from "./Action/Expedite";
 import CancelEncounter from "./Action/Cancel";
+import TimelineSvg from "@/assets/icons/Timeline";
+import EncounterTimeline from "./EncounterTimeline";
 
 const menuItems = [
   {
@@ -50,6 +53,11 @@ const menuItems = [
     icon: FilesSvg,
   },
   {
+    title: "Timeline",
+    scrollToId: "encounterTimelineInformation",
+    icon: TimelineSvg,
+  },
+  {
     title: "Notes",
     scrollToId: "encounterNotesInformation",
     icon: NotesSvg,
@@ -64,6 +72,7 @@ const EncounterDetailsPage = () => {
     | "labOrdersInformation"
     | "encounterQuestionnairesInformation"
     | "encounterFilesInformation"
+    | "encounterTimelineInformation"
     | "encounterNotesInformation"
   >("generalOverview");
 
@@ -73,7 +82,12 @@ const EncounterDetailsPage = () => {
     error,
   } = useViewEncounterByIdQuery(id as string);
 
-  if (isLoading) {
+  const { data: patient, isLoading: isPatientLoading } =
+    useViewPatientByIdQuery(encounter?.patient?.id as string, {
+      skip: !encounter?.patient?.id,
+    });
+
+  if (isLoading || isPatientLoading) {
     return (
       <div className="h-[100vh] flex justify-center items-center">
         <LoadingSpinner />
@@ -183,7 +197,8 @@ const EncounterDetailsPage = () => {
           <EncounterPatientDetails encounter={encounter} />
           <EncounterLabOrderInformation encounter={encounter} />
           <EncounterQuestionnaires encounter={encounter} />
-          <EncounterFiles encounter={encounter} />
+          {patient && <PatientFiles patient={patient} />}
+          <EncounterTimeline encounter={encounter} />
           <EncounterNotes encounter={encounter} />
         </div>
       </div>

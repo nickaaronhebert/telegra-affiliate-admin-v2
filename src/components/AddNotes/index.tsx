@@ -17,6 +17,7 @@ import { toast } from "sonner";
 interface AddNotesProps {
   labOrderId?: string;
   patientId?: string;
+  encounterId?: string;
   closeAction: (arg: boolean) => void;
 }
 type template_state = "create_new_template" | "edit_new_template";
@@ -28,12 +29,13 @@ type current_template = {
 export default function AddNotes({
   labOrderId,
   patientId,
+  encounterId,
   closeAction,
 }: AddNotesProps) {
   //   const [open, setOpen] = useState(false);
 
-  const relatedEntity = labOrderId || patientId || "";
-  const relatedEntityModel = labOrderId ? "LabOrder" : "Patient";
+  const relatedEntity = labOrderId || patientId || encounterId || "";
+  const relatedEntityModel = labOrderId ? "LabOrder" : encounterId ? "Order" : "Patient";
 
   const [createNewTemplate, { isLoading: isCreateNewTemplateLoader }] =
     useCreateNoteTemplateMutation();
@@ -125,7 +127,7 @@ export default function AddNotes({
         standardText: templateContent,
       },
       noteType: "standard",
-      subject: labOrderId ? "Lab Order Note" : "Patient Note",
+      subject: labOrderId ? "Lab Order Note" : encounterId ? "Order Note" : "Patient Note",
       isPrivate: true,
       relatedEntityModel: relatedEntityModel,
       relatedEntity: relatedEntity,
@@ -158,9 +160,8 @@ export default function AddNotes({
     relatedEntityModel,
     labOrderId,
     patientId,
+    encounterId,
   ]);
-
-  console.log("vvv", value);
 
   return (
     <div>
@@ -222,7 +223,6 @@ export default function AddNotes({
                 <Input
                   id="templateName" // Ensure to match the id with the Label's htmlFor
                   onChange={(e) => {
-                    console.log(e.target.value);
                     setValue((prev) => ({
                       ...prev,
                       name: e.target.value, // Update only the `name` property

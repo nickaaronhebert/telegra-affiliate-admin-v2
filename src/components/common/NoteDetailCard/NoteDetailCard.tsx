@@ -57,7 +57,7 @@ const NoteDetailCard: FC<NoteDetailCardProps> = ({
                 variant="ghost"
                 size="sm"
                 className="p-1 h-6 w-6 hover:bg-red-100 cursor-pointer"
-                onClick={() => setDeleteNoteId(note._id)}
+                onClick={() => setDeleteNoteId(note?._id || note?.id)}
               >
                 <Trash2 className="w-3 h-3 text-primary" />
               </Button>
