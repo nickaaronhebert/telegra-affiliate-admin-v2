@@ -105,7 +105,7 @@ const SelectElement: React.FC<SelectElementProps> = ({
               onChange?.(value); // Call custom onChange if provided
               onSearch?.("");
             }}
-            defaultValue={props.defaultValue || field.value}
+            value={field.value || ""}
             disabled={props.disabled}
           >
             <FormControl className={cn("bg-white", props.className)}>
