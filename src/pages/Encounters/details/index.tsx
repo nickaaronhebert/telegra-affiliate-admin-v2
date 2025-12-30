@@ -22,6 +22,7 @@ import EncounterGeneralOverview from "./EncounterGeneralOverview";
 import SendInviteLink from "./Action/InviteLink";
 import Expedite from "./Action/Expedite";
 import CancelEncounter from "./Action/Cancel";
+import EditOrder from "./Action/Edit";
 
 const menuItems = [
   {
@@ -112,6 +113,16 @@ const EncounterDetailsPage = () => {
         </div>
 
         <div className="flex items-center justify-end gap-2.5">
+          <EditOrder
+            encounterId={encounter?.id}
+            projectId={encounter?.project?.id}
+            address={encounter?.address}
+            patientId={encounter?.patient?.id}
+            existingProducts={encounter?.productVariations}
+            defaultPaymentMethodId={
+              encounter?.consultationPaymentIntent?.paymentMethod
+            }
+          />
           <SendInviteLink id={encounter?.id} status={encounter?.status} />
           <Expedite id={encounter?.id} status={encounter?.status} />
           <CancelEncounter id={encounter?.id} status={encounter?.status} />

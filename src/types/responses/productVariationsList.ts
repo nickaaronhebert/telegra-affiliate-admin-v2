@@ -9,11 +9,13 @@ export interface ProductVariationItem {
   deleted?: boolean;
   createdAt?: string;
   updatedAt?: string;
+  form?: string;
   product?: {
     id: string;
     title: string;
   };
   description?: string;
+  strength: string;
 }
 
 export interface ProductVariationsListResponse {
@@ -27,4 +29,3 @@ export interface GetProductVariationsListRequest {
   q?: string;
   withoutProducts?: string;
 }
-
