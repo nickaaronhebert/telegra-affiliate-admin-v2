@@ -8,12 +8,13 @@ import {
 import { useSendOrderInviteMutation } from "@/redux/services/patient";
 import type { PatientDetail, PatientOrder } from "@/types/responses/patient";
 import { toast } from "sonner";
-import { Plus, Link } from "lucide-react";
+import { Plus, Link as LinkIcon } from "lucide-react";
 import { type ColumnDef } from "@tanstack/react-table";
 import { PatientOrderModal } from "./PatientOrderModal";
 import { SendInviteModal } from "./SendInviteModal";
 import OrderInformationSvg from "@/assets/icons/OrderInformation";
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
+import { Link } from "react-router-dom";
 
 interface UserInformationProps {
   patient: PatientDetail;
@@ -34,7 +35,15 @@ const OrderInformation = ({ patient }: UserInformationProps) => {
         header: "Encounter ID",
         cell: ({ row }) => (
           <div className="text-sm text-gray-900">
-            #{row.getValue("id")?.toString().slice(-6)}
+            <Link
+              to={`${
+                import.meta.env.VITE_AFFILIATE_ADMIN_FRONTEND_URL
+              }/encounters/${row.getValue("id")}`}
+              className="font-normal text-sm text text-muted-foreground text-queued hover:underline"
+              target="_blank"
+            >
+              #{row.getValue("id")?.toString().slice(-6)}
+            </Link>
           </div>
         ),
       },
@@ -123,7 +132,7 @@ const OrderInformation = ({ patient }: UserInformationProps) => {
               disabled={isSendingInvite}
               className="bg-primary text-white text-sm font-medium cursor-pointer"
             >
-              <Link className="w-4 h-4 mr-1" />
+              <LinkIcon className="w-4 h-4 mr-1" />
               VISIT
             </Button>
           );

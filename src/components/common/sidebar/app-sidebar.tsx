@@ -32,6 +32,8 @@ import LabOrdersSVG from "@/assets/icons/LabOrders";
 import DashboardSVG from "@/assets/icons/Dashboard";
 import SettingsSVG from "@/assets/icons/Settings";
 import TeamManagementSVG from "@/assets/icons/TeamManagement";
+import { useGetAffiliateDetailsQuery } from "@/redux/services/organizationIdentity";
+import { ECOMMERCE_PLATFORMS } from "@/constants";
 
 const dashboardItem = { title: "Dashboard", url: "/dashboard", icon: DashboardSVG };
 const commerce = [
@@ -63,6 +65,12 @@ export function AppSidebar() {
     const { state, open, toggleSidebar } = useSidebar();
     const location = useLocation();
     const [settingsOpen, setSettingsOpen] = useState(false);
+
+    const { data: affiliateDetails } = useGetAffiliateDetailsQuery();
+    // Check if ecommerce module is enabled
+    const checkEcommerceModule =
+        affiliateDetails?.ecommerceModuleEnabled &&
+        affiliateDetails?.ecommercePlatform === ECOMMERCE_PLATFORMS.TELEGRA_COMMERCE;
 
     const isActive = (item: any) => {
         return location.pathname === item.url || location.pathname.startsWith(item.url + '/');
@@ -122,17 +130,19 @@ export function AppSidebar() {
                     </SidebarGroupContent>
                 </SidebarGroup>
 
-                {/* COMMERCE */}
-                <SidebarGroup>
-                    {open && (
-                        <h4 className="px-4 font-['Inter'] font-medium text-[10px] leading-[22px] tracking-[1.8px] align-middle uppercase mt-0.5 mb-0.5 text-gray-400">
-                            COMMERCE
-                        </h4>
-                    )}
-                    <SidebarGroupContent >
-                        <SidebarMenu>{renderMenu(commerce)}</SidebarMenu>
-                    </SidebarGroupContent>
-                </SidebarGroup>
+                {/* COMMERCE - Only show if ecommerce module is enabled */}
+                {checkEcommerceModule && (
+                    <SidebarGroup>
+                        {open && (
+                            <h4 className="px-4 font-['Inter'] font-medium text-[10px] leading-[22px] tracking-[1.8px] align-middle uppercase mt-0.5 mb-0.5 text-gray-400">
+                                COMMERCE
+                            </h4>
+                        )}
+                        <SidebarGroupContent >
+                            <SidebarMenu>{renderMenu(commerce)}</SidebarMenu>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+                )}
 
                 {/* CLINICAL */}
                 <SidebarGroup>
