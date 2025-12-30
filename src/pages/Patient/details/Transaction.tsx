@@ -1,29 +1,54 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { DataTable } from "@/components/data-table/data-table";
 import {
   useDataTable,
   type DataTableFilterField,
 } from "@/hooks/use-data-table";
-import type { PatientDetail, PatientOrder } from "@/types/responses/patient";
+import type { PatientDetail } from "@/types/responses/patient";
 import { type ColumnDef } from "@tanstack/react-table";
 import TransactionSvg from "@/assets/icons/Transactions";
 import { PAYMENT_MECHANISMS } from "@/constants";
 import dayjs from "dayjs";
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
+import { TransactionDetailsModal } from "@/pages/Encounters/details/TransactionDetailsModal";
 
 interface TransactionProps {
   patient: PatientDetail;
 }
 
+interface Transaction {
+  key: string;
+  fullId: string;
+  id: string;
+  status: string;
+  date: string;
+  amount: string;
+  billing: string;
+  finalProducts: string;
+}
+
 const Transaction = ({ patient }: TransactionProps) => {
+  const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
+  const [selectedTransactionId, setSelectedTransactionId] = useState<string | null>(null);
+
+  const handleOpenTransaction = (transactionId: string) => {
+    setSelectedTransactionId(transactionId);
+    setIsTransactionModalOpen(true);
+  };
+
+  const handleCloseTransaction = () => {
+    setIsTransactionModalOpen(false);
+    setSelectedTransactionId(null);
+  };
+
   const transactions = useMemo(() => {
     return patient?.orders
       ?.map((item) => {
         if (item.consultationPaymentIntent) {
-          const key = item?.consultationPaymentIntent.id;
-          const fullId = item?.consultationPaymentIntent?.id;
-          const id = item?.consultationPaymentIntent?.id?.substring(
-            item?.consultationPaymentIntent?.id?.length - 6
+          const key = item?.consultationPaymentIntent._id;
+          const fullId = item?.consultationPaymentIntent?._id;
+          const id = item?.consultationPaymentIntent?._id?.substring(
+            item?.consultationPaymentIntent?._id?.length - 6
           );
           let billing = "";
 
@@ -63,14 +88,17 @@ const Transaction = ({ patient }: TransactionProps) => {
       .filter((x) => x);
   }, [patient?.orders]);
 
-  const columns = useMemo<ColumnDef<PatientOrder>[]>(
+  const columns = useMemo<ColumnDef<Transaction>[]>(
     () => [
       {
         accessorKey: "id",
         header: "ID",
         cell: ({ row }) => (
-          <div className="text-sm text-gray-900">
-            {row.getValue("id")?.toString().slice(-6)}
+          <div
+            className="text-sm text-gray-900 cursor-pointer text-queued hover:underline"
+            onClick={() => handleOpenTransaction(row.original.fullId)}
+          >
+            #{row.getValue("id")?.toString().slice(-6)}
           </div>
         ),
       },
@@ -109,7 +137,7 @@ const Transaction = ({ patient }: TransactionProps) => {
     []
   );
 
-  const filterFields: DataTableFilterField<PatientOrder>[] = [
+  const filterFields: DataTableFilterField<Transaction>[] = [
     {
       label: "status",
       value: "status",
@@ -149,6 +177,11 @@ const Transaction = ({ patient }: TransactionProps) => {
         </div>
         {patient?.orders?.length > 1 && <DataTablePagination table={table} />}
       </div>
+      <TransactionDetailsModal
+        isOpen={isTransactionModalOpen}
+        onClose={handleCloseTransaction}
+        transactionId={selectedTransactionId}
+      />
     </div>
   );
 };

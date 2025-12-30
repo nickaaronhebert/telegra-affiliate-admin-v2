@@ -11,6 +11,7 @@ import { type ColumnDef } from "@tanstack/react-table";
 import { PatientLabOrderModal } from "./PatientLabOrderModal";
 import LabOrderSvg from "@/assets/icons/LabOrder";
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
+import { Link } from "react-router-dom";
 
 interface UserInformationProps {
   patient: PatientDetail;
@@ -18,9 +19,8 @@ interface UserInformationProps {
 
 const LabOrderInformation = ({ patient }: UserInformationProps) => {
   const [isLabOrderModalOpen, setIsLabOrderModalOpen] = useState(false);
-  const [editingLabOrder, setEditingLabOrder] = useState<PatientLabOrder | null>(
-    null
-  );
+  const [editingLabOrder, setEditingLabOrder] =
+    useState<PatientLabOrder | null>(null);
 
   const columns = useMemo<ColumnDef<PatientLabOrder>[]>(
     () => [
@@ -29,7 +29,15 @@ const LabOrderInformation = ({ patient }: UserInformationProps) => {
         header: "ID",
         cell: ({ row }) => (
           <div className="text-sm text-gray-900">
-            #{row.getValue("id")?.toString().slice(-6)}
+            <Link
+              to={`${
+                import.meta.env.VITE_AFFILIATE_ADMIN_FRONTEND_URL
+              }/lab-orders/${row.getValue("id")}`}
+              className="font-normal text-sm text text-muted-foreground text-queued hover:underline"
+              target="_blank"
+            >
+              #{row.getValue("id")?.toString().slice(-6)}
+            </Link>
           </div>
         ),
       },
