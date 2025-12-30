@@ -5,22 +5,27 @@ import {
   useDataTable,
   type DataTableFilterField,
 } from "@/hooks/use-data-table";
-import type { EncounterDetail, EncounterLabOrder } from "@/types/responses/encounter";
+import type {
+  EncounterDetail,
+  EncounterLabOrder,
+} from "@/types/responses/encounter";
 import { Plus } from "lucide-react";
 import { type ColumnDef } from "@tanstack/react-table";
 import { EncounterLabOrderModal } from "./EncounterLabOrderModal";
 import LabOrderSvg from "@/assets/icons/LabOrder";
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
+import { Link } from "react-router-dom";
 
 interface EncounterLabOrderInformationProps {
   encounter: EncounterDetail;
 }
 
-const EncounterLabOrderInformation = ({ encounter }: EncounterLabOrderInformationProps) => {
+const EncounterLabOrderInformation = ({
+  encounter,
+}: EncounterLabOrderInformationProps) => {
   const [isLabOrderModalOpen, setIsLabOrderModalOpen] = useState(false);
-  const [editingLabOrder, setEditingLabOrder] = useState<EncounterLabOrder | null>(
-    null
-  );
+  const [editingLabOrder, setEditingLabOrder] =
+    useState<EncounterLabOrder | null>(null);
 
   const columns = useMemo<ColumnDef<EncounterLabOrder>[]>(
     () => [
@@ -29,7 +34,15 @@ const EncounterLabOrderInformation = ({ encounter }: EncounterLabOrderInformatio
         header: "ID",
         cell: ({ row }) => (
           <div className="text-sm text-gray-900">
-            #{row.getValue("id")?.toString().slice(-6)}
+            <Link
+              to={`${
+                import.meta.env.VITE_AFFILIATE_ADMIN_FRONTEND_URL
+              }/lab-orders/${row.getValue("id")}`}
+              className="font-normal text-sm text text-muted-foreground text-queued hover:underline"
+              target="_blank"
+            >
+              #{row.getValue("id")?.toString().slice(-6)}
+            </Link>
           </div>
         ),
       },
@@ -49,7 +62,7 @@ const EncounterLabOrderInformation = ({ encounter }: EncounterLabOrderInformatio
           return (
             <span
               className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${
-                status && statusColors[status as keyof typeof statusColors] ||
+                (status && statusColors[status as keyof typeof statusColors]) ||
                 "bg-gray-100 text-gray-800"
               }`}
             >
@@ -138,12 +151,12 @@ const EncounterLabOrderInformation = ({ encounter }: EncounterLabOrderInformatio
       id="labOrdersInformation"
       className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014] p-6 mb-2.5"
     >
-      <div className="flex gap-2 items-center border-b border-card-border justify-between align-middle">
+      <div className="flex gap-2 items-center border-b border-card-border justify-between align-middle pb-4">
         <div className="flex gap-2 items-center">
           <LabOrderSvg color="#000000" width={18} height={18} />
           <h1 className="text-base font-bold ">Lab Order</h1>
         </div>
-        <div className="flex justify-between items-center mb-4">
+        <div className="flex justify-between items-center ">
           <Button
             onClick={openAddModal}
             className="bg-black text-white hover:bg-gray-800 rounded-lg px-4 py-2 cursor-pointer"

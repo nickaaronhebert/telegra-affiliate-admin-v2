@@ -231,6 +231,51 @@ export const encounterApi = baseApi.injectEndpoints({
         { type: TAG_GET_ENCOUNTER, id: paymentId },
       ],
     }),
+
+    inviteQuestionnaireToEncounter: builder.mutation<
+      any,
+      {
+        encounterId: string;
+        patientId: string;
+        questionnaireId: string;
+      }
+    >({
+      query: ({ encounterId, patientId, questionnaireId }) => {
+        return {
+          url: `/patients/${patientId}/inviteCompleteQuestionnaire`,
+          method: "POST",
+          body: {
+            id: patientId,
+            questionnaire: questionnaireId,
+            orderId: encounterId,
+          },
+        };
+      },
+      invalidatesTags: (_result, _error, { encounterId }) => [
+        { type: TAG_GET_ENCOUNTER, id: encounterId },
+      ],
+    }),
+
+    attachQuestionnaireToEncounter: builder.mutation<
+      any,
+      {
+        encounterId: string;
+        questionnaireInstanceIds: string[];
+      }
+    >({
+      query: ({ encounterId, questionnaireInstanceIds }) => {
+        return {
+          url: `/orders/${encounterId}`,
+          method: "PUT",
+          body: {
+            questionnaireInstances: questionnaireInstanceIds,
+          },
+        };
+      },
+      invalidatesTags: (_result, _error, { encounterId }) => [
+        { type: TAG_GET_ENCOUNTER, id: encounterId },
+      ],
+    }),
   }),
 });
 
@@ -243,6 +288,8 @@ export const {
   useGetEncounterTransactionQuery,
   useLazyGetEncounterTransactionQuery,
   useGetPaymentMethodDetailsQuery,
+  useInviteQuestionnaireToEncounterMutation,
+  useAttachQuestionnaireToEncounterMutation,
   useUpdateEncounterOrderMutation,
   useUpdateEncounterProductsMutation,
 } = encounterApi;
