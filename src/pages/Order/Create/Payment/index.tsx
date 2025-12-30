@@ -27,7 +27,7 @@ import {
   resetOrder,
   updateOrderAmount,
 } from "@/redux/slices/create-order";
-import { Input } from "@/components/ui/input";
+// import { Input } from "@/components/ui/input";
 import { useRef, useState } from "react";
 import { useValidateCouponMutation } from "@/redux/services/coupon";
 import { useNavigate } from "react-router-dom";
@@ -159,9 +159,9 @@ export default function SelectPaymentDetails() {
             Coupon <span className="text-red-500 ">*</span>
           </p>
           <div className="flex gap-2 mb-7 mt-1">
-            <Input
+            <input
               ref={couponRef}
-              className="min-h-11 placeholder:text-[#C3C1C6] border border-[#9EA5AB]"
+              className="min-h-11 min-w-91 placeholder:text-[#C3C1C6] border border-[#9EA5AB] px-2 rounded-[6px] text-sm"
               placeholder="Enter Coupon Code"
             />
 
