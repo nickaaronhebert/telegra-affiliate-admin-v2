@@ -61,6 +61,28 @@ interface IViewAllEncountersResponse {
   result: EncounterList[];
 }
 
+interface UpdateEncounterOrderProps {
+  id: string;
+  address: {
+    billing: {
+      address1: string;
+      address2?: string;
+      city: string;
+      state: string;
+      zipcode: string;
+    };
+    shipping: {
+      address1: string;
+      address2?: string;
+      city: string;
+      state: string;
+      zipcode: string;
+    };
+  };
+  project?: string;
+  paymentMethod?: string;
+}
+
 export const encounterApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     viewAllEncounters: builder.query<
@@ -149,6 +171,42 @@ export const encounterApi = baseApi.injectEndpoints({
       ],
     }),
 
+    updateEncounterOrder: builder.mutation<any, UpdateEncounterOrderProps>({
+      query: ({ id, ...body }) => {
+        return {
+          url: `/orders/${id}`,
+          method: "PUT",
+          body: body,
+        };
+      },
+      invalidatesTags: (_result, _error, data) => [
+        { type: TAG_GET_ENCOUNTER, id: data.id },
+      ],
+    }),
+
+    updateEncounterProducts: builder.mutation<
+      any,
+      {
+        id: string;
+        productVariations: {
+          action: string;
+          productVariation: string;
+          quantity?: number;
+        }[];
+      }
+    >({
+      query: ({ id, ...body }) => {
+        return {
+          url: `/orders/${id}/actions/updateProducts`,
+          method: "PUT",
+          body: body,
+        };
+      },
+      invalidatesTags: (_result, _error, data) => [
+        { type: TAG_GET_ENCOUNTER, id: data.id },
+      ],
+    }),
+
     getEncounterTransaction: builder.query<Transaction, string>({
       query: (transactionId) => {
         return {
@@ -232,6 +290,8 @@ export const {
   useGetPaymentMethodDetailsQuery,
   useInviteQuestionnaireToEncounterMutation,
   useAttachQuestionnaireToEncounterMutation,
+  useUpdateEncounterOrderMutation,
+  useUpdateEncounterProductsMutation,
 } = encounterApi;
 
 export default encounterApi;

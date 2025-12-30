@@ -6,6 +6,7 @@ import "./services/register-services"; // Ensure all services are registered
 import orderReducer from "@/redux/slices/create-order";
 import subscriptionReducer from "@/redux/slices/subscription";
 import authReducer from "@/redux/slices/auth";
+import twoFactorAuthReducer from "@/redux/slices/auth/twoFactorAuth";
 import productVariationsReducer from "@/redux/slices/product-variations";
 import patientReducer from "@/redux/slices/patient";
 import communicationTemplatesReducer from "@/redux/slices/communicationTemplates";
@@ -24,6 +25,7 @@ export const store = configureStore({
     order: orderReducer,
     subscription: subscriptionReducer,
     auth: authReducer,
+    twoFactorAuth: twoFactorAuthReducer.reducer,
     productVariations: productVariationsReducer,
     patient: patientReducer,
     communicationTemplates: communicationTemplatesReducer,

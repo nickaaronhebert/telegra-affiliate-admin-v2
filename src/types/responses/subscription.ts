@@ -90,6 +90,11 @@ export interface SubscriptionDetails {
     firstName: string;
     lastName: string;
     email: string;
+    phone: string;
+    dateOfBirth: string;
+    genderBiological: string;
+    medicationAllergies: string[];
+    patientMedications: string[];
   };
   address: {
     _id: string;

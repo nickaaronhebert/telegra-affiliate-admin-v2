@@ -4,6 +4,14 @@ export interface LoginRequest {
   recaptcha_token?: string;
 }
 
+export interface SendOtpRequest {
+  method: 'email' | 'sms';
+}
+
+export interface VerifyOtpRequest {
+  code: string;
+}
+
 export interface ForgotPasswordRequest {
   email: string;
 }

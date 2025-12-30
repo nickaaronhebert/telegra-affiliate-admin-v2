@@ -6,6 +6,8 @@ import {
   type LogoutResponse,
   type RequestPasswordResetResponse,
   type ResetPasswordResponse,
+  type SendOtpResponse,
+  type VerifyOtpResponse,
 } from "@/types/responses";
 import type { LoginRequest, ForgotPasswordRequest, ResetPasswordRequest } from "@/types/requests";
 
@@ -13,21 +15,45 @@ export const authApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     login: builder.mutation<LoginResponse, LoginRequest>({
       query: ({ username, password, recaptcha_token }) => {
-        const basicAuthHeader = `Basic ${btoa(`${username}:${password}`)}`;
+        const disabled2FA = `${import.meta.env.VITE_ENABLE_2FA}` === "false";
+        const url = disabled2FA ? "/auth/client" : "/auth/login";
+
         return {
-          url: "/auth/client",
+          url,
           method: "POST",
           headers: {
-            Authorization: basicAuthHeader,
-            // "x-bypass-recaptcha": import.meta.env.VITE_RECAPTCHA_TOKEN,
+            Authorization: `Basic ${btoa(`${username}:${password}`)}`,
+            Accept: "application/json, text/plain, */*",
           },
-          // auth: { username, password },
-          body: { recaptcha_token: recaptcha_token, },
+          body: { recaptcha_token },
           params: {
-            app: 'affiliate-admin'
-          }
+            app: "affiliate-admin",
+          },
         };
       },
+      invalidatesTags: [TAG_GET_USER_PROFILE],
+    }),
+
+    sendOtpCode: builder.mutation<SendOtpResponse, { access_token: string; method: 'email' | 'sms' }>({
+      query: ({ access_token, method }) => ({
+        url: "/auth/client/otp-code",
+        method: "GET",
+        params: {
+          access_token,
+          method,
+        },
+      }),
+    }),
+
+    verifyOtpCode: builder.mutation<VerifyOtpResponse, { access_token: string; code: string }>({
+      query: ({ access_token, code }) => ({
+        url: "/auth/client/otp-code",
+        method: "POST",
+        params: {
+          access_token,
+          code,
+        },
+      }),
       invalidatesTags: [TAG_GET_USER_PROFILE],
     }),
 
@@ -38,7 +64,10 @@ export const authApi = baseApi.injectEndpoints({
       }),
     }),
 
-    forgotPassword: builder.mutation<RequestPasswordResetResponse, ForgotPasswordRequest>({
+    forgotPassword: builder.mutation<
+      RequestPasswordResetResponse,
+      ForgotPasswordRequest
+    >({
       query: ({ email }) => ({
         url: "/auth/forgot",
         method: "POST",
@@ -46,23 +75,28 @@ export const authApi = baseApi.injectEndpoints({
       }),
     }),
 
-    resetPassword: builder.mutation<ResetPasswordResponse, ResetPasswordRequest>({
+    resetPassword: builder.mutation<
+      ResetPasswordResponse,
+      ResetPasswordRequest
+    >({
       query: ({ access_token, password, passwordConfirm }) => ({
-        url: `/auth/reset?access_token=${access_token}`,
+        url: `/auth/reset`,
         method: "POST",
-        body: { access_token, password, passwordConfirm },
+        params: { access_token },
+        body: { password, passwordConfirm },
       }),
     }),
-
   }),
   overrideExisting: false,
 });
+
 
 export const {
   useLoginMutation,
   useForgotPasswordMutation,
   useResetPasswordMutation,
-
+  useSendOtpCodeMutation,
+  useVerifyOtpCodeMutation,
 } = authApi;
 
 export default authApi;
