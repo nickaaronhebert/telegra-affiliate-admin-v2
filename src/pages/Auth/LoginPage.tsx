@@ -49,7 +49,7 @@ const LoginPage = () => {
 
   const onSubmit = async (values: LoginFormValues) => {
     try {
-      await login({
+      const response = await login({
         username: values.email,
         password: values.password,
         recaptcha_token: values.recaptcha_token,
@@ -57,8 +57,25 @@ const LoginPage = () => {
 
       form.reset();
 
-      // Navigate to dashboard on successful login
-      navigate("/dashboard");
+      // Check if 2FA is required
+      const is2FAEnabled = `${import.meta.env.VITE_ENABLE_2FA}` !== "false";
+      
+      if (is2FAEnabled && response.token && !response.user?.id) {
+        // 2FA required - navigate to 2FA page with temporary token
+        navigate(ROUTES.TWO_FA, {
+          state: {
+            accessToken: response.token,
+            userEmail: response.user?.email,
+            userPhone: response.user?.phone,
+          },
+        });
+      } else if (response.user?.id) {
+        // Already authenticated (2FA disabled)
+        navigate(ROUTES.DASHBOARD);
+      } else {
+        // Navigate to dashboard as fallback
+        navigate(ROUTES.DASHBOARD);
+      }
     } catch (error: unknown) {
       console.error("Login failed:", error);
 

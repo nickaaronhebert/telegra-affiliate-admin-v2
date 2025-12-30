@@ -79,6 +79,7 @@ export interface EncounterEvent {
   targetEntityModel: string;
   eventTitle: string;
   eventType: string;
+  eventDescription?: string;
   eventData: EncounterEventData;
   deleted: boolean;
   createdAt: string;

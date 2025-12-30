@@ -53,4 +53,6 @@ export const ROUTES = {
   ORGANIZATION_IDENTITY_PATH: "settings/organization-identity",
   WORKFLOW_SETTINGS_PATH: "settings/workflow-settings",
   LAB_ORDER_DETAILS: "lab-orders/:id",
+  TWO_FA_PATH: "two-factor",
+  TWO_FA: "/two-factor",
 } as const;
