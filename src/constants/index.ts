@@ -305,3 +305,8 @@ export const STATUS_COLORS = {
   },
 
 } as const;
+
+
+export const ECOMMERCE_PLATFORMS = {
+  TELEGRA_COMMERCE: 'telegra_commerce'
+};
