@@ -13,6 +13,7 @@ import type {
   CreateEcommerceProductResponse,
   ProductMappingRequest,
   ProductMappingResponse,
+  EcommerceProductDetailResponse,
 } from "@/types/responses/ecommerceProductCreation";
 import type { IViewAllProductsInterface } from "@/types/responses/IViewAllProducts";
 import type { EcommerceProductsResponse } from "@/types/responses/ecommerceProducts";
@@ -80,7 +81,7 @@ const productApi = baseApi.injectEndpoints({
       },
     }),
 
-    viewEcommerceProductById: builder.query<any, string>({
+    viewEcommerceProductById: builder.query<EcommerceProductDetailResponse, string>({
       query: (id) => {
         return {
           url: `/ecommerceProducts/${id}`,
@@ -182,7 +183,7 @@ const productApi = baseApi.injectEndpoints({
         result ? [{ type: TAG_GET_PRODUCTS, id: "LIST" }] : [],
     }),
 
-    updateEcommerceProduct: builder.mutation<any, { id: string; data: any }>({
+    updateEcommerceProduct: builder.mutation<EcommerceProductDetailResponse, { id: string; data: any }>({
       query: ({ id, data }) => {
         return {
           url: `/ecommerceProducts/${id}`,
