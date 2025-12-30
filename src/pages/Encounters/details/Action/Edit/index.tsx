@@ -224,6 +224,7 @@ function UpdateEncounterOrder({
             <div className="mb-4">
               <p className="text-sm font-semibold">Use address</p>
               <AddressDropdown
+                optionClass="max-h-[200px] overflow-y-auto p-1"
                 options={address}
                 onChange={(option: AddressOption) => {
                   console.log("option", option);
