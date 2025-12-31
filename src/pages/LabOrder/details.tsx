@@ -2,11 +2,11 @@ import { DetailsCard } from "@/components/common/Card";
 import { ConfirmDialog } from "@/components/common/Dialog";
 import { useViewLabOrderDetailsQuery } from "@/redux/services/labOrder";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import EditLabOrders from "./Edit";
 import Header from "@/components/common/Header";
 import { Button } from "@/components/ui/button";
-import { Activity, Pill, Users, Notebook } from "lucide-react";
+import { Activity, Plus, Users } from "lucide-react";
 import { DetailMenuSidebar } from "@/components/common/Scroller";
 import CubeSVG from "@/assets/icons/Cube";
 import dayjs from "dayjs";
@@ -19,28 +19,32 @@ import { baseApi } from "@/redux/services";
 import { TAG_GET_LAB_ORDER } from "@/types/baseApiTags";
 import { useAppDispatch } from "@/redux/store";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import NoData from "@/assets/icons/NoData";
+import GeneralOverviewSvg from "@/assets/icons/GeneralOverview";
+import LabOrderSvg from "@/assets/icons/LabOrder";
+import NotesSvg from "@/assets/icons/Notes";
 
 const menuItems = [
   {
     title: "Lab Order Overview",
     scrollToId: "labOrderOverview",
-    icon: <Activity />,
+    icon: <Activity color="#9AA2AC" />,
   },
   {
     title: "Patient Details",
     scrollToId: "patientOverview",
-    icon: <Users />,
+    icon: <Users color="#9AA2AC" />,
+  },
+  {
+    title: "Lab Orders",
+    scrollToId: "labPanelsOverview",
+    icon: <LabOrderSvg color="#9AA2AC" width={18} height={18} />,
   },
 
   {
-    title: "Items",
-    scrollToId: "labPanelsOverview",
-    icon: <Pill />,
-  },
-  {
     title: "Notes",
     scrollToId: "notesOverview",
-    icon: <Notebook />,
+    icon: <NotesSvg color="#9AA2AC" />,
   },
 ];
 
@@ -59,7 +63,6 @@ export default function LabOrderDetails() {
       skip: !id,
     }
   );
-
   const [openEditLabOrder, setOpenEditLabOrder] = useState(false);
   const [openAddNotes, setOpenAddNotes] = useState(false);
   const handleDeleteNote = async () => {
@@ -114,12 +117,16 @@ export default function LabOrderDetails() {
             <DetailsCard
               isLoading={isLoading}
               id="#"
+              icon={
+                <GeneralOverviewSvg color="#000000" width={18} height={18} />
+              }
               // id="labOrderOverview"
               title="Lab Order Overview"
               fields={[
                 {
                   label: "Status",
                   value: data?.status || "-",
+                  isBadge: true,
                 },
                 {
                   label: "Date",
@@ -141,6 +148,18 @@ export default function LabOrderDetails() {
               isLoading={isLoading}
               id="patientOverview"
               title="Patient Details"
+              icon={<Users />}
+              actions={
+                <div>
+                  <Link
+                    to={`/patients/${data?.patient?.id}`}
+                    className="text-sm font-medium text-queued underline"
+                    target="_blank"
+                  >
+                    View Patient
+                  </Link>
+                </div>
+              }
               fields={[
                 {
                   label: "Patient Name",
@@ -183,42 +202,77 @@ export default function LabOrderDetails() {
               id="labPanelsOverview"
               title="Lab Orders"
               fields={[]}
+              icon={<LabOrderSvg color="#000000" width={18} height={18} />}
             />
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7 p-5">
-              {data?.labPanels?.map((item) => {
-                return (
-                  <div key={item.id} className="">
-                    <p className="text-sm font-medium text-primary underline underline-offset-2">
-                      {item.title}
-                    </p>
-                    <p className="text-xs font-normal">{item.description}</p>
-                  </div>
-                );
-              })}
-            </div>
+
+            {isLoading || isFetching ? (
+              <div className="flex justify-center py-8">
+                <LoadingSpinner />
+              </div>
+            ) : data?.labPanels?.length === 0 ? (
+              <div className="flex p-4 items-center justify-center flex-col gap-2 mt-4">
+                <NoData />
+                <span className="text-gray-400">No Lab Orders Found</span>
+              </div>
+            ) : (
+              <div className="p-2">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-5 max-h-75 overflow-y-auto">
+                  {data?.labPanels?.map((item) => {
+                    return (
+                      <>
+                        <div key={item.id} className="border rounded-lg w-full">
+                          <div className="text-primary bg-lilac p-2.5 rounded-tl-lg rounded-tr-lg">
+                            <span className="flex text-xs font-normal items-center gap-2">
+                              <LabOrderSvg
+                                color="#5456AD"
+                                width={10}
+                                height={10}
+                              />
+                              <span className="text-sm font-semibold">
+                                Lab Panel
+                              </span>{" "}
+                              - {item.title}
+                            </span>
+                          </div>
+                          <div className="p-3">
+                            <p className="text-xs font-normal max-h-20 overflow-y-auto">
+                              {item.description}
+                            </p>
+                          </div>
+                        </div>
+                      </>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014] relative">
-            <DetailsCard id="notesOverview" title="Notes" fields={[]} />
-
+            <DetailsCard
+              id="notesOverview"
+              title="Notes"
+              fields={[]}
+              icon={<NotesSvg color="#000000" width={18} height={18} />}
+            />
             <Button
               onClick={() => setOpenAddNotes(true)}
-              className="absolute right-6 top-4 z-50 cursor-pointer rounded-[50px] bg-black text-white"
+              className="absolute right-6 top-4 z-50 cursor-pointer  bg-black text-white hover:bg-gray-800 px-4 py-2"
             >
-              + Add Notes
+              <Plus className="w-4 h-4 mx-1" />
+              ADD NOTE
             </Button>
 
-            <div className="mt-4 space-y-3 p-6">
+            <div className="mt-4 space-y-3 p-6 h-[350px] overflow-y-auto rounded-lg">
               {isLoading || isDeleting || isFetching ? (
                 <div className="flex justify-center py-8">
                   <LoadingSpinner />{" "}
                   {/* Assuming LoadingSpinner is a component you already have */}
                 </div>
               ) : data?.notes.length === 0 ? (
-                <div className="flex justify-center py-8">
-                  <div className="text-sm text-gray-500">
-                    No notes available
-                  </div>
+                <div className="flex justify-center py-8 items-center justify-center flex-col gap-2 mt-4">
+                  <NoData />
+                  <span className="text-gray-400">No Notes Found</span>
                 </div>
               ) : (
                 data?.notes.map((note: Note) => (

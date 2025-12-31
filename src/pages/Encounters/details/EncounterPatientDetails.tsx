@@ -35,7 +35,7 @@ const EncounterPatientDetails = ({
         <div className="flex justify-center items-center gap-4">
           <Link
             to={`/patients/${encounter?.patient?.id}`}
-            className="text-sm font-medium text-queued hover:underline"
+            className="text-sm font-medium text-queued underline"
             target="_blank"
           >
             View Patient
