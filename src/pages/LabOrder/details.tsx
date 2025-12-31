@@ -203,86 +203,48 @@ export default function LabOrderDetails() {
               fields={[]}
               icon={<LabOrderSvg color="#000000" width={18} height={18} />}
             />
-            <div className="flex flex-wrap gap-2 p-5">
-              {data?.labPanels?.map((item) => {
-                return (<>
-                 <div
-                    key={item.id}
-                    className="border rounded-lg w-full md:w-1/2"
-                  >
-                    <div className="text-primary bg-lilac p-2">
-                      <span className="flex text-xs font-normal items-center gap-2">
-                        <LabOrderSvg
-                          color="#5456AD"
-                          width={10}
-                          height={10}
-                        />
-                        Lab Panel - {item.title}
-                      </span>
-                    </div>
-                    <div className="p-2">
-                      <p className="text-xs font-normal">{item.description} </p>
-                    </div>
-                  </div>
-                   <div
-                    key={item.id}
-                    className="border rounded-lg w-full md:w-1/2"
-                  >
-                    <div className="text-primary bg-lilac p-2">
-                      <span className="flex text-xs font-normal items-center gap-2">
-                        <LabOrderSvg
-                          color="#5456AD"
-                          width={10}
-                          height={10}
-                        />
-                        Lab Panel - {item.title}
-                      </span>
-                    </div>
-                    <div className="p-2">
-                      <p className="text-xs font-normal">{item.description} </p>
-                    </div>
-                  </div>
-                   <div
-                    key={item.id}
-                    className="border rounded-lg w-full md:w-1/2"
-                  >
-                    <div className="text-primary bg-lilac p-2">
-                      <span className="flex text-xs font-normal items-center gap-2">
-                        <LabOrderSvg
-                          color="#5456AD"
-                          width={10}
-                          height={10}
-                        />
-                        Lab Panel - {item.title}
-                      </span>
-                    </div>
-                    <div className="p-2">
-                      <p className="text-xs font-normal">{item.description} </p>
-                    </div>
-                  </div>
-                   <div
-                    key={item.id}
-                    className="border rounded-lg w-full md:w-1/2"
-                  >
-                    <div className="text-primary bg-lilac p-2">
-                      <span className="flex text-xs font-normal items-center gap-2">
-                        <LabOrderSvg
-                          color="#5456AD"
-                          width={10}
-                          height={10}
-                        />
-                        Lab Panel - {item.title}
-                      </span>
-                    </div>
-                    <div className="p-2">
-                      <p className="text-xs font-normal">{item.description} </p>
-                    </div>
-                  </div>
-                </>
-                 
-                );
-              })}
-            </div>
+
+            {isLoading || isFetching ? (
+              <div className="flex justify-center py-8">
+                <LoadingSpinner />
+              </div>
+            ) : data?.labPanels?.length === 0 ? (
+              <div className="flex p-4 items-center justify-center flex-col gap-2 mt-4">
+                <NoData />
+                <span className="text-gray-400">No Notes Found</span>
+              </div>
+            ) : (
+              <div className="p-2">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-5 max-h-75 overflow-y-auto">
+                  {data?.labPanels?.map((item) => {
+                    return (
+                      <>
+                        <div key={item.id} className="border rounded-lg w-full">
+                          <div className="text-primary bg-lilac p-2.5 rounded-tl-lg rounded-tr-lg">
+                            <span className="flex text-xs font-normal items-center gap-2">
+                              <LabOrderSvg
+                                color="#5456AD"
+                                width={10}
+                                height={10}
+                              />
+                              <span className="text-sm font-semibold">
+                                Lab Panel
+                              </span>{" "}
+                              - {item.title}
+                            </span>
+                          </div>
+                          <div className="p-3">
+                            <p className="text-xs font-normal max-h-20 overflow-y-auto">
+                              {item.description}
+                            </p>
+                          </div>
+                        </div>
+                      </>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014] relative">

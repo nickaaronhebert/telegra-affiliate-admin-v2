@@ -29,7 +29,7 @@ export function DetailsCard({
 }: DetailCardProps) {
   return (
     <div
-      className="min-w-196.5"
+      className=""
       //   className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014]"
       id={id}
     >
