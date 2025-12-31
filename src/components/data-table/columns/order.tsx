@@ -33,7 +33,7 @@ export function organizationOrderColumns(): ColumnDef<OrderDetails>[] {
           <div className="space-y-1">
             {row.original.productVariations.map((item) => {
               return (
-                <div className="flex gap-2 items-center">
+                <div className="flex gap-2 items-center" key={item.id}>
                   <span className="capitalize font-medium text-xs">
                     {item.name}
                   </span>

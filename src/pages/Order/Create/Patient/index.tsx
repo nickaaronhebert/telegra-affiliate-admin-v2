@@ -81,8 +81,6 @@ export default function SelectPatient({
     }
   }, [patient]);
 
-  console.log("Patient Details:", patientDetails);
-
   return (
     <div className="px-40 mb-10">
       <div>
