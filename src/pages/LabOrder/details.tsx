@@ -6,7 +6,7 @@ import { Link, useParams } from "react-router-dom";
 import EditLabOrders from "./Edit";
 import Header from "@/components/common/Header";
 import { Button } from "@/components/ui/button";
-import { Activity, Pill, Users, Notebook } from "lucide-react";
+import { Activity, Plus, Users } from "lucide-react";
 import { DetailMenuSidebar } from "@/components/common/Scroller";
 import CubeSVG from "@/assets/icons/Cube";
 import dayjs from "dayjs";
@@ -22,6 +22,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import NoData from "@/assets/icons/NoData";
 import GeneralOverviewSvg from "@/assets/icons/GeneralOverview";
 import LabOrderSvg from "@/assets/icons/LabOrder";
+import NotesSvg from "@/assets/icons/Notes";
 
 const menuItems = [
   {
@@ -34,16 +35,16 @@ const menuItems = [
     scrollToId: "patientOverview",
     icon: <Users color="#9AA2AC" />,
   },
-
   {
     title: "Lab Orders",
     scrollToId: "labPanelsOverview",
     icon: <LabOrderSvg color="#9AA2AC" width={18} height={18} />,
   },
+
   {
     title: "Notes",
     scrollToId: "notesOverview",
-    icon: <Notebook color="#9AA2AC" />,
+    icon: <NotesSvg color="#9AA2AC" />,
   },
 ];
 
@@ -205,97 +206,94 @@ export default function LabOrderDetails() {
             />
             <div className="flex flex-wrap gap-2 p-5">
               {data?.labPanels?.map((item) => {
-                return (<>
-                 <div
-                    key={item.id}
-                    className="border rounded-lg w-full md:w-1/2"
-                  >
-                    <div className="text-primary bg-lilac p-2">
-                      <span className="flex text-xs font-normal items-center gap-2">
-                        <LabOrderSvg
-                          color="#5456AD"
-                          width={10}
-                          height={10}
-                        />
-                        Lab Panel - {item.title}
-                      </span>
+                return (
+                  <>
+                    <div
+                      key={item.id}
+                      className="border rounded-lg w-full md:w-1/2"
+                    >
+                      <div className="text-primary bg-lilac p-2">
+                        <span className="flex text-xs font-normal items-center gap-2">
+                          <LabOrderSvg color="#5456AD" width={10} height={10} />
+                          Lab Panel - {item.title}
+                        </span>
+                      </div>
+                      <div className="p-2">
+                        <p className="text-xs font-normal">
+                          {item.description}{" "}
+                        </p>
+                      </div>
                     </div>
-                    <div className="p-2">
-                      <p className="text-xs font-normal">{item.description} </p>
+                    <div
+                      key={item.id}
+                      className="border rounded-lg w-full md:w-1/2"
+                    >
+                      <div className="text-primary bg-lilac p-2">
+                        <span className="flex text-xs font-normal items-center gap-2">
+                          <LabOrderSvg color="#5456AD" width={10} height={10} />
+                          Lab Panel - {item.title}
+                        </span>
+                      </div>
+                      <div className="p-2">
+                        <p className="text-xs font-normal">
+                          {item.description}{" "}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                   <div
-                    key={item.id}
-                    className="border rounded-lg w-full md:w-1/2"
-                  >
-                    <div className="text-primary bg-lilac p-2">
-                      <span className="flex text-xs font-normal items-center gap-2">
-                        <LabOrderSvg
-                          color="#5456AD"
-                          width={10}
-                          height={10}
-                        />
-                        Lab Panel - {item.title}
-                      </span>
+                    <div
+                      key={item.id}
+                      className="border rounded-lg w-full md:w-1/2"
+                    >
+                      <div className="text-primary bg-lilac p-2">
+                        <span className="flex text-xs font-normal items-center gap-2">
+                          <LabOrderSvg color="#5456AD" width={10} height={10} />
+                          Lab Panel - {item.title}
+                        </span>
+                      </div>
+                      <div className="p-2">
+                        <p className="text-xs font-normal">
+                          {item.description}{" "}
+                        </p>
+                      </div>
                     </div>
-                    <div className="p-2">
-                      <p className="text-xs font-normal">{item.description} </p>
+                    <div
+                      key={item.id}
+                      className="border rounded-lg w-full md:w-1/2"
+                    >
+                      <div className="text-primary bg-lilac p-2">
+                        <span className="flex text-xs font-normal items-center gap-2">
+                          <LabOrderSvg color="#5456AD" width={10} height={10} />
+                          Lab Panel - {item.title}
+                        </span>
+                      </div>
+                      <div className="p-2">
+                        <p className="text-xs font-normal">
+                          {item.description}{" "}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                   <div
-                    key={item.id}
-                    className="border rounded-lg w-full md:w-1/2"
-                  >
-                    <div className="text-primary bg-lilac p-2">
-                      <span className="flex text-xs font-normal items-center gap-2">
-                        <LabOrderSvg
-                          color="#5456AD"
-                          width={10}
-                          height={10}
-                        />
-                        Lab Panel - {item.title}
-                      </span>
-                    </div>
-                    <div className="p-2">
-                      <p className="text-xs font-normal">{item.description} </p>
-                    </div>
-                  </div>
-                   <div
-                    key={item.id}
-                    className="border rounded-lg w-full md:w-1/2"
-                  >
-                    <div className="text-primary bg-lilac p-2">
-                      <span className="flex text-xs font-normal items-center gap-2">
-                        <LabOrderSvg
-                          color="#5456AD"
-                          width={10}
-                          height={10}
-                        />
-                        Lab Panel - {item.title}
-                      </span>
-                    </div>
-                    <div className="p-2">
-                      <p className="text-xs font-normal">{item.description} </p>
-                    </div>
-                  </div>
-                </>
-                 
+                  </>
                 );
               })}
             </div>
           </div>
 
           <div className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014] relative">
-            <DetailsCard id="notesOverview" title="Notes" fields={[]} />
-
+            <DetailsCard
+              id="notesOverview"
+              title="Notes"
+              fields={[]}
+              icon={<NotesSvg color="#000000" width={18} height={18} />}
+            />
             <Button
               onClick={() => setOpenAddNotes(true)}
-              className="absolute right-6 top-4 z-50 cursor-pointer rounded-[50px] bg-black text-white"
+              className="absolute right-6 top-4 z-50 cursor-pointer  bg-black text-white hover:bg-gray-800 px-4 py-2"
             >
-              + Add Notes
+              <Plus className="w-4 h-4 mx-1" />
+              ADD NOTE
             </Button>
 
-            <div className="mt-4 space-y-3 p-6">
+            <div className="mt-4 space-y-3 p-6 h-[350px] overflow-y-auto rounded-lg">
               {isLoading || isDeleting || isFetching ? (
                 <div className="flex justify-center py-8">
                   <LoadingSpinner />{" "}
