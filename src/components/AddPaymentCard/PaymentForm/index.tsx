@@ -16,7 +16,11 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { useAppDispatch } from "@/redux/store";
 import { baseApi } from "@/redux/services";
-import { TAG_GET_PAYMENT_METHODS } from "@/types/baseApiTags";
+import {
+  TAG_GET_PATIENT_CARDS,
+  TAG_GET_PAYMENT_METHODS,
+} from "@/types/baseApiTags";
+import { useAddPaymentMethodMutation } from "@/redux/services/paymentMethod";
 
 interface StripeWrapperProps {
   elementType: "number" | "expiry" | "cvc";
@@ -29,6 +33,7 @@ interface StripeWrapperProps {
 interface CustomCardFormProps {
   handleClose: (arg1: boolean) => void;
   onPaymentMethodCreated?: (paymentMethod: any) => void;
+  patientId?: string;
 }
 
 const StripeCardField: React.FC<StripeWrapperProps> = ({
@@ -80,12 +85,16 @@ const StripeCardField: React.FC<StripeWrapperProps> = ({
   );
 };
 
-const CustomCardForm = ({ handleClose, onPaymentMethodCreated }: CustomCardFormProps) => {
+const CustomCardForm = ({
+  handleClose,
+  onPaymentMethodCreated,
+  patientId,
+}: CustomCardFormProps) => {
   //   const navigate = useNavigate();
   const dispatch = useAppDispatch();
   const stripe = useStripe();
   const elements = useElements();
-
+  const [addPaymentCard, { isLoading }] = useAddPaymentMethodMutation();
   const [cardholderName, setCardholderName] = useState("");
   const [zip, setZip] = useState("");
 
@@ -133,7 +142,15 @@ const CustomCardForm = ({ handleClose, onPaymentMethodCreated }: CustomCardFormP
       }
 
       if (paymentMethod?.id) {
+        if (patientId) {
+          await addPaymentCard({
+            patientId: patientId,
+            paymentMethodId: paymentMethod.id,
+          }).unwrap();
+        }
+
         dispatch(baseApi.util.invalidateTags([TAG_GET_PAYMENT_METHODS]));
+        dispatch(baseApi.util.invalidateTags([TAG_GET_PATIENT_CARDS]));
         setCardholderName("");
         setZip("");
         elements.getElement(CardNumberElement)?.clear();
@@ -249,7 +266,7 @@ const CustomCardForm = ({ handleClose, onPaymentMethodCreated }: CustomCardFormP
         </Button>
         <Button
           type="submit"
-          disabled={!stripe || isProcessing}
+          disabled={!stripe || isProcessing || isLoading}
           variant={"ctrl"}
           //   size={"xl"}
         >
