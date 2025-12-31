@@ -36,6 +36,7 @@ export const ROUTES = {
   SUBSCRIPTIONS_PATH: "subscriptions",
   CREATE_SUBSCRIPTION: "/subscriptions/create",
   SUBSCRIPTION_DETAILS: "/subscriptions/:id",
+  SUBSCRIPTION_EDIT: "/edit-subscription/:id",
   COUPONS_PATH: "/coupons",
   COUPONS_CREATE: "/coupons/create",
   COUPONS_EDIT: "/coupons/:id/edit",

@@ -138,7 +138,7 @@ export default function EditCommerceOrder() {
             ],
           },
           stepTwo: {
-            address: data?.addressId || "",
+            address: data?.address?._id || "",
           },
           selectedAddress: {
             shippingAddress: undefined,

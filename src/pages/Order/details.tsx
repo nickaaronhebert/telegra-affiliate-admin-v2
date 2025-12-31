@@ -493,22 +493,22 @@ export default function ViewEcommerceOrderDetails() {
               },
             ]}
             billingAddress={{
-              address: `${data?.billingDetails?.address1}${
-                data?.billingDetails?.address2
-                  ? ", " + data?.billingDetails?.address2
+              address: `${data?.address?.billing?.address1}${
+                data?.address?.billing?.address2
+                  ? ", " + data?.address?.billing?.address2
                   : ""
               }`,
-              city: data?.billingDetails?.city || "-",
-              zipcode: data?.billingDetails?.zipcode || "-",
+              city: data?.address?.billing?.city || "-",
+              zipcode: data?.address?.billing?.zipcode || "-",
             }}
             shippingAddress={{
-              address: `${data?.shippingDetails?.address1}${
-                data?.shippingDetails?.address2
-                  ? ", " + data?.shippingDetails?.address2
+              address: `${data?.address?.shipping?.address1}${
+                data?.address?.shipping?.address2
+                  ? ", " + data?.address?.shipping?.address2
                   : ""
               }`,
-              city: data?.shippingDetails?.city || "-",
-              zipcode: data?.shippingDetails?.zipcode || "-",
+              city: data?.address?.shipping?.city || "-",
+              zipcode: data?.address?.shipping?.zipcode || "-",
             }}
           />
 
@@ -544,7 +544,7 @@ export default function ViewEcommerceOrderDetails() {
               {
                 label: "Currency",
                 capitalize: true,
-                value: data?.paymentDetails?.currency || "-",
+                value: data?.paymentDetails?.currency || "USD",
               },
             ]}
           />

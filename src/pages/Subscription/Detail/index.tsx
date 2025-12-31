@@ -7,7 +7,7 @@ import {
 } from "@/redux/services/subscription";
 import { Activity, Pill, Users, Box } from "lucide-react";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import CubeSVG from "@/assets/icons/Cube";
 import { Button } from "@/components/ui/button";
 import RelatedOrder from "./RelatedOrder";
@@ -90,13 +90,21 @@ export default function SubscriptionDetail() {
         linkTitle="<- Back to subscriptions"
         linkUrl="/subscriptions"
       >
-        <Button
-          variant={"transparent"}
-          className="border-destructive text-destructive"
-          onClick={() => setIsCancelOpen(true)}
-        >
-          Cancel Subscription
-        </Button>
+        <div className="flex items-center gap-2.5 ">
+          <Link
+            to={`/edit-subscription/${id}`}
+            className="rounded-2xl bg-[#3E4D61] text-white py-2 px-5 cursor-pointer text-sm font-semibold"
+          >
+            Edit Subscription
+          </Link>
+          <Button
+            variant={"transparent"}
+            className="border-destructive text-destructive"
+            onClick={() => setIsCancelOpen(true)}
+          >
+            Cancel Subscription
+          </Button>
+        </div>
       </Header>
       <div className="flex gap-8 px-14 mt-6">
         <div

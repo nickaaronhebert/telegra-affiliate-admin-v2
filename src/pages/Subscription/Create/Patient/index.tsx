@@ -19,6 +19,9 @@ import { useAppDispatch, useTypedSelector } from "@/redux/store";
 import { nextStep, updatePatientDetails } from "@/redux/slices/subscription";
 import type { Patient } from "@/types/responses/patient";
 
+interface PatientProps {
+  disabled?: boolean;
+}
 export function formatToMMDDYYYY(dateStr: string): string {
   const date = new Date(dateStr);
 
@@ -33,7 +36,7 @@ export function formatToMMDDYYYY(dateStr: string): string {
   return `${mm}/${dd}/${yyyy}`;
 }
 
-export default function Patient() {
+export default function Patient({ disabled = false }: PatientProps) {
   const patientDetails = useTypedSelector(
     (state) => state.subscription.patient
   );
@@ -81,6 +84,7 @@ export default function Patient() {
                     </FormLabel>
                     <FormControl>
                       <PatientSearch
+                        disabled={disabled}
                         selectedPatient={field.value}
                         onSelect={(patient: Patient | null) => {
                           if (!patient) field.onChange(null);
