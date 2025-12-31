@@ -1,8 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Upload } from "lucide-react";
+import { toast } from "sonner";
+import {
+    useGetBrandIdentityQuery,
+    useUpdateBrandIdentityMutation,
+    useLazyGetFrontendConfigurationQuery,
+    useUploadLogoMutation,
+} from "@/redux/services/brandIdentity";
+import type { IBrandIdentityEmbeddedStyle, IFrontendConfigurationEmbeddedStyle } from "@/types/responses/brandIdentity";
 
 interface BrandIdentityProps {
     sectionRef: React.RefObject<HTMLDivElement | null>;
@@ -18,12 +26,43 @@ interface BrandFormData {
     neutralColor: string;
 }
 
+// Helper function to extract color from embedded styles
+const getColorFromStyles = (
+    styles: IBrandIdentityEmbeddedStyle[] | undefined,
+    variableName: string,
+    defaultValue: string
+): string => {
+    if (!styles || styles.length === 0) return defaultValue;
+    const globalStyle = styles.find((s) => s.elementType === "global");
+    if (!globalStyle) return defaultValue;
+    const color = globalStyle.colors.find((c) => c.variableName === variableName);
+    return color?.variableValue || defaultValue;
+};
+
+// Helper function to extract color from frontend configuration embedded styles
+const getColorFromFrontendConfigStyles = (
+    styles: IFrontendConfigurationEmbeddedStyle[] | undefined,
+    variableName: string,
+    defaultValue: string
+): string => {
+    if (!styles || styles.length === 0) return defaultValue;
+    const globalStyle = styles.find((s) => s.elementType === "global");
+    if (!globalStyle) return defaultValue;
+    const color = globalStyle.colors.find((c) => c.variableName === variableName);
+    return color?.variableValue || defaultValue;
+};
+
 export default function BrandIdentity({
     sectionRef,
 }: BrandIdentityProps) {
+    const { data: brandIdentity, isLoading } = useGetBrandIdentityQuery();
+    const [updateBrandIdentity] = useUpdateBrandIdentityMutation();
+    const [getFrontendConfiguration, { isLoading: isLoadingFrontendConfig }] = useLazyGetFrontendConfigurationQuery();
+    const [uploadLogo, { isLoading: isUploadingLogo }] = useUploadLogoMutation();
+
     const [formData, setFormData] = useState<BrandFormData>({
-        brandName: "Your Brand",
-        brandTagline: "Your brand tagline here",
+        brandName: "",
+        brandTagline: "",
         brandLogo: null,
         logoPreview: null,
         primaryColor: "#5456ad",
@@ -33,6 +72,33 @@ export default function BrandIdentity({
 
     const [isUpdating, setIsUpdating] = useState(false);
 
+    // Initialize form data from API response
+    useEffect(() => {
+        if (brandIdentity) {
+            setFormData({
+                brandName: brandIdentity.appName || "",
+                brandTagline: brandIdentity.appTagline || "",
+                brandLogo: null,
+                logoPreview: brandIdentity.appLogo || null,
+                primaryColor: getColorFromStyles(
+                    brandIdentity.embeddedStyles,
+                    "--theme-primary",
+                    "#5456ad"
+                ),
+                accentColor: getColorFromStyles(
+                    brandIdentity.embeddedStyles,
+                    "--theme-secondary",
+                    "#d8b8f3"
+                ),
+                neutralColor: getColorFromStyles(
+                    brandIdentity.embeddedStyles,
+                    "--theme-light",
+                    "#fcf9ff"
+                ),
+            });
+        }
+    }, [brandIdentity]);
+
     const handleInputChange = (field: keyof BrandFormData, value: string) => {
         setFormData((prev) => ({
             ...prev,
@@ -40,65 +106,157 @@ export default function BrandIdentity({
         }));
     };
 
-    const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleLogoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
             // Validate file type
             const validTypes = ["image/jpeg", "image/png", "image/gif"];
             if (!validTypes.includes(file.type)) {
-                alert("Please upload a JPG, JPEG, PNG, or GIF file");
+                toast.error("Please upload a JPG, JPEG, PNG, or GIF file", { duration: 3000 });
                 return;
             }
 
             // Validate file size (200kb)
             if (file.size > 200 * 1024) {
-                alert("File size must be less than 200kb");
+                toast.error("File size must be less than 200kb", { duration: 3000 });
                 return;
             }
 
             const reader = new FileReader();
-            reader.onloadend = () => {
-                setFormData((prev) => ({
-                    ...prev,
-                    brandLogo: file,
-                    logoPreview: reader.result as string,
-                }));
+            reader.onloadend = async () => {
+                const base64String = reader.result as string;
+                try {
+                    const response = await uploadLogo({
+                        picture: {
+                            fileData: base64String,
+                            fileName: file.name,
+                        },
+                    }).unwrap();
+                    setFormData((prev) => ({
+                        ...prev,
+                        brandLogo: file,
+                        logoPreview: response.picture || base64String,
+                    }));
+                } catch (err) {
+                    console.error("Failed to upload logo:", err);
+                    toast.error("Failed to upload logo. Please try again.", { duration: 3000 });
+                }
             };
             reader.readAsDataURL(file);
         }
     };
 
-    const handleImportFromAccount = () => {
-        // TODO: Implement API call to import brand settings from main account
-        alert("Import functionality will be implemented with API integration");
+    const handleImportFromAccount = async () => {
+        try {
+            const result = await getFrontendConfiguration().unwrap();
+            setFormData({
+                brandName: result.appName || "",
+                brandTagline: result.appTagline || "",
+                brandLogo: null,
+                logoPreview: result.appLogo || null,
+                primaryColor: getColorFromFrontendConfigStyles(
+                    result.embeddedStyles,
+                    "--theme-primary",
+                    "#5456ad"
+                ),
+                accentColor: getColorFromFrontendConfigStyles(
+                    result.embeddedStyles,
+                    "--theme-secondary",
+                    "#d8b8f3"
+                ),
+                neutralColor: getColorFromFrontendConfigStyles(
+                    result.embeddedStyles,
+                    "--theme-light",
+                    "#fcf9ff"
+                ),
+            });
+        } catch (err) {
+            console.error("Failed to import brand settings:", err);
+            toast.error("Failed to import brand settings. Please try again.", { duration: 3000 });
+        }
     };
 
     const handleSave = async () => {
         setIsUpdating(true);
         try {
-            // TODO: Implement API call to save brand identity
-            console.log("Saving brand identity:", formData);
-            alert("Brand identity saved successfully!");
+            const embeddedStyles: IBrandIdentityEmbeddedStyle[] = [
+                {
+                    elementType: "global",
+                    elementIdentifier: "global",
+                    backgroundImages: [],
+                    backgroundType: "default",
+                    colors: [
+                        {
+                            category: "brand_colors",
+                            variableName: "--theme-primary",
+                            variableValue: formData.primaryColor,
+                        },
+                        {
+                            category: "brand_colors",
+                            variableName: "--theme-secondary",
+                            variableValue: formData.accentColor,
+                        },
+                        {
+                            category: "brand_colors",
+                            variableName: "--theme-light",
+                            variableValue: formData.neutralColor,
+                        },
+                    ],
+                    fontFamilies: [],
+                },
+            ];
+
+            await updateBrandIdentity({
+                appName: formData.brandName,
+                appTagline: formData.brandTagline,
+                appLogo: formData.logoPreview || undefined,
+                embeddedStyles,
+            }).unwrap();
+            toast.success("Brand identity saved successfully!", { duration: 1500 });
         } catch (err) {
             console.error("Failed to save brand identity:", err);
-            alert("Failed to save brand identity. Please try again.");
+            toast.error("Failed to save brand identity. Please try again.", { duration: 3000 });
         } finally {
             setIsUpdating(false);
         }
     };
 
     const handleCancel = () => {
-        // Reset to initial state
-        setFormData({
-            brandName: "Your Brand",
-            brandTagline: "Your brand tagline here",
-            brandLogo: null,
-            logoPreview: null,
-            primaryColor: "#5456ad",
-            accentColor: "#d8b8f3",
-            neutralColor: "#fcf9ff",
-        });
+        // Reset to API data
+        if (brandIdentity) {
+            setFormData({
+                brandName: brandIdentity.appName || "",
+                brandTagline: brandIdentity.appTagline || "",
+                brandLogo: null,
+                logoPreview: brandIdentity.appLogo || null,
+                primaryColor: getColorFromStyles(
+                    brandIdentity.embeddedStyles,
+                    "--theme-primary",
+                    "#5456ad"
+                ),
+                accentColor: getColorFromStyles(
+                    brandIdentity.embeddedStyles,
+                    "--theme-secondary",
+                    "#d8b8f3"
+                ),
+                neutralColor: getColorFromStyles(
+                    brandIdentity.embeddedStyles,
+                    "--theme-light",
+                    "#fcf9ff"
+                ),
+            });
+        }
     };
+
+    if (isLoading) {
+        return (
+            <div ref={sectionRef} className="space-y-6">
+                <div className="flex justify-center items-center p-8">
+                    <p className="text-gray-500">Loading brand identity...</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div ref={sectionRef} className="space-y-6">
@@ -119,9 +277,10 @@ export default function BrandIdentity({
                             variant="outline"
                             size="sm"
                             onClick={handleImportFromAccount}
+                            disabled={isLoadingFrontendConfig}
                             className="text-xs bg-black text-white hover:bg-gray-800 hover:text-white pointer font-semibold px-10 py-5 border-0 rounded"
                         >
-                            APPLY FROM MY ACCOUNT SETTINGS
+                            {isLoadingFrontendConfig ? "IMPORTING..." : "APPLY FROM MY ACCOUNT SETTINGS"}
                         </Button>
                     </div>
                     {/* Brand Name */}
@@ -177,13 +336,14 @@ export default function BrandIdentity({
                                         <Button
                                             variant="outline"
                                             size="sm"
+                                            disabled={isUploadingLogo}
                                             onClick={() =>
                                                 document
                                                     .getElementById("logo-upload")
                                                     ?.click()
                                             }
                                         >
-                                            Change Logo
+                                            {isUploadingLogo ? "Uploading..." : "Change Logo"}
                                         </Button>
                                     </div>
                                 ) : (
@@ -192,13 +352,14 @@ export default function BrandIdentity({
                                         <Button
                                             variant="outline"
                                             size="sm"
+                                            disabled={isUploadingLogo}
                                             onClick={() =>
                                                 document
                                                     .getElementById("logo-upload")
                                                     ?.click()
                                             }
                                         >
-                                            Upload
+                                            {isUploadingLogo ? "Uploading..." : "Upload"}
                                         </Button>
                                     </div>
                                 )}
@@ -383,13 +544,14 @@ export default function BrandIdentity({
                             variant="outline"
                             onClick={handleCancel}
                             disabled={isUpdating}
+                            className="cursor-pointer"
                         >
                             Cancel
                         </Button>
                         <Button
                             onClick={handleSave}
                             disabled={isUpdating}
-                            className="bg-black text-white hover:bg-gray-800"
+                            className="bg-black text-white hover:bg-gray-800 cursor-pointer"
                         >
                             {isUpdating ? "Saving..." : "Save"}
                         </Button>

@@ -41,6 +41,7 @@ import {
   TAG_AFFILIATE_DETAILS,
   TAG_GET_TEMPLATES,
   TAG_GET_TEAM_MANAGEMENT,
+  TAG_BRAND_IDENTITY,
 } from "@/types/baseApiTags";
 
 export const baseApi = createApi({
@@ -86,6 +87,7 @@ export const baseApi = createApi({
     TAG_AFFILIATE_DETAILS,
     TAG_GET_TEMPLATES,
     TAG_GET_TEAM_MANAGEMENT,
+    TAG_BRAND_IDENTITY,
   ],
   baseQuery: fetchBaseQuery({
     baseUrl: import.meta.env.VITE_BASE_BACKEND_URL || "http://localhost:7009",

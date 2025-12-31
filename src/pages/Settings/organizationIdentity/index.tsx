@@ -1,9 +1,10 @@
-import React, { useMemo, useRef, useState } from "react";
+import React, { useMemo, useRef, useState, useEffect } from "react";
 import CompanyDetailsSection from "./CompanyDetailsSection";
 import BrandIdentity from "./BrandIdentity";
 import CommunicationsSection from "./CommunicationsSection";
 import CompanyDetailsSidebar from "./sidebar";
 import { ArrowRight } from "lucide-react";
+import { useGetAffiliateDetailsQuery } from "@/redux/services/organizationIdentity";
 
 export const OrganizationIdentityPage = () => {
   const companyDetailsRef = useRef<HTMLDivElement>(null);
@@ -11,9 +12,9 @@ export const OrganizationIdentityPage = () => {
   const communicationsRef = useRef<HTMLDivElement>(null);
   const contentRef = useRef<HTMLDivElement | null>(null);
   const [activeSection, setActiveSection] = useState("company-details");
-
+  const { data: affiliateDetails } = useGetAffiliateDetailsQuery();
   // Track active section on scroll
-  React.useEffect(() => {
+  useEffect(() => {
     const handleScroll = () => {
       if (!contentRef.current) return;
 
@@ -101,7 +102,9 @@ export const OrganizationIdentityPage = () => {
             {/* Main content */}
             <div ref={contentRef} className="flex-1 min-w-0 space-y-6">
               <CompanyDetailsSection sectionRef={companyDetailsRef} />
-              <BrandIdentity sectionRef={brandIdentityRef} />
+              {affiliateDetails?.whiteLabeling && (
+                <BrandIdentity sectionRef={brandIdentityRef} />
+              )}
               <CommunicationsSection sectionRef={communicationsRef} />
             </div>
           </div>
