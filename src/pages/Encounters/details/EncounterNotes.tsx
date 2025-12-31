@@ -1,7 +1,11 @@
 import NotesSvg from "@/assets/icons/Notes";
 import { Button } from "@/components/ui/button";
 import type { EncounterDetail } from "@/types/responses/encounter";
-import { useDeleteNoteMutation, useGetEncounterNotesQuery, type Note } from "@/redux/services/notes";
+import {
+  useDeleteNoteMutation,
+  useGetEncounterNotesQuery,
+  type Note,
+} from "@/redux/services/notes";
 import { Plus } from "lucide-react";
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
@@ -9,6 +13,7 @@ import NoteDetailCard from "@/components/common/NoteDetailCard/NoteDetailCard";
 import { ConfirmDialog } from "@/components/common/Dialog";
 import AddNotes from "@/components/AddNotes";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import NoData from "@/assets/icons/NoData";
 
 interface EncounterNotesProps {
   encounter: EncounterDetail;
@@ -21,9 +26,10 @@ const EncounterNotes = ({ encounter }: EncounterNotesProps) => {
   const [openAddNotes, setOpenAddNotes] = useState(false);
 
   // Fetch encounter notes using the API
-  const { data: encounterNotes = [], isLoading: isLoadingNotes } = useGetEncounterNotesQuery(encounter?.id || "", {
-    skip: !encounter?.id,
-  });
+  const { data: encounterNotes = [], isLoading: isLoadingNotes } =
+    useGetEncounterNotesQuery(encounter?.id || "", {
+      skip: !encounter?.id,
+    });
 
   useEffect(() => {
     setNotes(encounterNotes);
@@ -74,14 +80,19 @@ const EncounterNotes = ({ encounter }: EncounterNotesProps) => {
           </Button>
         </div>
 
-        <div className="mt-4 space-y-3 overflow-y-auto rounded-lg h-[350px]">
+        <div
+          className={`mt-4 space-y-3 overflow-y-auto rounded-lg ${
+            notes.length === 0 ? "h-[200px] justify-center" : "h-[350px]"
+          }`}
+        >
           {isLoadingNotes || isDeleting ? (
             <div className="flex justify-center py-8">
               <LoadingSpinner />
             </div>
           ) : notes.length === 0 ? (
-            <div className="flex justify-center py-8">
-              <div className="text-sm text-gray-500">No notes available</div>
+            <div className="flex items-center justify-center flex-col gap-2 mt-4">
+              <NoData />
+              <span className="text-gray-400">No Notes Found</span>
             </div>
           ) : (
             notes.map((note: Note) => (
