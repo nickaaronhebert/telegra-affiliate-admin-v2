@@ -43,6 +43,7 @@ export const ROUTES = {
   PRODUCT_VARIATIONS_PATH: "settings/product-list",
   FINANCIAL_MANAGEMENT_PATH: "/settings/financial-management",
   PRODUCTS_CREATE: "/products/create",
+  PRODUCTS_CREATE_EDIT: "/products/create/:id",
   PRODUCTS_EDIT: "products/edit",
   JOURNEYS_PATH: "/journeys",
   JOURNEYS_EDIT: "/journeys/:id/edit",

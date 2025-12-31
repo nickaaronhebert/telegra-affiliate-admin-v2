@@ -115,7 +115,6 @@ const EditProductPage = () => {
         sku: productData.sku || "",
         productType: productData.productType || "",
         regularPrice: productData.regularPrice?.toString() || "",
-        imageUrl: productData.imageUrl || "",
         subscriptionPeriod: "",
         subscriptionPeriodInterval: "",
         subscriptionLength: productData.subscriptionLength?.toString() || "",

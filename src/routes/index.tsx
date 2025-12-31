@@ -140,6 +140,10 @@ export const router = createBrowserRouter([
         element: <CreateProductPage />,
       },
       {
+        path: ROUTES.PRODUCTS_CREATE_EDIT,
+        element: <CreateProductPage />,
+      },
+      {
         path: "products/:id",
         element: <EditProductPage />,
       },
