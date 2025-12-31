@@ -2,6 +2,8 @@ import {
   useCancelOrderMutation,
   useViewOrderByIdQuery,
 } from "@/redux/services/order";
+import { Skeleton } from "@/components/ui/skeleton";
+
 import dayjs from "@/lib/dayjs";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { Activity } from "lucide-react";
@@ -17,7 +19,7 @@ import { toast } from "sonner";
 
 interface EntityDetailProps {
   title: string;
-
+  isLoading?: boolean;
   fields: {
     label: string;
     value: string;
@@ -42,6 +44,7 @@ interface AddressCardProps {
   address: string;
   city: string;
   zipcode: string;
+  isLoading?: boolean;
 }
 
 interface ProductVariationsProps {
@@ -54,6 +57,7 @@ interface ProductVariationsProps {
 }
 
 interface DetailCardProps {
+  isLoading?: boolean;
   title: string;
   id: string;
   fields: {
@@ -152,7 +156,13 @@ function ProductVariations({ items }: ProductVariationsProps) {
   );
 }
 
-function AddressCard({ title, address, city, zipcode }: AddressCardProps) {
+function AddressCard({
+  title,
+  address,
+  city,
+  zipcode,
+  isLoading,
+}: AddressCardProps) {
   return (
     <div className="w-[48%] border border-card-border rounded-2xl ">
       <h3 className="text-sm font-semibold px-4 py-2.5 bg-gray-100 rounded-tl-2xl rounded-tr-2xl">
@@ -161,15 +171,30 @@ function AddressCard({ title, address, city, zipcode }: AddressCardProps) {
       <div className="p-4 space-y-[15px]">
         <div>
           <h5 className="text-sm font-normal text-[#63627F]">Address</h5>
-          <h5 className="text-sm font-medium">{address}</h5>
+          {isLoading ? (
+            <Skeleton className="h-4 w-32 mt-3" />
+          ) : (
+            <h5 className="text-sm font-medium">{address}</h5>
+          )}
+          {/* <h5 className="text-sm font-medium">{address}</h5> */}
         </div>
         <div>
           <h5 className="text-sm font-normal text-[#63627F]">City</h5>
-          <h5 className="text-sm font-medium">{city}</h5>
+          {isLoading ? (
+            <Skeleton className="h-4 w-32 mt-3" />
+          ) : (
+            <h5 className="text-sm font-medium">{city}</h5>
+          )}
+          {/* <h5 className="text-sm font-medium">{city}</h5> */}
         </div>
         <div>
           <h5 className="text-sm font-normal text-[#63627F]">Zip Code</h5>
-          <h5 className="text-sm font-medium">{zipcode}</h5>
+          {isLoading ? (
+            <Skeleton className="h-4 w-32 mt-3" />
+          ) : (
+            <h5 className="text-sm font-medium">{zipcode}</h5>
+          )}
+          {/* <h5 className="text-sm font-medium">{zipcode}</h5> */}
         </div>
       </div>
     </div>
@@ -180,6 +205,7 @@ function PatientDetail({
   fields,
   billingAddress,
   shippingAddress,
+  isLoading,
 }: EntityDetailProps) {
   return (
     <div
@@ -201,7 +227,8 @@ function PatientDetail({
                 capitalize ? "capitalize" : ""
               }`}
             >
-              {value}
+              {isLoading ? <Skeleton className="h-4 w-32 mt-3" /> : value}
+              {/* {value} */}
             </span>
           </div>
         ))}
@@ -213,6 +240,7 @@ function PatientDetail({
           city={billingAddress.city}
           zipcode={billingAddress.zipcode}
           title="Billing Details"
+          isLoading={isLoading}
         />
 
         <AddressCard
@@ -220,13 +248,14 @@ function PatientDetail({
           city={shippingAddress.city}
           zipcode={shippingAddress.zipcode}
           title="Shipping Details"
+          isLoading={isLoading}
         />
       </div>
     </div>
   );
 }
 
-function DetailsCard({ title, fields, id }: DetailCardProps) {
+function DetailsCard({ title, fields, id, isLoading }: DetailCardProps) {
   return (
     <div
       className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014]"
@@ -248,7 +277,7 @@ function DetailsCard({ title, fields, id }: DetailCardProps) {
                 capitalize ? "capitalize" : ""
               }`}
             >
-              {value}
+              {isLoading ? <Skeleton className="h-4 w-32 mt-3" /> : value}
             </span>
           </div>
         ))}
@@ -260,7 +289,8 @@ function DetailsCard({ title, fields, id }: DetailCardProps) {
 export default function ViewEcommerceOrderDetails() {
   const navigate = useNavigate();
 
-  const [cancelEcommerceOrder] = useCancelOrderMutation();
+  const [cancelEcommerceOrder, { isLoading: isCancelling }] =
+    useCancelOrderMutation();
   const [cancelOrder, setCancelOrder] = useState(false);
   const [activeTab, setActiveTab] = useState<
     | "patientInformation"
@@ -269,24 +299,27 @@ export default function ViewEcommerceOrderDetails() {
     | "paymentInformation"
   >("orderOverview");
   const { id } = useParams();
-  const { data } = useViewOrderByIdQuery(id as string, {
-    skip: !id,
-    selectFromResult: ({ data, isLoading, isError }) => ({
-      data: {
-        ...data,
-        items: data?.productVariations?.map((item) => {
-          return {
-            name: item.name,
-            price: item.pricePerUnitOverride,
-            quantity: item.quantity,
-            total: item.pricePerUnitOverride * item.quantity,
-          };
-        }),
-      },
-      isLoading,
-      isError,
-    }),
-  });
+  const { data, isLoading: isLoadingOrder } = useViewOrderByIdQuery(
+    id as string,
+    {
+      skip: !id,
+      selectFromResult: ({ data, isLoading, isError }) => ({
+        data: {
+          ...data,
+          items: data?.productVariations?.map((item) => {
+            return {
+              name: item.name,
+              price: item.pricePerUnitOverride,
+              quantity: item.quantity,
+              total: item.pricePerUnitOverride * item.quantity,
+            };
+          }),
+        },
+        isLoading,
+        isError,
+      }),
+    }
+  );
 
   function handleEditClick() {
     navigate(`/edit-order/${id}`);
@@ -349,7 +382,11 @@ export default function ViewEcommerceOrderDetails() {
               </div>
               <div>
                 <h4 className="text-base font-semibold text-black">
-                  {`Order #${data?.ecommerceOrderId ?? "-"}`}
+                  {isLoadingOrder ? (
+                    <Skeleton className="h-4 w-32 mt-3" />
+                  ) : (
+                    `Order #${data?.ecommerceOrderId ?? "-"}`
+                  )}
                 </h4>
                 {/* <h6 className="text-xs font-normal text-[#3E4D61]">
                   {transmissionsLength} Transmission{" "}
@@ -392,6 +429,7 @@ export default function ViewEcommerceOrderDetails() {
           <DetailsCard
             id="orderOverview"
             title="Order Overview"
+            isLoading={isLoadingOrder}
             fields={[
               {
                 label: "Status",
@@ -423,6 +461,7 @@ export default function ViewEcommerceOrderDetails() {
             ]}
           />
           <PatientDetail
+            isLoading={isLoadingOrder}
             title="Patient Details"
             fields={[
               {
@@ -486,6 +525,7 @@ export default function ViewEcommerceOrderDetails() {
           </div>
 
           <DetailsCard
+            isLoading={isLoadingOrder}
             id="paymentInformation"
             title="Payment Information"
             fields={[
@@ -515,7 +555,9 @@ export default function ViewEcommerceOrderDetails() {
         <ConfirmDialog
           open={cancelOrder}
           onOpenChange={setCancelOrder}
+          isLoading={isCancelling}
           title="Cancel Commerce Order?"
+          description=""
           onConfirm={async () => {
             await cancelEcommerceOrder(id as string)
               .unwrap()
