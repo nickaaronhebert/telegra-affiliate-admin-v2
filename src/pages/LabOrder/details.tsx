@@ -212,7 +212,7 @@ export default function LabOrderDetails() {
             ) : data?.labPanels?.length === 0 ? (
               <div className="flex p-4 items-center justify-center flex-col gap-2 mt-4">
                 <NoData />
-                <span className="text-gray-400">No Notes Found</span>
+                <span className="text-gray-400">No Lab Orders Found</span>
               </div>
             ) : (
               <div className="p-2">
