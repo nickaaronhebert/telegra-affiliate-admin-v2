@@ -41,3 +41,4 @@ export const TAG_PAYMENT_PROCESSOR = "PaymentProcessor" as const;
 export const TAG_GET_TAGS = "Tags" as const;
 export const TAG_AFFILIATE_DETAILS = "AffiliateDetails" as const;
 export const TAG_BRAND_IDENTITY = "BrandIdentity" as const;
+export const TAG_GET_PATIENT_CARDS = "PatientCards" as const;

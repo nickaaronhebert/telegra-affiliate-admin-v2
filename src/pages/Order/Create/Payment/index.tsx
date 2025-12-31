@@ -1,4 +1,3 @@
-import { useViewPatientPaymentMethodQuery } from "@/redux/services/paymentMethod";
 import { useAppDispatch, useTypedSelector } from "@/redux/store";
 import { selectOrderPaymentSchema } from "@/schemas/selectOrderPayment";
 import { Spinner } from "@/components/ui/spinner";
@@ -34,6 +33,7 @@ import { useNavigate } from "react-router-dom";
 import { ConfirmDialog } from "@/components/common/Dialog";
 import AddStripeCard from "@/components/AddPaymentCard";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { useViewPatientPaymentCardsQuery } from "@/redux/services/paymentMethod";
 
 // const stripePromise = loadStripe(
 //   import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string
@@ -47,12 +47,12 @@ export default function SelectPaymentDetails() {
   const couponRef = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
   const order = useTypedSelector((state) => state.order);
-  const userJson = localStorage.getItem("user");
-  const user = userJson ? JSON.parse(userJson) : null;
+  // const userJson = localStorage.getItem("user");
+  // const user = userJson ? JSON.parse(userJson) : null;
   const { data, isLoading: isPatiendCardLoading } =
-    useViewPatientPaymentMethodQuery({
+    useViewPatientPaymentCardsQuery({
       patient: order.initialStep.patient as string,
-      affiliate: user?.affiliate,
+      // affiliate: user?.affiliate,
     });
 
   const totalAmount = order?.stepOne?.productVariations
@@ -246,25 +246,22 @@ export default function SelectPaymentDetails() {
                         defaultValue={field.value}
                         onValueChange={field.onChange}
                       >
-                        {data?.map((item) => {
+                        {data?.data?.paymentMethods?.map((item) => {
                           return (
                             <div
-                              key={item.paymentId}
+                              key={item.id}
                               className={cn(
                                 "px-3.5 py-4 flex justify-between border  rounded-[6px]",
-                                field.value === item.paymentId
+                                field.value === item.id
                                   ? " border-[#008CE3] bg-[#E5F3FC]"
                                   : "border-[#DFDFDFE0]"
                               )}
                             >
-                              <Label htmlFor={item.paymentId}>
+                              <Label htmlFor={item.id}>
                                 <CreditCard stroke="#3E4D61" size={14} />
                                 <span>{`Credit Ending in ${item.last4}`}</span>
                               </Label>
-                              <RadioGroupItem
-                                id={item.paymentId}
-                                value={item.paymentId}
-                              />
+                              <RadioGroupItem id={item.id} value={item.id} />
                             </div>
                           );
                         })}
@@ -316,7 +313,10 @@ export default function SelectPaymentDetails() {
         onConfirm={() => {}}
         showFooter={false}
       >
-        <AddStripeCard handleClose={setAddCardModal} />
+        <AddStripeCard
+          handleClose={setAddCardModal}
+          patientId={order.initialStep.patient as string}
+        />
       </ConfirmDialog>
     </div>
   );
