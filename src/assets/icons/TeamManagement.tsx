@@ -6,6 +6,7 @@ export default function TeamManagementSVG() {
       viewBox="0 0 26 26"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      className="!w-[25px] !h-[25px]"
     >
       <path
         d="M11.6657 15.9985H8.33283C7.44891 15.9985 6.60119 16.3497 5.97616 16.9747C5.35114 17.5997 5 18.4474 5 19.3314V20.9978"

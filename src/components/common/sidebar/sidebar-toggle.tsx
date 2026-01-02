@@ -13,7 +13,7 @@ export function SidebarToggle({ isOpen, setIsOpen }: SidebarToggleProps) {
     <div className="invisible md:visible absolute top-[25px] -right-[16px] z-20">
       <Button
         onClick={() => setIsOpen?.()}
-        className="rounded-full w-8 h-8 border border-light-border"
+        className="rounded-full w-8 h-8 border border-light-border cursor-pointer bg-white p-0 shadow-md flex items-center justify-center"
         variant="outline"
         size="icon"
       >

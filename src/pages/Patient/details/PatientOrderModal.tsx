@@ -36,6 +36,7 @@ import { useGetAllProductVariationsQuery } from "@/redux/services/productVariati
 import { X } from "lucide-react";
 import type { PatientOrder, PatientDetail } from "@/types/responses/patient";
 import ProductVariationSVG from "@/assets/icons/ProductVariation";
+import { PAYMENT_MECHANISMS } from "@/constants";
 
 interface PatientOrderModalProps {
   isOpen: boolean;
@@ -95,6 +96,14 @@ export function PatientOrderModal({
   );
 
   const watchedUserAddress = form.watch("userAddress");
+  const watchedProject = form.watch("project");
+
+  // Check if selected project uses AffiliatePay
+  const selectedProjectPaymentMechanism = projects.find(
+    (project) => project?.id === watchedProject
+  )?.paymentMechanism;
+  const isAffiliatePay =
+    selectedProjectPaymentMechanism === PAYMENT_MECHANISMS.AffiliatePay;
 
   // Auto-populate address fields when user selects an address
   useEffect(() => {
@@ -184,6 +193,12 @@ export function PatientOrderModal({
 
   const onSubmit = async (data: CreateOrderFormData) => {
     try {
+      const paymentMechanism = projects.find(
+        (project) => project?.id === data?.project
+      )?.paymentMechanism;
+      const isAffiliatePayEnabled =
+        paymentMechanism &&
+        paymentMechanism === PAYMENT_MECHANISMS.AffiliatePay;
       // Get the selected payment method ID (paymentId)
       const selectedPaymentId =
         data.paymentMethod && data.paymentMethod.trim()
@@ -212,7 +227,7 @@ export function PatientOrderModal({
           productVariation: pv.productVariation?.id,
           quantity: pv.quantity,
         })),
-        paymentMethod: selectedPaymentId,
+        paymentMethod: isAffiliatePayEnabled ? null : selectedPaymentId,
         isAddressInSelect: data.userAddress !== "none",
       };
       await createPatientOrder(orderData).unwrap();
@@ -455,47 +470,49 @@ export function PatientOrderModal({
                   </div>
 
                   {/* Credit Card */}
-                  <div className="space-y-4">
-                    <h3 className="text-lg font-semibold">Credit Card</h3>
-                    <FormField
-                      control={form.control}
-                      name="paymentMethod"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Payment Method *</FormLabel>
-                          <FormControl>
-                            <Select
-                              onValueChange={field.onChange}
-                              value={field.value || ""}
-                            >
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select Payment Method" />
-                              </SelectTrigger>
-                              <SelectContent>
-                                {patient?.payment &&
-                                patient.payment.length > 0 ? (
-                                  patient.payment.map((card: any) => (
-                                    <SelectItem
-                                      key={card.paymentId}
-                                      value={card.paymentId}
-                                    >
-                                      {card.cardBrand} ****{card.last4} - Expire{" "}
-                                      {card.expMonth}/{card.expYear}
+                  {!isAffiliatePay && (
+                    <div className="space-y-4">
+                      <h3 className="text-lg font-semibold">Credit Card</h3>
+                      <FormField
+                        control={form.control}
+                        name="paymentMethod"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Payment Method *</FormLabel>
+                            <FormControl>
+                              <Select
+                                onValueChange={field.onChange}
+                                value={field.value || ""}
+                              >
+                                <SelectTrigger className="w-full">
+                                  <SelectValue placeholder="Select Payment Method" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  {patient?.payment &&
+                                  patient.payment.length > 0 ? (
+                                    patient.payment.map((card: any) => (
+                                      <SelectItem
+                                        key={card.paymentId}
+                                        value={card.paymentId}
+                                      >
+                                        {card.cardBrand} ****{card.last4} - Expire{" "}
+                                        {card.expMonth}/{card.expYear}
+                                      </SelectItem>
+                                    ))
+                                  ) : (
+                                    <SelectItem value="none" disabled>
+                                      No payment methods available
                                     </SelectItem>
-                                  ))
-                                ) : (
-                                  <SelectItem value="none" disabled>
-                                    No payment methods available
-                                  </SelectItem>
-                                )}
-                              </SelectContent>
-                            </Select>
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                                  )}
+                                </SelectContent>
+                              </Select>
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  )}
                 </div>
 
                 {/* Right Column - Products */}
