@@ -38,7 +38,7 @@ export default function FinancialManagementPage() {
     useUpdatePaymentProcessorMutation();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [showSecretKey, setShowSecretKey] = useState(false);
+  // const [showSecretKey, setShowSecretKey] = useState(false);
 
   const [formData, setFormData] = useState<UpdatePaymentProcessorRequest>({
     PROCESSOR_TYPE: "",
@@ -96,7 +96,7 @@ export default function FinancialManagementPage() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const maskSecretKey = (key: string) => (key ? "•".repeat(key.length) : "");
+  const maskSecretKey = (key: string) => (key ? "•".repeat(100) : "");
 
   if (isLoading) {
     return (
@@ -158,7 +158,7 @@ export default function FinancialManagementPage() {
                       </DialogHeader>
 
                       <form onSubmit={handleFormSubmit} className="space-y-4">
-                        <div>
+                        <div className="space-y-2">
                           <Label>Payment Processor</Label>
                           <Select
                             value={formData.PROCESSOR_TYPE}
@@ -166,7 +166,7 @@ export default function FinancialManagementPage() {
                               handleInputChange("PROCESSOR_TYPE", v)
                             }
                           >
-                            <SelectTrigger>
+                            <SelectTrigger className="w-full">
                               <SelectValue placeholder="Select processor" />
                             </SelectTrigger>
                             <SelectContent>
@@ -175,7 +175,7 @@ export default function FinancialManagementPage() {
                           </Select>
                         </div>
 
-                        <div>
+                        <div className="space-y-2">
                           <Label>Secret Key</Label>
                           <Input
                             value={formData.STRIPE_SECRET_KEY}
@@ -188,7 +188,7 @@ export default function FinancialManagementPage() {
                           />
                         </div>
 
-                        <div>
+                        <div className="space-y-2">
                           <Label>Publisher Key</Label>
                           <Input
                             value={formData.STRIPE_PUBLISHER_KEY}
@@ -206,10 +206,15 @@ export default function FinancialManagementPage() {
                             type="button"
                             variant="outline"
                             onClick={() => setIsDialogOpen(false)}
+                            className="rounded-2xl cursor-pointer"
                           >
                             Cancel
                           </Button>
-                          <Button type="submit" disabled={isUpdating}>
+                          <Button
+                            type="submit"
+                            disabled={isUpdating}
+                            className="rounded-2xl text-white cursor-pointer"
+                          >
                             {isUpdating ? "Updating..." : "Update"}
                           </Button>
                         </div>
@@ -248,22 +253,25 @@ export default function FinancialManagementPage() {
                           "Not configured"
                         }
                       >
-                        {showSecretKey
+                        {/* {showSecretKey
                           ? normalizedPaymentData?.STRIPE_SECRET_KEY ||
                             "Not configured"
                           : maskSecretKey(
                               normalizedPaymentData?.STRIPE_SECRET_KEY || ""
-                            )}
+                            )} */}
+                        {maskSecretKey(
+                          normalizedPaymentData?.STRIPE_SECRET_KEY || ""
+                        ) || "Not configured"}
                       </span>
 
-                      <Button
+                      {/* <Button
                         variant="ghost"
                         size="sm"
                         className="shrink-0"
                         onClick={() => setShowSecretKey(!showSecretKey)}
                       >
                         {showSecretKey ? <EyeOff /> : <Eye />}
-                      </Button>
+                      </Button> */}
                     </div>
                   </div>
 
