@@ -21,7 +21,7 @@ export const SubscriptionsPage = () => {
   const [searchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1", 10);
   const perPage = parseInt(searchParams.get("per_page") ?? "10", 10);
-  const searchQuery = searchParams.get("q") ?? "";
+  const searchQuery = searchParams.get("patient") ?? "";
 
   const { data, isLoading } = useViewAllSubscriptionsQuery({
     page,

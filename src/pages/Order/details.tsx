@@ -16,8 +16,9 @@ import CubeSVG from "@/assets/icons/Cube";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/common/Dialog";
 import { toast } from "sonner";
-
+import type { ReactNode } from "react";
 interface EntityDetailProps {
+  icon?: ReactNode;
   title: string;
   isLoading?: boolean;
   fields: {
@@ -57,6 +58,7 @@ interface ProductVariationsProps {
 }
 
 interface DetailCardProps {
+  icon?: ReactNode;
   isLoading?: boolean;
   title: string;
   id: string;
@@ -206,6 +208,7 @@ function PatientDetail({
   billingAddress,
   shippingAddress,
   isLoading,
+  icon = <></>,
 }: EntityDetailProps) {
   return (
     <div
@@ -213,8 +216,10 @@ function PatientDetail({
       id="patientInformation"
     >
       <h2 className="text-base font-semibold p-5 border-b border-card-border flex items-center gap-2">
-        {/* <Profile color="black" width={16} height={16} /> */}
-        {title}
+        <div className="flex gap-2 items-center justify-center">
+          {icon}
+          {title}
+        </div>
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7 p-5">
         {fields.map(({ label, value, capitalize }) => (
@@ -255,15 +260,23 @@ function PatientDetail({
   );
 }
 
-function DetailsCard({ title, fields, id, isLoading }: DetailCardProps) {
+function DetailsCard({
+  title,
+  fields,
+  id,
+  isLoading,
+  icon = <></>,
+}: DetailCardProps) {
   return (
     <div
       className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014]"
       id={id}
     >
       <h2 className="text-base font-semibold p-5 border-b border-card-border flex items-center gap-2">
-        {/* <Profile color="black" width={16} height={16} /> */}
-        {title}
+        <div className="flex gap-2 items-center justify-center">
+          {icon}
+          {title}
+        </div>
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7 p-5">
         {fields.map(({ label, value, capitalize }) => (
@@ -427,6 +440,7 @@ export default function ViewEcommerceOrderDetails() {
 
         <div className="w-[70%] space-y-4">
           <DetailsCard
+            icon={<Activity size={16} />}
             id="orderOverview"
             title="Order Overview"
             isLoading={isLoadingOrder}
@@ -461,6 +475,7 @@ export default function ViewEcommerceOrderDetails() {
             ]}
           />
           <PatientDetail
+            icon={<Users size={16} />}
             isLoading={isLoadingOrder}
             title="Patient Details"
             fields={[
@@ -517,14 +532,17 @@ export default function ViewEcommerceOrderDetails() {
             id="orderInformation"
           >
             <h2 className="text-base font-semibold p-5 border-b border-card-border flex items-center gap-2">
-              {/* <Profile color="black" width={16} height={16} /> */}
-              Order Items
+              <div className="flex gap-2 items-center justify-center">
+                <Pill size={16} />
+                Order Items
+              </div>
             </h2>
 
             <ProductVariations items={data?.items ?? []} />
           </div>
 
           <DetailsCard
+            icon={<CreditCard size={16} />}
             isLoading={isLoadingOrder}
             id="paymentInformation"
             title="Payment Information"
