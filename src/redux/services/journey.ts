@@ -42,7 +42,7 @@ const journeyApi = baseApi.injectEndpoints({
     viewJourneyById: builder.query<IGetJourneyById, string>({
       query: (id) => {
         return {
-          url: `/journeyTemplates/${id}`,
+          url: `/journeyTemplates/${id}/affiliate`,
           method: "GET",
         };
       },
@@ -61,7 +61,10 @@ const journeyApi = baseApi.injectEndpoints({
         result ? [{ type: TAG_GET_JOURNEYS, id: "LIST" }] : [],
     }),
 
-    updateJourney: builder.mutation<ICreateJourneyResponse, ICreateJourneyRequest & { journeyId: string }>({
+    updateJourney: builder.mutation<
+      ICreateJourneyResponse,
+      ICreateJourneyRequest & { journeyId: string }
+    >({
       query: ({ journeyId, ...body }) => {
         return {
           url: `/journeyTemplates/${journeyId}`,
@@ -70,12 +73,13 @@ const journeyApi = baseApi.injectEndpoints({
         };
       },
       invalidatesTags: (result, _error, { journeyId }) =>
-        result ? [
-          { type: TAG_GET_JOURNEYS, id: journeyId },
-          { type: TAG_GET_JOURNEYS, id: "LIST" }
-        ] : [],
+        result
+          ? [
+              { type: TAG_GET_JOURNEYS, id: journeyId },
+              { type: TAG_GET_JOURNEYS, id: "LIST" },
+            ]
+          : [],
     }),
-
   }),
 });
 

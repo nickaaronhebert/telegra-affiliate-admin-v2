@@ -15,6 +15,7 @@ import { useGetProductVariationsQuery } from "@/redux/services/productVariations
 import { productVariationType } from "@/constants";
 
 import type { ProductVariationMapping } from "@/types/responses/productVariations";
+import { Badge } from "@/components/ui/badge";
 
 interface ProductVariationItem {
   id: string;
@@ -41,21 +42,21 @@ export function ProductVariationsSearch({
     selectedData && selectedData.length > 0
       ? selectedData
       : [
-          {
-            id: crypto.randomUUID(),
-            productVariation: null,
-            quantity: 1,
-            pricePerUnitOverride: 0,
-            billingCycleLength: 0,
-          },
-        ]
+        {
+          id: crypto.randomUUID(),
+          productVariation: null,
+          quantity: 1,
+          pricePerUnitOverride: 0,
+          billingCycleLength: 0,
+        },
+      ]
   );
 
   useEffect(() => {
     if (selectedData && selectedData.length > 0) {
       setProductVariationItems(selectedData);
     }
-  }, []);
+  }, [selectedData]);
 
   // Notify parent of changes
   useEffect(() => {
@@ -148,10 +149,10 @@ export function ProductVariationsSearch({
         <div className="flex justify-between items-center">
           <h3 className="text-xl font-semibold">Product variations</h3>
           <Link
-          to="#"
+            to="#"
             type="button"
             onClick={addProductVariationRow}
-            className="text-blue-500 border-none bg-white flex items-center hover:underline hover:bg-white"
+            className="text-queued border-none bg-white flex items-center underline"
           >
             <Plus className="h-4 w-4 mr-2" /> Add Product Variation
           </Link>
@@ -169,27 +170,28 @@ export function ProductVariationsSearch({
           return (
             <div key={item.id} className="relative">
               {/* Remove button - only show if multiple items and acceptMultiple is true */}
-              {acceptMultiple && productVariationItems.length > 1 && (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => removeProductVariationRow(item.id)}
-                  className="absolute top-8 right-5 text-red-500 hover:text-red-700 pointer"
-                >
-                  Delete
-                </Button>
-              )}
+              <div className="flex justify-between items-center">
+                <div className="text-sm text-[10px] tracking-[2px]">
+                  PRODUCT {index + 1}
+                </div>
+                {acceptMultiple && productVariationItems.length > 1 && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => removeProductVariationRow(item.id)}
+                    className="text-red-500 hover:text-red-700 pointer underline"
+                  >
+                    Delete
+                  </Button>
+                )}
 
-              <div className="text-sm text-gray-600 mb-4 text-[10px]">
-                PRODUCT {index + 1}
               </div>
-
               <div className="space-y-4 p-6 bg-[var(--background)] border border-[#F4F4F4] rounded-lg">
                 {/* Product Variation Dropdown */}
                 <div className="space-y-2 w-full justify-center">
-                  <Label htmlFor={`product-variation-${item.id}`}>
-                    Product Variation
+                  <Label htmlFor={`product-variation-${item.id}`} className="font-semibold">
+                    Select Product
                   </Label>
                   <Select
                     value={item.productVariation?.id || "none"}
@@ -197,7 +199,7 @@ export function ProductVariationsSearch({
                       handleProductVariationChange(item.id, value)
                     }
                   >
-                    <SelectTrigger className="bg-white  w-full">
+                    <SelectTrigger className="bg-white border-border w-full">
                       <SelectValue
                         placeholder={
                           isFetching
@@ -242,7 +244,7 @@ export function ProductVariationsSearch({
                       <Input
                         id={`quantity-${item.id}`}
                         type="number"
-                        className="bg-white"
+                        className="bg-white border-border"
                         min="1"
                         value={item.quantity}
                         onChange={(e) =>
@@ -263,7 +265,7 @@ export function ProductVariationsSearch({
                       </Label>
                       <Input
                         id={`overwrite-price-${item.id}`}
-                        className="bg-white"
+                        className="bg-white border-border"
                         type="number"
                         min="0"
                         step="0.01"
@@ -288,7 +290,7 @@ export function ProductVariationsSearch({
                         <Input
                           id={`billing-cycle-${item.id}`}
                           type="number"
-                          className="bg-white"
+                          className="bg-white border-border"
                           min="0"
                           value={item.billingCycleLength || 0}
                           onChange={(e) =>
@@ -308,47 +310,25 @@ export function ProductVariationsSearch({
                     )}
 
                     {/* Product Details Display */}
-                    <div className="p-4 border rounded-lg bg-gray-50">
-                      <h4 className="font-medium text-base mb-2">
+                    <div className="p-4 border rounded-lg bg-light-background space-y-3">
+                      <h4 className="font-medium text-base pb-2">
                         {item.productVariation.name}
                       </h4>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm text-gray-600">
-                        <div>
-                          <p>
-                            <span className="font-medium">Original Price:</span>{" "}
-                            ${item.productVariation.regularPrice}
-                          </p>
-                          <p>
-                            <span className="font-medium">Type:</span>{" "}
-                            {item.productVariation.productType}
-                          </p>
-                          <p>
-                            <span className="font-medium">Platform:</span>{" "}
-                            {item.productVariation.ecommercePlatform}
-                          </p>
+
+                      <div className="text-sm text-gray-600 space-y-2">
+                        <div className="flex justify-between">
+                          <span className="font-medium">Original Price</span>
+                          <span className="text-black font-medium">${item.productVariation.regularPrice}</span>
                         </div>
-                        <div>
-                          <p>
-                            <span className="font-medium">Mapped to:</span>{" "}
-                            {
-                              item.productVariation?.mappedProductVariation
-                                ?.name
-                            }
-                          </p>
-                          {item.productVariation.subscriptionPeriod && (
-                            <p>
-                              <span className="font-medium">Billing:</span>{" "}
-                              Every{" "}
-                              {item.productVariation.subscriptionPeriodInterval}{" "}
-                              {item.productVariation.subscriptionPeriod}(s)
-                            </p>
-                          )}
-                          {item.productVariation.ecommerceVariationId && (
-                            <p>
-                              <span className="font-medium">Variation ID:</span>{" "}
-                              {item.productVariation.ecommerceVariationId}
-                            </p>
-                          )}
+
+                        <div className="flex justify-between">
+                          <span className="font-medium">Type</span>
+                          <span className="text-black font-medium"><Badge variant="active" className="text-primary-foreground">{item.productVariation.productType}</Badge></span>
+                        </div>
+
+                        <div className="flex justify-between">
+                          <span className="font-medium">Platform</span>
+                          <span className="text-black font-medium">{item.productVariation.ecommercePlatform}</span>
                         </div>
                       </div>
                     </div>

@@ -18,7 +18,10 @@ import {
   useDeleteWebhookMutation,
   useGetWebhookEventsDictionaryQuery,
 } from "@/redux/services/webhooks";
-import type { IWebhookResponse, IWebhookEvent } from "@/types/responses/webhook";
+import type {
+  IWebhookResponse,
+  IWebhookEvent,
+} from "@/types/responses/webhook";
 import type { IWebhookRequest } from "@/types/requests/webhook";
 import { BlueEdit } from "@/assets/icons/BlueEdit";
 import { Delete } from "@/assets/icons/Delete";
@@ -66,10 +69,8 @@ export default function WebhookManagement({
     useGetWebhooksListQuery();
   const { data: eventsData, isLoading: loadingEvents } =
     useGetWebhookEventsDictionaryQuery();
-  const [createWebhook, { isLoading: isCreating }] =
-    useCreateWebhookMutation();
-  const [updateWebhook, { isLoading: isUpdating }] =
-    useUpdateWebhookMutation();
+  const [createWebhook, { isLoading: isCreating }] = useCreateWebhookMutation();
+  const [updateWebhook, { isLoading: isUpdating }] = useUpdateWebhookMutation();
   const [deleteWebhook] = useDeleteWebhookMutation();
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
@@ -202,8 +203,7 @@ export default function WebhookManagement({
       setIsDialogOpen(false);
       setForm(emptyForm);
     } catch (error: any) {
-      const errorMessage =
-        error?.data?.message || "Failed to save webhook";
+      const errorMessage = error?.data?.message || "Failed to save webhook";
       toast.error(errorMessage);
     }
   };
@@ -248,17 +248,19 @@ export default function WebhookManagement({
           {webhooks.map((webhook: IWebhookResponse) => (
             <div
               key={webhook.id}
-              className="flex items-center justify-between rounded-lg border border-gray-200 bg-[#F6FAFF] hover:shadow-sm transition-shadow p-4"
+              className="flex items-center justify-between rounded-lg border border-gray-200 bg-[#FFFEF6] hover:shadow-sm transition-shadow p-4"
             >
               {/* Left section with icon and content */}
               <div className="flex items-center gap-3 flex-1">
-                <div className="bg-[#CCE5FF] p-2.5 rounded-md flex items-center justify-center">
-                  <Webhook size={20} className="text-blue-600" />
+                <div className="bg-[#FEF9C3] p-2.5 rounded-md flex items-center justify-center">
+                  <Webhook size={20} className="#854D0E" />
                 </div>
                 {/* Content */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="font-semibold text-sm">{webhook.name}</span>
+                    <span className="font-semibold text-sm">
+                      {webhook.name}
+                    </span>
                     {webhook.authentication && (
                       <span className="text-[10px] bg-blue-100 text-blue-700 px-2 py-1 rounded">
                         Private
@@ -266,26 +268,33 @@ export default function WebhookManagement({
                     )}
                   </div>
 
-                  <p className="text-[10px] text-[#3E4D61] mt-1">
+                  <p className="text-[10px] text-[#008CE3] mt-1">
                     {webhook.url}
                   </p>
 
-                  {webhook.webhookInterests && webhook.webhookInterests.length > 0 && (
-                    <div className="text-[10px] text-[#666] mt-2 flex flex-wrap gap-1">
-                      <span className="font-medium">Events:</span>
-                      {webhook.webhookInterests.slice(0, 3).map((event) => (
-                        <span key={event} className="text-gray-600">
-                          {event}
-                          {webhook.webhookInterests.indexOf(event) < webhook.webhookInterests.length - 1 && webhook.webhookInterests.slice(0, 3).indexOf(event) < 2 ? "," : ""}
-                        </span>
-                      ))}
-                      {webhook.webhookInterests.length > 3 && (
-                        <span className="text-gray-500">
-                          +{webhook.webhookInterests.length - 3} more
-                        </span>
-                      )}
-                    </div>
-                  )}
+                  {webhook.webhookInterests &&
+                    webhook.webhookInterests.length > 0 && (
+                      <div className="text-[10px] text-[#666] mt-2 flex flex-wrap gap-1">
+                        <span className="font-medium">Events:</span>
+                        {webhook.webhookInterests.slice(0, 3).map((event) => (
+                          <span key={event} className="text-gray-600">
+                            {event}
+                            {webhook.webhookInterests.indexOf(event) <
+                              webhook.webhookInterests.length - 1 &&
+                            webhook.webhookInterests
+                              .slice(0, 3)
+                              .indexOf(event) < 2
+                              ? ","
+                              : ""}
+                          </span>
+                        ))}
+                        {webhook.webhookInterests.length > 3 && (
+                          <span className="text-gray-500">
+                            +{webhook.webhookInterests.length - 3} more
+                          </span>
+                        )}
+                      </div>
+                    )}
                 </div>
               </div>
 
@@ -395,7 +404,9 @@ export default function WebhookManagement({
                       <div className="flex flex-wrap gap-2 mb-3">
                         {form.webhookInterests
                           .filter((interest) =>
-                            group.events.some((e) => e.eventSystemName === interest)
+                            group.events.some(
+                              (e) => e.eventSystemName === interest
+                            )
                           )
                           .map((eventSystemName) => (
                             <div
@@ -427,9 +438,7 @@ export default function WebhookManagement({
                             checked={form.webhookInterests.includes(
                               event.eventSystemName
                             )}
-                            onChange={() =>
-                              toggleEvent(event.eventSystemName)
-                            }
+                            onChange={() => toggleEvent(event.eventSystemName)}
                             className="mt-1"
                           />
                           <div className="flex-1">
