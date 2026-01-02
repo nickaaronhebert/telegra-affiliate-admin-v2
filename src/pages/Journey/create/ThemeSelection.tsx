@@ -1,5 +1,4 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
 import type { z } from "zod";
 import type { journeySchema } from "@/schemas/journeySchema";
@@ -19,8 +18,7 @@ interface LayoutTheme {
 }
 
 const ThemeSelection = ({ 
-  onBack, 
-  onContinue, 
+  // onContinue, 
   currentTheme,
   onThemeChange 
 }: ThemeSelectionProps) => {
@@ -82,30 +80,30 @@ const ThemeSelection = ({
     }));
   };
 
-  const handleContinue = () => {
-    // Convert theme id back to uppercase format for storage
-    const themeLayout = selectedTheme.toUpperCase().replace(/-/g, "_");
+  // const handleContinue = () => {
+  //   // Convert theme id back to uppercase format for storage
+  //   const themeLayout = selectedTheme.toUpperCase().replace(/-/g, "_");
     
-    const updatedTheme = {
-      layout: themeLayout,
-      inheritFromAffiliate: currentTheme?.inheritFromAffiliate || false,
-      brandColors,
-    };
+  //   const updatedTheme = {
+  //     layout: themeLayout,
+  //     inheritFromAffiliate: currentTheme?.inheritFromAffiliate || false,
+  //     brandColors,
+  //   };
 
-    // Notify parent of theme changes
-    if (onThemeChange) {
-      onThemeChange(updatedTheme);
-    }
+  //   // Notify parent of theme changes
+  //   if (onThemeChange) {
+  //     onThemeChange(updatedTheme);
+  //   }
 
-    // Log the theme being sent
-    console.log("Theme being sent on continue:", updatedTheme);
+  //   // Log the theme being sent
+  //   console.log("Theme being sent on continue:", updatedTheme);
 
-    onContinue();
-  };
+  //   onContinue();
+  // };
 
-  const applyFromAccountSettings = () => {
-    console.log("Applying colors from account settings");
-  };
+  // const applyFromAccountSettings = () => {
+  //   console.log("Applying colors from account settings");
+  // };
 
   return (
     <>
@@ -215,14 +213,14 @@ const ThemeSelection = ({
             </div>
           </div>
 
-          <div className="mt-4">
+          {/* <div className="mt-4">
             <button
               onClick={applyFromAccountSettings}
               className="px-4 py-2 text-sm pointer font-medium bg-black text-white rounded hover:bg-gray-800 transition-colors"
             >
               APPLY FROM MY ACCOUNT SETTINGS
             </button>
-          </div>
+          </div> */}
         </div>
       </div>
     </>
