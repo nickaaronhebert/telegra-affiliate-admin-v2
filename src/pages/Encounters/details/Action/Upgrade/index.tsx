@@ -1,42 +1,39 @@
 import { ConfirmDialog } from "@/components/common/Dialog";
 import { Button } from "@/components/ui/button";
-import { useSubmitEncounterMutation } from "@/redux/services/encounter";
+import { useUpgradeEncounterMutation } from "@/redux/services/encounter";
 import { useState } from "react";
 import { toast } from "sonner";
 
-interface SendInviteLinkProps {
+interface UpgradeEncounterProps {
   id: string;
 }
-export default function SubmitOrder({ id }: SendInviteLinkProps) {
-  const [openSubmitDialog, setOpenSubmitDialog] = useState(false);
-  const [submitOrder, { isLoading }] = useSubmitEncounterMutation();
+export default function UpgradeOrder({ id }: UpgradeEncounterProps) {
+  const [openUpgradeDialog, setOpenUpgradeDialog] = useState(false);
+  const [upgradeOrder, { isLoading }] = useUpgradeEncounterMutation();
   return (
     <>
       <Button
         variant={"transparent"}
-        onClick={() => setOpenSubmitDialog(true)}
+        onClick={() => setOpenUpgradeDialog(true)}
         className="min-w-27.5 text-sm font-semibold text-primary border-primary"
       >
-        Submit
+        Upgrade to Synchronous
       </Button>
 
       <ConfirmDialog
         isLoading={isLoading}
-        open={openSubmitDialog}
-        onOpenChange={setOpenSubmitDialog}
-        title="Submit Order ?"
-        description={`Are you sure you want to submit this order?`}
+        open={openUpgradeDialog}
+        onOpenChange={setOpenUpgradeDialog}
+        title="Upgrade to Synchronous ?"
+        description={`Are you sure you want to upgrade this order to synchronous?`}
         onConfirm={async () => {
-          await submitOrder(id)
+          await upgradeOrder(id)
             .unwrap()
             .then((data) => {
-              toast.success(
-                data?.message || "Order is successfully submitted",
-                {
-                  duration: 1500,
-                }
-              );
-              setOpenSubmitDialog(false);
+              toast.success(data?.message || "Order is successfully upgraded", {
+                duration: 1500,
+              });
+              setOpenUpgradeDialog(false);
             })
             .catch((err) => {
               console.log("error", err);

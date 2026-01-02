@@ -27,8 +27,14 @@ import EditOrder from "./Action/Edit";
 import TimelineSvg from "@/assets/icons/Timeline";
 import EncounterTimeline from "./EncounterTimeline";
 import SendPerformVisitLink from "./Action/PerformVisit";
-import { EVENT_TYPES, ORDER_STATUS } from "@/constants";
+import {
+  EVENT_TYPES,
+  ORDER_STATUS,
+  VISIT_STATUS,
+  VISIT_TYPES,
+} from "@/constants";
 import SubmitOrder from "./Action/Submit";
+import UpgradeOrder from "./Action/Upgrade";
 
 const menuItems = [
   {
@@ -68,6 +74,13 @@ const menuItems = [
   },
 ];
 
+const availableEvaluateVisitTypeStatuses = [
+  ORDER_STATUS.RequiresWaitingRoomEgress,
+  ORDER_STATUS.RequiresAffiliateReview,
+  ORDER_STATUS.Delayed,
+  ORDER_STATUS.RequiresProviderReview,
+  ORDER_STATUS.RequiresPrerequisiteCompletion,
+];
 const EncounterDetailsPage = () => {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState<
@@ -109,6 +122,16 @@ const EncounterDetailsPage = () => {
     return "";
   }, [encounter]);
 
+  const hasAsynchronousVisit = useMemo(() => {
+    return encounter?.prescriptionFulfillments?.some((pf) => {
+      const visit = pf?.prescription?.visit;
+      return (
+        visit?.visitType === VISIT_TYPES.Asynchronous &&
+        visit?.status === VISIT_STATUS.Active
+      );
+    });
+  }, [encounter?.prescriptionFulfillments]);
+
   if (isLoading || isPatientLoading) {
     return (
       <div className="h-[100vh] flex justify-center items-center">
@@ -148,7 +171,11 @@ const EncounterDetailsPage = () => {
           </h1>
         </div>
 
-        <div className="flex items-center justify-end gap-2.5">
+        <div className="flex items-center justify-end gap-2.5 flex-wrap">
+          {availableEvaluateVisitTypeStatuses.includes(
+            encounter?.status as any
+          ) &&
+            hasAsynchronousVisit && <UpgradeOrder id={encounter?.id} />}
           {encounter.status === ORDER_STATUS.RequiresOrderSubmission && (
             <SubmitOrder id={encounter?.id} />
           )}
