@@ -61,7 +61,7 @@ const paymentMethodApi = baseApi.injectEndpoints({
     >({
       query: ({ patient }) => {
         return {
-          url: `/v2/paymentMethods?patientId=${patient}`,
+          url: `/paymentMethods?patientId=${patient}`,
           method: "GET",
         };
       },
@@ -74,7 +74,7 @@ const paymentMethodApi = baseApi.injectEndpoints({
     >({
       query: ({ patientId, paymentMethodId }) => {
         return {
-          url: `/v2/paymentMethods`,
+          url: `/paymentMethods`,
           method: "POST",
           body: {
             patientId,

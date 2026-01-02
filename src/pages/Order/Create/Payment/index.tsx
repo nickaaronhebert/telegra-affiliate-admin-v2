@@ -242,7 +242,7 @@ export default function SelectPaymentDetails() {
                     <FormLabel>Select Payment Method</FormLabel>
                     <FormControl>
                       <RadioGroup
-                        className="flex flex-col space-y-1"
+                        className="flex flex-col space-y-1 max-h-50 overflow-y-auto"
                         defaultValue={field.value}
                         onValueChange={field.onChange}
                       >

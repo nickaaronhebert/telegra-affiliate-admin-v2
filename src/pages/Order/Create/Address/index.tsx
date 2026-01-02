@@ -22,6 +22,8 @@ import {
 import { toast } from "sonner";
 import { useViewPatientByIdQuery } from "@/redux/services/patient";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { useViewAllStatesQuery } from "@/redux/services/state";
+import SelectElement from "@/components/Form/SelectElement";
 
 interface SelectAddressProps {
   userId: string;
@@ -57,6 +59,18 @@ export default function SelectAddress({ userId }: SelectAddressProps) {
         }),
       },
 
+      isLoading,
+    }),
+  });
+
+  const { data: statesData } = useViewAllStatesQuery(undefined, {
+    selectFromResult: ({ data, isLoading }) => ({
+      data: data?.map((item) => {
+        return {
+          label: item?.name,
+          value: item?.id,
+        };
+      }), // Adjust the `map` function if you want to transform `item`
       isLoading,
     }),
   });
@@ -252,7 +266,7 @@ export default function SelectAddress({ userId }: SelectAddressProps) {
                       inputClassName="border-border !h-[46px] placeholder:text-[#C3C1C6]"
                     />
 
-                    <InputElement
+                    {/* <InputElement
                       name={`shippingAddress.state`}
                       className="w-60 "
                       label="State"
@@ -261,6 +275,19 @@ export default function SelectAddress({ userId }: SelectAddressProps) {
                       placeholder="1247 Broadway Street"
                       reserveSpace={true}
                       inputClassName="border-border !h-[46px] placeholder:text-[#C3C1C6]"
+                    /> */}
+                    <SelectElement
+                      options={statesData || []}
+                      name={`shippingAddress.state`}
+                      className="w-60 "
+                      label="State"
+                      isRequired={true}
+                      errorClassName="text-right"
+                      placeholder="Select State"
+                      reserveSpace={true}
+                      triggerClassName="border border-border"
+                      labelClassName="!placeholder:text-muted-foreground"
+                      // className="border-border !h-[46px] placeholder:text-[#C3C1C6]"
                     />
                   </CenteredRow>
 
@@ -364,7 +391,7 @@ export default function SelectAddress({ userId }: SelectAddressProps) {
                         inputClassName="border-border !h-[46px] placeholder:text-[#C3C1C6]"
                       />
 
-                      <InputElement
+                      {/* <InputElement
                         name={`billingAddress.state`}
                         className="w-60 "
                         label="State"
@@ -373,6 +400,19 @@ export default function SelectAddress({ userId }: SelectAddressProps) {
                         placeholder="1247 Broadway Street"
                         reserveSpace={true}
                         inputClassName="border-border !h-[46px] placeholder:text-[#C3C1C6]"
+                      /> */}
+                      <SelectElement
+                        options={statesData || []}
+                        name={`billingAddress.state`}
+                        className="w-60 "
+                        label="State"
+                        isRequired={true}
+                        errorClassName="text-right"
+                        placeholder="Select State"
+                        reserveSpace={true}
+                        triggerClassName="border border-border"
+                        labelClassName="!placeholder:text-muted-foreground"
+                        // className="border-border !h-[46px] placeholder:text-[#C3C1C6]"
                       />
                     </CenteredRow>
 

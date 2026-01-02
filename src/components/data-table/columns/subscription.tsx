@@ -9,7 +9,7 @@ export type SubscriptionDetails = Subscription;
 export function organizationSubscriptionColumns(): ColumnDef<SubscriptionDetails>[] {
   return [
     {
-      accessorKey: "id",
+      accessorKey: "patient",
       header: "Subscription ID",
       cell: ({ row }) => {
         const { patient, ecommerceSubscriptionId, id } = row.original;
@@ -145,7 +145,7 @@ export function organizationSubscriptionColumns(): ColumnDef<SubscriptionDetails
         return (
           <div>
             <Link
-              to="#"
+              to={`/order/${parentOrder._id}`}
               className="text-xs font-medium text-[#008CE3] underline"
             >
               #{parentOrder.ecommerceOrderId || "N/A"}

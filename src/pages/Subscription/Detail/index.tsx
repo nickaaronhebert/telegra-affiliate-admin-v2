@@ -7,7 +7,7 @@ import {
 } from "@/redux/services/subscription";
 import { Activity, Pill, Users, Box } from "lucide-react";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import CubeSVG from "@/assets/icons/Cube";
 import { Button } from "@/components/ui/button";
 import RelatedOrder from "./RelatedOrder";
@@ -18,6 +18,7 @@ import dayjs from "@/lib/dayjs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ConfirmDialog } from "@/components/common/Dialog";
 import { toast } from "sonner";
+import { CalendarRange, CircleUserRound } from "lucide-react";
 
 const menuItems = [
   {
@@ -90,13 +91,21 @@ export default function SubscriptionDetail() {
         linkTitle="<- Back to subscriptions"
         linkUrl="/subscriptions"
       >
-        <Button
-          variant={"transparent"}
-          className="border-destructive text-destructive"
-          onClick={() => setIsCancelOpen(true)}
-        >
-          Cancel Subscription
-        </Button>
+        <div className="flex items-center gap-2.5 ">
+          <Link
+            to={`/edit-subscription/${id}`}
+            className="rounded-2xl bg-[#3E4D61] text-white py-2 px-5 cursor-pointer text-sm font-semibold"
+          >
+            Edit Subscription
+          </Link>
+          <Button
+            variant={"transparent"}
+            className="border-destructive text-destructive"
+            onClick={() => setIsCancelOpen(true)}
+          >
+            Cancel Subscription
+          </Button>
+        </div>
       </Header>
       <div className="flex gap-8 px-14 mt-6">
         <div
@@ -152,6 +161,7 @@ export default function SubscriptionDetail() {
         <div className="w-[70%] space-y-4">
           <div className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014]">
             <DetailsCard
+              icon={<CalendarRange size={16} />}
               isLoading={isLoading}
               id="subscriptionOverview"
               title="Subscription Overview"
@@ -221,6 +231,7 @@ export default function SubscriptionDetail() {
 
           <div className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014]">
             <DetailsCard
+              icon={<CircleUserRound size={16} />}
               title="Patient Details"
               id="patientOverview"
               isLoading={isLoading}
@@ -262,7 +273,12 @@ export default function SubscriptionDetail() {
           </div>
 
           <div className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014]">
-            <DetailsCard id="orderOverview" title="Order Items" fields={[]} />
+            <DetailsCard
+              icon={<Pill size={16} />}
+              id="orderOverview"
+              title="Order Items"
+              fields={[]}
+            />
             {isLoading ? (
               <SubscriptionLoader />
             ) : (
@@ -272,6 +288,7 @@ export default function SubscriptionDetail() {
 
           <div className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014]">
             <DetailsCard
+              icon={<Box size={16} />}
               id="relatedOrders"
               title="Related Orders"
               fields={[]}
