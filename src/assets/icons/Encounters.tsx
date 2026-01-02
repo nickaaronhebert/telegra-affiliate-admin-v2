@@ -6,6 +6,7 @@ export default function EncountersSVG() {
       viewBox="0 0 26 26"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      className="!w-[25px] !h-[25px]"
     >
       <path
         d="M12.6316 6V7.47369"

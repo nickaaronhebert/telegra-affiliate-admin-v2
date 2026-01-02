@@ -15,6 +15,8 @@ import { SendInviteModal } from "./SendInviteModal";
 import OrderInformationSvg from "@/assets/icons/OrderInformation";
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
 import { Link } from "react-router-dom";
+import { useGetProjectsQuery } from "@/redux/services/projects";
+import { PAYMENT_MECHANISMS } from "@/constants";
 
 interface UserInformationProps {
   patient: PatientDetail;
@@ -23,6 +25,8 @@ interface UserInformationProps {
 const OrderInformation = ({ patient }: UserInformationProps) => {
   const [sendOrderInvite, { isLoading: isSendingInvite }] =
     useSendOrderInviteMutation();
+  const { data: projects = [], isLoading: isLoadingProjects } =
+    useGetProjectsQuery();
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<PatientOrder | null>(null);
@@ -157,6 +161,9 @@ const OrderInformation = ({ patient }: UserInformationProps) => {
     pageCount: 1,
   });
 
+  const affiliatePayProject = projects?.some(
+    (project) => project?.paymentMechanism === PAYMENT_MECHANISMS.AffiliatePay
+  );
   const handleSendInvite = async (inviteType: "email" | "sms") => {
     if (!selectedOrder) return;
     try {
@@ -205,6 +212,9 @@ const OrderInformation = ({ patient }: UserInformationProps) => {
           <Button
             onClick={openAddModal}
             className="bg-black text-white hover:bg-gray-800 rounded-lg px-4 py-2 cursor-pointer"
+            disabled={
+              isLoadingProjects || affiliatePayProject || !patient?.payment?.length
+            }
           >
             <Plus className="w-4 h-4 mx-1" />
             ADD ORDER
