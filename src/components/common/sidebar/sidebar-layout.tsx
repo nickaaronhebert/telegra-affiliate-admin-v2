@@ -20,13 +20,20 @@ export default function SidebarLayout() {
       dispatch(setAffiliateData(affiliateData));
     }
   }, [affiliateData, dispatch]);
-  const noPaddingRoutes = ["/login", "/register", "/coupons/create", "/journeys/create", "/journeys/:id/edit", "/settings/product-list", "/settings/financial-management", "/settings/workflow-settings", "/settings/organization-identity"];
+  const noPaddingRoutes = ["/login", "/register", "/coupons/create", "/journeys/create", "/journeys/:id/edit", "/settings/product-list", "/settings/financial-management", "/settings/workflow-settings", "/settings/organization-identity", "/products/create"];
   const editJourneyMatch = useMatch("/journeys/:id/edit");
   if (editJourneyMatch) {
     noPaddingRoutes.push(editJourneyMatch.pathname);
   }
   const editCouponMatch = useMatch("/coupons/:id/edit");
-  const shouldHavePadding = !noPaddingRoutes.includes(pathname) && !editCouponMatch;
+  if (editCouponMatch) {
+    noPaddingRoutes.push(editCouponMatch.pathname);
+  }
+  const editProductMatch = useMatch("/products/:id");
+  if (editProductMatch) {
+    noPaddingRoutes.push(editProductMatch.pathname);
+  }
+  const shouldHavePadding = !noPaddingRoutes.includes(pathname);
   return (
     <SidebarProvider
       style={{

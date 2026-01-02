@@ -11,6 +11,7 @@ import FinalReviewStep from "./FinalReviewStep";
 import ThemeSelection from "./ThemeSelection";
 import TickSVG from "@/assets/icons/Tick";
 import { STEPPER_STEPS } from "./constants";
+import StepperFooter from "./StepperFooter";
 
 interface QuestionnaireItem {
   id: string;
@@ -160,7 +161,7 @@ const JourneyStepper = ({
 
   const renderStepperHeader = () => (
     <div
-      className="flex items-center justify-center mb-8 rounded-[15px] bg-white p-4"
+      className="flex items-center justify-center mb-4 rounded-[15px] bg-white p-4"
       style={{
         boxShadow: "0px 8px 10px 0px hsla(0, 0%, 0%, 0.08)",
       }}
@@ -226,20 +227,6 @@ const JourneyStepper = ({
         selectedProductVariations={selectedProductVariations}
         onProductVariationsChange={setSelectedProductVariations}
       />
-      <div className="flex justify-end mt-6 items-center gap-2.5 border-t border-dashed border-gray-300">
-        <Button
-          type="button"
-          onClick={handleSaveAndContinue}
-          disabled={
-            !selectedProductVariations.some(
-              (item) => item.productVariation !== null
-            )
-          }
-          className="rounded-full min-h-[48px] min-w-[130px] text-[14px] font-semibold text-white mt-6 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          Save & Continue
-        </Button>
-      </div>
     </>
   );
 
@@ -250,28 +237,16 @@ const JourneyStepper = ({
         selectedQuestionnaires={selectedQuestionnaires}
         onQuestionnaireSelect={setSelectedQuestionnaires}
       />
-      <div className="flex justify-between items-center mt-6 gap-2.5 border-t border-dashed border-gray-300">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={handleBack}
-          className="rounded-full min-h-[48px] min-w-[130px] text-[14px] font-semibold mt-6 cursor-pointer"
-        >
-          Back
-        </Button>
-        <Button
-          type="button"
-          onClick={handleSaveAndContinue}
-          className="rounded-full min-h-[48px] min-w-[130px] text-[14px] font-semibold text-white mt-6 cursor-pointer"
-        >
-          Save & Continue
-        </Button>
-      </div>
     </>
   );
 
   const renderThemeSelection = () => (
-    <ThemeSelection onBack={handleBack} onContinue={handleSaveAndContinue} />
+    <ThemeSelection 
+      onBack={handleBack} 
+      onContinue={handleSaveAndContinue}
+      currentTheme={form.getValues("theme")}
+      onThemeChange={(theme) => form.setValue("theme", theme)}
+    />
   );
 
   const renderFinalReview = () => (
@@ -279,9 +254,6 @@ const JourneyStepper = ({
       journeyName={form.getValues("name") || ""}
       selectedProductVariations={selectedProductVariations}
       selectedQuestionnaires={selectedQuestionnaires}
-      onBack={handleBack}
-      onSubmit={handleSaveAndContinue}
-      isSubmitting={isSubmitting}
     />
   );
 
@@ -304,13 +276,25 @@ const JourneyStepper = ({
     <>
       {renderStepperHeader()}
       <div
-        className="p-7.5 bg-white rounded-[15px]"
+        className="p-7.5 bg-white rounded-[15px] mb-20"
         style={{
           boxShadow: "0px 8px 10px 0px hsla(0, 0%, 0%, 0.08)",
         }}
       >
         {renderCurrentStep()}
       </div>
+          <StepperFooter
+      currentStep={currentStepperStep}
+      onBack={handleBack}
+      onContinue={handleSaveAndContinue}
+      isSubmitting={isSubmitting}
+      disableContinue={
+        currentStepperStep === STEPPER_STEPS.CONFIGURE_PRODUCTS.step &&
+        !selectedProductVariations.some(
+          (item) => item.productVariation !== null
+        )
+      }
+    />
     </>
   );
 };

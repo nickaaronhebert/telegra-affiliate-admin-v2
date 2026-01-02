@@ -42,7 +42,48 @@ export interface Patient {
   genderBiological: string;
   addresses?: PatientAddress[];
 }
-export interface Journey {}
+export interface BrandColors {
+  primary: string;
+  accent: string;
+  neutral: string;
+}
+
+export interface JourneyTheme {
+  layout: string;
+  inheritFromAffiliate: boolean;
+  brandColors: BrandColors;
+}
+
+export interface ProductVariationResponse {
+  id: string;
+  name: string;
+  regularPrice: number;
+  currency: string;
+  productType: string;
+  ecommerceVariationId: string;
+  quantity: number;
+  pricePerUnitOverride?: number;
+  billingCycleLength: number;
+}
+
+export interface PreCheckoutQuestionnaireResponse {
+  _id: string;
+  title: string;
+  locationsCount: number;
+}
+
+export interface Journey {
+  id?: string;
+  _id?: string;
+  name: string;
+  slug?: string;
+  affiliate: string;
+  productVariations: ProductVariationResponse[];
+  preCheckoutQuestionnaire: PreCheckoutQuestionnaireResponse[];
+  theme?: JourneyTheme;
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 export interface LineItem {
   id: string;

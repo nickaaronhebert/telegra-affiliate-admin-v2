@@ -1,10 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
+import type { z } from "zod";
+import type { journeySchema } from "@/schemas/journeySchema";
 
 interface ThemeSelectionProps {
   onBack: () => void;
   onContinue: () => void;
+  currentTheme?: z.infer<typeof journeySchema>["theme"];
+  onThemeChange?: (theme: z.infer<typeof journeySchema>["theme"]) => void;
 }
 
 interface LayoutTheme {
@@ -14,8 +18,47 @@ interface LayoutTheme {
   isSelected?: boolean;
 }
 
-const ThemeSelection = ({ onBack, onContinue }: ThemeSelectionProps) => {
-  const [selectedTheme, setSelectedTheme] = useState<string>("guided-cards");
+const ThemeSelection = ({ 
+  onBack, 
+  onContinue, 
+  currentTheme,
+  onThemeChange 
+}: ThemeSelectionProps) => {
+  const [selectedTheme, setSelectedTheme] = useState<string>(
+    currentTheme?.layout?.toLowerCase().replace(/_/g, "-") || "guided-cards"
+  );
+
+  const [brandColors, setBrandColors] = useState({
+    primary: currentTheme?.brandColors?.primary || "#5456f4",
+    accent: currentTheme?.brandColors?.accent || "#d8b8f3",
+    neutral: currentTheme?.brandColors?.neutral || "#fcfcff",
+  });
+
+  // Sync with form when component mounts or currentTheme changes
+  useEffect(() => {
+    if (currentTheme) {
+      setSelectedTheme(currentTheme.layout?.toLowerCase().replace(/_/g, "-") || "guided-cards");
+      setBrandColors({
+        primary: currentTheme.brandColors?.primary || "#5456f4",
+        accent: currentTheme.brandColors?.accent || "#d8b8f3",
+        neutral: currentTheme.brandColors?.neutral || "#fcfcff",
+      });
+    }
+  }, [currentTheme]);
+
+  // Sync brand color changes to parent form in real-time
+  useEffect(() => {
+    if (onThemeChange) {
+      const themeLayout = selectedTheme.toUpperCase().replace(/-/g, "_");
+      const updatedTheme = {
+        layout: themeLayout,
+        inheritFromAffiliate: currentTheme?.inheritFromAffiliate || false,
+        brandColors,
+      };
+      console.log("Syncing theme to form in real-time:", updatedTheme);
+      onThemeChange(updatedTheme);
+    }
+  }, [selectedTheme, brandColors, currentTheme, onThemeChange]);
 
   const layoutThemes: LayoutTheme[] = [
     {
@@ -23,18 +66,7 @@ const ThemeSelection = ({ onBack, onContinue }: ThemeSelectionProps) => {
       name: "Guided Cards",
       description: "Step-by-step card-based interface with progress indicator",
     },
-    // {
-    //   id: "express-minimal",
-    //   name: "Express Minimal",
-    //   description: "Streamlined single-page checkout for faster conversion"
-    // }
   ];
-
-  const [brandColors, setBrandColors] = useState({
-    primary: "#5456f4",
-    accent: "#d8b8f3",
-    neutral: "#fcfcff",
-  });
 
   const handleThemeSelect = (themeId: string) => {
     setSelectedTheme(themeId);
@@ -50,6 +82,27 @@ const ThemeSelection = ({ onBack, onContinue }: ThemeSelectionProps) => {
     }));
   };
 
+  const handleContinue = () => {
+    // Convert theme id back to uppercase format for storage
+    const themeLayout = selectedTheme.toUpperCase().replace(/-/g, "_");
+    
+    const updatedTheme = {
+      layout: themeLayout,
+      inheritFromAffiliate: currentTheme?.inheritFromAffiliate || false,
+      brandColors,
+    };
+
+    // Notify parent of theme changes
+    if (onThemeChange) {
+      onThemeChange(updatedTheme);
+    }
+
+    // Log the theme being sent
+    console.log("Theme being sent on continue:", updatedTheme);
+
+    onContinue();
+  };
+
   const applyFromAccountSettings = () => {
     console.log("Applying colors from account settings");
   };
@@ -57,7 +110,7 @@ const ThemeSelection = ({ onBack, onContinue }: ThemeSelectionProps) => {
   return (
     <>
       <div className="flex flex-col mb-6">
-        <span className="text-lg font-semibold">Theme and Branding</span>
+        <span className="text-2xl font-medium">Theme and Branding</span>
         <span className="text-base text-[#63627F]">
           Customize the look and feel of your journey to match your brand.
         </span>
@@ -98,62 +151,65 @@ const ThemeSelection = ({ onBack, onContinue }: ThemeSelectionProps) => {
 
         <div className="space-y-4">
           <div>
-            <h3 className="text-base font-medium text-gray-900 mb-1">
+            <h3 className="text-base font-medium text-gray-900">
               Brand Colors
             </h3>
           </div>
 
           <div className="grid grid-cols-3 gap-6">
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm text-[#7B828A]">
                 Primary
               </label>
               <div className="flex items-center gap-3">
                 <div
-                  className="w-12 h-8 rounded border"
+                  className="w-12 h-10 rounded border pointer"
                   style={{ backgroundColor: brandColors.primary }}
                 />
                 <input
                   type="text"
                   value={brandColors.primary}
                   onChange={(e) => handleColorChange("primary", e.target.value)}
-                  className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded"
+                  className="flex-1 px-3 py-3 text-sm bg-[#EFE9F4] rounded"
+                  placeholder="#000000"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm text-[#7B828A]">
                 Accent
               </label>
               <div className="flex items-center gap-3">
                 <div
-                  className="w-12 h-8 rounded border"
+                  className="w-12 h-10 rounded border pointer"
                   style={{ backgroundColor: brandColors.accent }}
                 />
                 <input
                   type="text"
                   value={brandColors.accent}
                   onChange={(e) => handleColorChange("accent", e.target.value)}
-                  className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded"
+                  className="flex-1 px-3 py-3 text-sm bg-[#EFE9F4] rounded"
+                  placeholder="#000000"
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-sm font-medium text-gray-700">
+              <label className="text-sm text-[#7B828A]">
                 Neutral
               </label>
               <div className="flex items-center gap-3">
                 <div
-                  className="w-12 h-8 rounded border"
+                  className="w-12 h-10 rounded border pointer"
                   style={{ backgroundColor: brandColors.neutral }}
                 />
                 <input
                   type="text"
                   value={brandColors.neutral}
                   onChange={(e) => handleColorChange("neutral", e.target.value)}
-                  className="flex-1 px-3 py-1 text-sm border border-gray-300 rounded"
+                  className="flex-1 px-3 py-3 text-sm bg-[#EFE9F4] rounded"
+                  placeholder="#000000"
                 />
               </div>
             </div>
@@ -162,30 +218,12 @@ const ThemeSelection = ({ onBack, onContinue }: ThemeSelectionProps) => {
           <div className="mt-4">
             <button
               onClick={applyFromAccountSettings}
-              className="px-4 py-2 text-sm font-medium bg-black text-white rounded hover:bg-gray-800 transition-colors"
+              className="px-4 py-2 text-sm pointer font-medium bg-black text-white rounded hover:bg-gray-800 transition-colors"
             >
               APPLY FROM MY ACCOUNT SETTINGS
             </button>
           </div>
         </div>
-      </div>
-
-      <div className="flex justify-between items-center mt-6 gap-2.5 border-t border-dashed border-gray-300">
-        <Button
-          type="button"
-          variant="outline"
-          onClick={onBack}
-          className="rounded-full min-h-[48px] min-w-[130px] text-[14px] font-semibold mt-6 cursor-pointer"
-        >
-          Back
-        </Button>
-        <Button
-          type="button"
-          onClick={onContinue}
-          className="rounded-full min-h-[48px] min-w-[130px] text-[14px] font-semibold text-white mt-6 cursor-pointer"
-        >
-          Save & Continue
-        </Button>
       </div>
     </>
   );

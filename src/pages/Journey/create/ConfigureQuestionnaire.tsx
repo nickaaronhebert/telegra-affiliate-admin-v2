@@ -45,17 +45,17 @@ const ConfigureQuestionnaire = ({
 
   return (
     <>
-      <div className="flex flex-col mb-6">
-        <span className="text-lg font-semibold">Configure Questionnaire</span>
+      <div className="flex flex-col">
+        <span className="text-2xl font-medium">Configure Questionnaire</span>
         <span className="text-base text-[#63627F]">
           Choose which questionnaire will be used in this journey.
         </span>
       </div>
 
       <div className="bg-white p-6 space-y-6">
-        <div className="space-y-4">
+        <div className="space-y-4 p-5 bg-secondary rounded-md">
           <div className="flex items-center gap-2">
-            <Label className="text-sm font-medium text-gray-700">
+            <Label className="text-sm font-semibold text-[#3E4D61]">
               Selected Products:
             </Label>
             <div className="flex gap-2 flex-wrap">
@@ -63,7 +63,10 @@ const ConfigureQuestionnaire = ({
                 validProducts.map((item) => (
                   <span
                     key={item.id}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800"
+                    className="inline-flex items-center px-3 py-2 rounded-md text-xs font-medium bg-white text-[#3E4D61] border border-card-border"
+                    style={{
+                      boxShadow: "0px 4px 4px 0px hsla(0, 0%, 0%, 0.08)",
+                    }}
                   >
                     {item.productVariation?.name}
                   </span>
@@ -76,7 +79,7 @@ const ConfigureQuestionnaire = ({
             </div>
           </div>
         </div>
-        <div className="space-y-4">
+        <div className="space-y-4 w-[60%] mx-auto">
           <div className="space-y-2">
             <div className="flex items-center gap-1">
               <Label className="text-sm font-medium text-gray-900">
@@ -96,7 +99,7 @@ const ConfigureQuestionnaire = ({
             onSelect={setPreQuestionnaires}
           />
         </div>
-        <div className="space-y-4">
+        <div className="space-y-4 w-[60%] mx-auto">
           <div className="space-y-2">
             <div className="flex items-center gap-1">
               <Label className="text-sm font-medium text-gray-900">

@@ -14,19 +14,13 @@ interface EditJourneyNameProps {
 
 const EditJourneyName = ({ form, onNext, onBack }: EditJourneyNameProps) => {
   return (
-    <div className="bg-white p-6 rounded-[15px] mx-auto box shadow-md">
-      <div className="flex flex-col mb-6">
-        <span className="text-lg font-semibold">Edit journey details</span>
-        <span className="text-base text-[#63627F]">
-          Update the journey name. These changes will reflect publicly.
-        </span>
-      </div>
-
-      <BuiltInGuardrails />
-
+    <div>
       <Form {...form}>
         <form
-          className="w-[60%] mx-auto"
+          className="mx-auto pb-32 bg-white p-8 rounded-[15px]"
+          style={{
+            boxShadow: "0px 8px 10px 0px hsla(0, 0%, 0%, 0.08)",
+          }}
           onSubmit={(e) => {
             e.preventDefault();
             const nameValue = form.getValues("name");
@@ -35,24 +29,37 @@ const EditJourneyName = ({ form, onNext, onBack }: EditJourneyNameProps) => {
             }
           }}
         >
-          <div>
-            <InputElement
-              name="name"
-              label="Journey Name"
-              placeholder="Eg. Weight loss journey"
-              disabled
-              className="cursor-not-allowed"
-            />
+          <div className="">
+            <div className="flex flex-col mb-6">
+              <span className="text-2xl font-semibold">
+                Edit journey details
+              </span>
+              <span className="text-base text-[#63627F]">
+                Update the journey name. These changes will reflect publicly.
+              </span>
+            </div>
+            <div className="w-[60%] space-y-6 mx-auto">
+              <BuiltInGuardrails />
+              <div>
+                <InputElement
+                  name="name"
+                  label="Journey Name"
+                  placeholder="Eg. Weight loss journey"
+                  disabled
+                  className="cursor-not-allowed"
+                />
+              </div>
+            </div>
           </div>
 
-          <div className="flex justify-end mt-6 items-center gap-2.5 pt-6">
-            {/* BACK BUTTON (optional) */}
+          {/* FIXED FOOTER */}
+          <div className="fixed bottom-0 left-0 right-0 bg-white px-8 py-6 flex justify-end gap-2.5">
             {onBack && (
               <Button
                 type="button"
                 variant="outline"
                 onClick={onBack}
-                className="rounded-full min-h-[48px] min-w-[130px] text-[14px] font-medium"
+                className="px-[20px] py-[5px] min-h-[40px] cursor-pointer rounded-[50px]"
               >
                 Back
               </Button>
@@ -61,7 +68,7 @@ const EditJourneyName = ({ form, onNext, onBack }: EditJourneyNameProps) => {
             <Button
               type="submit"
               disabled={!form.watch("name") || form.watch("name").trim() === ""}
-              className="rounded-full min-h-[48px] min-w-[130px] text-[14px] font-semibold text-white cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-[20px] py-[5px] min-h-[40px] cursor-pointer rounded-[50px] bg-primary text-white font-semibold leading-[16px]"
             >
               Continue
             </Button>
