@@ -190,11 +190,12 @@ const EncounterDetailsPage = () => {
             }
             status={encounter?.status}
           />
-          <SendPerformVisitLink
-            orderId={encounter?.id}
-            affiliateId={encounter?.affiliate?.id}
-            status={encounter?.status}
-          />
+          {encounter?.status === ORDER_STATUS.Started && (
+            <SendPerformVisitLink
+              orderId={encounter?.id}
+              affiliateId={encounter?.affiliate?.id}
+            />
+          )}
           <SendInviteLink id={encounter?.id} status={encounter?.status} />
           <Expedite id={encounter?.id} status={encounter?.status} />
           <CancelEncounter id={encounter?.id} status={encounter?.status} />
