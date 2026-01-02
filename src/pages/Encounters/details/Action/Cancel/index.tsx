@@ -1,5 +1,6 @@
 import { ConfirmDialog } from "@/components/common/Dialog";
 import { Button } from "@/components/ui/button";
+import { ORDER_STATUS } from "@/constants";
 import { useCancelEncounterMutation } from "@/redux/services/encounter";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -18,7 +19,9 @@ export default function CancelEncounter({ id, status }: CancelEncounterProps) {
         variant={"transparent"}
         onClick={() => setOpenCancelEncounterDialog(true)}
         className="min-w-27.5 text-sm font-semibold text-destructive border-destructive"
-        disabled={status === "cancelled"}
+        disabled={
+          status === ORDER_STATUS.Cancelled || status === ORDER_STATUS.Completed
+        }
       >
         Cancel
       </Button>

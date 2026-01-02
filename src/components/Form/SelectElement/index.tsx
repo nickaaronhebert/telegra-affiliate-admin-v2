@@ -140,7 +140,23 @@ const SelectElement: React.FC<SelectElementProps> = ({
                 // />
               )}
 
-              {options && options?.length === 0 && (
+              {isLoading ? (
+                <div className="px-2 py-1 text-sm text-muted-foreground">
+                  {loadingTitle || "Loading..."}
+                </div>
+              ) : options && options.length > 0 ? (
+                options.map((option) => (
+                  <SelectItem key={option.value} value={`${option.value}`}>
+                    {getDisplayText(option)}
+                  </SelectItem>
+                ))
+              ) : (
+                <div className="flex justify-center p-5 text-sm text-[#9EA5AB]">
+                  No Records Found
+                </div>
+              )}
+
+              {/* {options && options?.length === 0 && (
                 <div className="flex justify-center p-5 text-sm text-[#9EA5AB]">
                   No Records Found
                 </div>
@@ -156,7 +172,7 @@ const SelectElement: React.FC<SelectElementProps> = ({
                     {getDisplayText(option)}
                   </SelectItem>
                 ))
-              )}
+              )} */}
               {/* {options.map((option) => (
                 <SelectItem key={option.value} value={`${option.value}`}>
                   {getDisplayText(option)}

@@ -11,6 +11,7 @@ import { selectPatientSchema } from "@/schemas/selectPatientSchema";
 import { useAppDispatch } from "@/redux/store";
 import { updateInitialStep } from "@/redux/slices/create-order";
 import type { PatientProps } from "..";
+import dayjs from "@/lib/dayjs";
 
 export function formatToMMDDYYYY(dateStr: string): string {
   const date = new Date(dateStr);
@@ -68,7 +69,7 @@ export default function EcommercePatientDetails({
         <p className="text-sm text-gray-600 mb-4">
           If patient is not listed,{" "}
           <Link
-            to={"/org/create-patient"}
+            to={"/patients"}
             className="text-[#008CE3]  cursor-pointer underline underline-offset-2"
           >
             Create Patient
@@ -135,7 +136,11 @@ export default function EcommercePatientDetails({
                             DOB
                           </span>
                           <span className="text-sm font-semibold text-gray-900">
-                            {patientDetails?.dateOfBirth}
+                            {patientDetails?.dateOfBirth
+                              ? dayjs(patientDetails?.dateOfBirth)?.format(
+                                  "MMMM D, YYYY"
+                                )
+                              : "-"}
                           </span>
                         </div>
                       </div>

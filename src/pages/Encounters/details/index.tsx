@@ -4,7 +4,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { ROUTES } from "@/constants/routes";
 import { useViewEncounterByIdQuery } from "@/redux/services/encounter";
 import { useViewPatientByIdQuery } from "@/redux/services/patient";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import ErrorComponent from "@/components/Error";
 import EncounterPatientDetails from "./EncounterPatientDetails";
@@ -27,6 +27,14 @@ import EditOrder from "./Action/Edit";
 import TimelineSvg from "@/assets/icons/Timeline";
 import EncounterTimeline from "./EncounterTimeline";
 import SendPerformVisitLink from "./Action/PerformVisit";
+import {
+  EVENT_TYPES,
+  ORDER_STATUS,
+  VISIT_STATUS,
+  VISIT_TYPES,
+} from "@/constants";
+import SubmitOrder from "./Action/Submit";
+import UpgradeOrder from "./Action/Upgrade";
 
 const menuItems = [
   {
@@ -66,6 +74,13 @@ const menuItems = [
   },
 ];
 
+const availableEvaluateVisitTypeStatuses = [
+  ORDER_STATUS.RequiresWaitingRoomEgress,
+  ORDER_STATUS.RequiresAffiliateReview,
+  ORDER_STATUS.Delayed,
+  ORDER_STATUS.RequiresProviderReview,
+  ORDER_STATUS.RequiresPrerequisiteCompletion,
+];
 const EncounterDetailsPage = () => {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState<
@@ -89,6 +104,34 @@ const EncounterDetailsPage = () => {
       skip: !encounter?.patient?.id,
     });
 
+  const affiliateReviewReason = useMemo(() => {
+    if (encounter?.status === ORDER_STATUS.RequiresAffiliateReview) {
+      const latestAffiliateReviewEvent = encounter?.history
+        ?.filter(
+          (item) =>
+            item?.eventType === EVENT_TYPES.NewStatusSetToRequest &&
+            item?.eventData?.newStatus === ORDER_STATUS.RequiresAffiliateReview
+        )
+        .sort(
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        )[0];
+
+      return latestAffiliateReviewEvent?.eventData?.reason || "";
+    }
+    return "";
+  }, [encounter]);
+
+  const hasAsynchronousVisit = useMemo(() => {
+    return encounter?.prescriptionFulfillments?.some((pf) => {
+      const visit = pf?.prescription?.visit;
+      return (
+        visit?.visitType === VISIT_TYPES.Asynchronous &&
+        visit?.status === VISIT_STATUS.Active
+      );
+    });
+  }, [encounter?.prescriptionFulfillments]);
+
   if (isLoading || isPatientLoading) {
     return (
       <div className="h-[100vh] flex justify-center items-center">
@@ -111,6 +154,7 @@ const EncounterDetailsPage = () => {
       />
     );
   }
+
   return (
     <div className="mb-5">
       <div className="bg-lilac py-3 px-12 flex justify-between items-center">
@@ -127,7 +171,14 @@ const EncounterDetailsPage = () => {
           </h1>
         </div>
 
-        <div className="flex items-center justify-end gap-2.5">
+        <div className="flex items-center justify-end gap-2.5 flex-wrap">
+          {availableEvaluateVisitTypeStatuses.includes(
+            encounter?.status as any
+          ) &&
+            hasAsynchronousVisit && <UpgradeOrder id={encounter?.id} />}
+          {encounter.status === ORDER_STATUS.RequiresOrderSubmission && (
+            <SubmitOrder id={encounter?.id} />
+          )}
           <EditOrder
             encounterId={encounter?.id}
             projectId={encounter?.project?.id}
@@ -137,10 +188,12 @@ const EncounterDetailsPage = () => {
             defaultPaymentMethodId={
               encounter?.consultationPaymentIntent?.paymentMethod
             }
+            status={encounter?.status}
           />
           <SendPerformVisitLink
             orderId={encounter?.id}
             affiliateId={encounter?.affiliate?.id}
+            status={encounter?.status}
           />
           <SendInviteLink id={encounter?.id} status={encounter?.status} />
           <Expedite id={encounter?.id} status={encounter?.status} />
@@ -209,10 +262,18 @@ const EncounterDetailsPage = () => {
 
         {/* Main Content Area */}
         <div className="flex-1">
+          {affiliateReviewReason && (
+            <div className="mb-4 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700">
+              <p>
+                The order has been returned to the Affiliate Review for the
+                following reason: <span>{"reason"}</span>
+              </p>
+            </div>
+          )}
           <EncounterGeneralOverview encounter={encounter} />
           <EncounterPatientDetails encounter={encounter} />
           <EncounterLabOrderInformation encounter={encounter} />
-          <EncounterQuestionnaires encounter={encounter} patient={patient}/>
+          <EncounterQuestionnaires encounter={encounter} patient={patient} />
           {patient && <PatientFiles patient={patient} />}
           <EncounterTimeline encounter={encounter} />
           <EncounterNotes encounter={encounter} />

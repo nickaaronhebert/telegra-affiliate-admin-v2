@@ -46,22 +46,26 @@ export interface IViewOrderDetailsResponse {
 
   ecommerceOrderId: string;
   productVariations: ProductVariation[];
-  billingDetails: {
-    address1: string;
-    address2: string;
-    city: string;
-    state: string;
-    zipcode: string;
-    id: string;
+  address: {
+    _id: string;
+    billing: {
+      address1: string;
+      address2: string;
+      city: string;
+      state: string;
+      zipcode: string;
+      id: string;
+    };
+    shipping: {
+      address1: string;
+      address2: string;
+      city: string;
+      state: string;
+      zipcode: string;
+      id: string;
+    };
   };
-  shippingDetails: {
-    address1: string;
-    address2: string;
-    city: string;
-    state: string;
-    zipcode: string;
-    id: string;
-  };
+
   paymentDetails: PaymentDetails;
   addressId: string;
   subtotal: number;

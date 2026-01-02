@@ -31,6 +31,7 @@ import {
 } from "@/redux/services/encounter";
 import { toast } from "sonner";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { ORDER_STATUS } from "@/constants";
 
 interface EditOrderProps {
   defaultPaymentMethodId?: string;
@@ -39,6 +40,7 @@ interface EditOrderProps {
   projectId: string;
   address: EncounterAddress;
   existingProducts: any;
+  status: string;
 }
 
 interface UpdateEncounterOrderProps {
@@ -227,7 +229,6 @@ function UpdateEncounterOrder({
                 optionClass="max-h-[200px] overflow-y-auto p-1"
                 options={address}
                 onChange={(option: AddressOption) => {
-                  console.log("option", option);
                   if (option.address1) {
                     form.setValue("address1", option.address1);
                   }
@@ -375,11 +376,11 @@ function UpdateEncounterOrder({
                     defaultValue={item.quantity}
                     onChange={(e) => {
                       const quantity = Number(e.target.value);
-                      setCurrentProducts((prev) => {
-                        const updated = [...prev];
-                        updated[index].quantity = quantity;
-                        return updated;
-                      });
+                      setCurrentProducts((prev) =>
+                        prev.map((item, i) =>
+                          i === index ? { ...item, quantity } : item
+                        )
+                      );
                     }}
                   />
                 </div>
@@ -419,6 +420,7 @@ export default function EditOrder({
   encounterId,
   projectId,
   defaultPaymentMethodId,
+  status,
 }: EditOrderProps) {
   const [openEditOrderDialog, setOpenEditOrderDialog] = useState(false);
 
@@ -483,6 +485,9 @@ export default function EditOrder({
         variant={"transparent"}
         onClick={() => setOpenEditOrderDialog(true)}
         className="min-w-27.5 text-sm font-semibold "
+        disabled={
+          status === ORDER_STATUS.Cancelled || status === ORDER_STATUS.Completed
+        }
       >
         Edit Order
       </Button>

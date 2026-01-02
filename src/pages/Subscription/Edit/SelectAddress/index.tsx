@@ -16,7 +16,7 @@ import { toast } from "sonner";
 import { useViewPatientByIdQuery } from "@/redux/services/patient";
 import { prevStep, resetSubscription } from "@/redux/slices/subscription";
 import type { ADDRESS } from "@/redux/slices/create-order";
-import { useCreateSubscriptionMutation } from "@/redux/services/subscription";
+import { useUpdateSubscriptionMutation } from "@/redux/services/subscription";
 import { useNavigate } from "react-router-dom";
 import { Spinner } from "@/components/ui/spinner";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
@@ -29,10 +29,12 @@ interface handleSubscriptionProps {
   shippingAddress?: ADDRESS;
 }
 
-export default function SubscriptionAddress() {
+export default function EditSubscriptionAddress({ id }: { id: string }) {
+  //   const { id } = useParams();
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
-  const [createSubscription, { isLoading }] = useCreateSubscriptionMutation();
+  const [updateSubscription, { isLoading }] = useUpdateSubscriptionMutation();
+  //   const [createSubscription, { isLoading }] = useCreateSubscriptionMutation();
   const subscriptionDetails = useTypedSelector((state) => state.subscription);
 
   const [selectedAddress, setSelectedAddress] = useState<string>(
@@ -41,7 +43,7 @@ export default function SubscriptionAddress() {
   const [billingAddress, setBillingAddress] = useState(
     !subscriptionDetails?.selectedAddress?.newBillingAddress
   );
-  const { data, isLoading: isPatientDetailsLoading } = useViewPatientByIdQuery(
+  const { data, isLoading: isPatientAddressLoading } = useViewPatientByIdQuery(
     subscriptionDetails?.patient?.patient as string,
     {
       skip: !subscriptionDetails?.patient?.patient,
@@ -88,7 +90,7 @@ export default function SubscriptionAddress() {
     },
   });
 
-  async function handleCreateSubscription(payload: handleSubscriptionProps) {
+  async function handleEditSubscription(payload: handleSubscriptionProps) {
     const productVariations =
       subscriptionDetails?.product?.productVariations?.map((item) => {
         const [id, _quantity, _productName] = item.productVariation.split("?");
@@ -99,11 +101,12 @@ export default function SubscriptionAddress() {
         };
       });
 
-    await createSubscription({
+    await updateSubscription({
       order: subscriptionDetails?.product?.order,
       patient: subscriptionDetails?.patient?.patient as string,
       schedule: subscriptionDetails?.product?.schedule,
       productVariations,
+      id,
       ...payload,
     })
       .unwrap()
@@ -112,7 +115,7 @@ export default function SubscriptionAddress() {
           duration: 1500,
         });
         dispatch(resetSubscription());
-        navigate("/subscriptions");
+        navigate(`/subscriptions/${id}`);
       })
       .catch((err) => {
         console.log("error", err);
@@ -124,17 +127,17 @@ export default function SubscriptionAddress() {
 
   async function onSubmit(values: z.infer<typeof selectOrderAddressSchema>) {
     if (selectedAddress) {
-      await handleCreateSubscription({ address: selectedAddress });
+      await handleEditSubscription({ address: selectedAddress });
     } else {
       if (values.shippingAddress) {
         if (!values.newBillingAddress) {
-          await handleCreateSubscription({
+          await handleEditSubscription({
             billingAddress: values?.shippingAddress as ADDRESS,
             shippingAddress: values?.shippingAddress as ADDRESS,
           });
         } else {
           if (values.billingAddress) {
-            await handleCreateSubscription({
+            await handleEditSubscription({
               billingAddress: values?.billingAddress as ADDRESS,
               shippingAddress: values?.shippingAddress as ADDRESS,
             });
@@ -193,8 +196,8 @@ export default function SubscriptionAddress() {
                 </div>
               </div>
 
-              {isPatientDetailsLoading ? (
-                <div className="min-h-50 flex items-center justify-center">
+              {isPatientAddressLoading ? (
+                <div className="min-h-50 flex justify-center items-center">
                   <LoadingSpinner />
                 </div>
               ) : (
@@ -240,7 +243,7 @@ export default function SubscriptionAddress() {
             </div>
 
             {newShippingAddress && (
-              <div className="mt-4">
+              <div className="mt-6">
                 <CenteredRow>
                   <InputElement
                     name={`shippingAddress.address1`}
@@ -414,7 +417,7 @@ export default function SubscriptionAddress() {
                     <SelectElement
                       options={statesData || []}
                       name={`billingAddress.state`}
-                      className="w-60"
+                      className="w-60 "
                       label="State"
                       isRequired={true}
                       errorClassName="text-right"
@@ -468,7 +471,7 @@ export default function SubscriptionAddress() {
               disabled={isLoading}
               className="rounded-full min-h-12 min-w-[130px] text-[14px] font-semibold text-white cursor-pointer"
             >
-              {isLoading ? <Spinner /> : <span>Create Subscription</span>}
+              {isLoading ? <Spinner /> : <span>Edit Subscription</span>}
             </Button>
           </div>
         </form>

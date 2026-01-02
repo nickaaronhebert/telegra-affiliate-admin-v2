@@ -7,6 +7,7 @@ import type {
 } from "@/types/responses/subscription";
 import type { ICreateSubscriptionRequest } from "@/types/requests/subscription";
 import { TAG_GET_SUBSCRIPTIONS } from "@/types/baseApiTags";
+import type { IEditSubscriptionPayload } from "@/types/requests/IEditSubscription";
 
 const subscriptionApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -69,6 +70,19 @@ const subscriptionApi = baseApi.injectEndpoints({
         result ? [{ type: TAG_GET_SUBSCRIPTIONS, id: "LIST" }] : [],
     }),
 
+    updateSubscription: builder.mutation<any, IEditSubscriptionPayload>({
+      query: ({ id, ...body }) => {
+        return {
+          url: `/ecommerceSubscriptions/${id}`,
+          method: "PUT",
+          body,
+        };
+      },
+      invalidatesTags: (_result, _error, data) => [
+        { type: TAG_GET_SUBSCRIPTIONS, id: data.id },
+      ],
+    }),
+
     cancelSubscription: builder.mutation({
       query: (id: string) => {
         return {
@@ -87,6 +101,7 @@ export const {
   useViewSubscriptionByIdQuery,
   useCreateSubscriptionMutation,
   useCancelSubscriptionMutation,
+  useUpdateSubscriptionMutation,
 } = subscriptionApi;
 
 export default subscriptionApi;

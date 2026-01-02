@@ -3,12 +3,18 @@ import { loadStripe, type Stripe } from "@stripe/stripe-js";
 import { useEffect, useState } from "react";
 import CustomCardForm from "./PaymentForm";
 import { usePaymentProcessorsQuery } from "@/redux/services/paymentMethod";
+import { LoadingSpinner } from "../ui/loading-spinner";
 
 interface AddStripeCardProps {
   handleClose: (arg: boolean) => void;
   onPaymentMethodCreated?: (paymentMethod: any) => void;
+  patientId?: string;
 }
-export default function AddStripeCard({ handleClose, onPaymentMethodCreated }: AddStripeCardProps) {
+export default function AddStripeCard({
+  handleClose,
+  onPaymentMethodCreated,
+  patientId,
+}: AddStripeCardProps) {
   const [stripePromise, setStripePromise] =
     useState<Promise<Stripe | null> | null>(null);
 
@@ -26,12 +32,20 @@ export default function AddStripeCard({ handleClose, onPaymentMethodCreated }: A
   }, [data]);
 
   if (!stripePromise) {
-    return <div>Loading payment form...</div>;
+    return (
+      <div className="flex justify-center items-center">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   return (
     <Elements stripe={stripePromise}>
-      <CustomCardForm handleClose={handleClose} onPaymentMethodCreated={onPaymentMethodCreated} />
+      <CustomCardForm
+        handleClose={handleClose}
+        onPaymentMethodCreated={onPaymentMethodCreated}
+        patientId={patientId}
+      />
     </Elements>
   );
 }

@@ -41,6 +41,7 @@ import TeamManagement from "@/pages/TeamManagement";
 import EncounterList from "@/pages/Encounters";
 import EncounterDetailsPage from "@/pages/Encounters/details";
 import TwoFactorAuthPage from "@/pages/Auth/TwoFactorAuth";
+import EditSubscription from "@/pages/Subscription/Edit";
 
 export const router = createBrowserRouter([
   {
@@ -107,6 +108,10 @@ export const router = createBrowserRouter([
         element: <SubscriptionsPage />,
       },
       {
+        path: ROUTES.SUBSCRIPTION_EDIT,
+        element: <EditSubscription />,
+      },
+      {
         path: ROUTES.COUPONS_PATH,
         element: <CouponsPage />,
       },
@@ -140,6 +145,10 @@ export const router = createBrowserRouter([
         element: <CreateProductPage />,
       },
       {
+        path: ROUTES.PRODUCTS_CREATE_EDIT,
+        element: <CreateProductPage />,
+      },
+      {
         path: "products/:id",
         element: <EditProductPage />,
       },
@@ -167,7 +176,7 @@ export const router = createBrowserRouter([
         path: ROUTES.ENCOUNTERS,
         element: <EncounterList />,
       },
-        {
+      {
         path: ROUTES.ENCOUNTERS_DETAIL,
         element: <EncounterDetailsPage />,
       },

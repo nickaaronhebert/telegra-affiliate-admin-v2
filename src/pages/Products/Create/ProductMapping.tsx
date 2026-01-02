@@ -237,7 +237,7 @@ const ProductMapping = ({
               onClick={onBack}
               className="rounded-full min-h-[44px] px-6 text-sm font-medium"
             >
-              Cancel
+              Back
             </Button>
             <Button
               type="button"

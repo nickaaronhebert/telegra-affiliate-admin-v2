@@ -14,11 +14,13 @@ import { updatePatientDetails } from "@/redux/slices/subscription";
 interface PatientSearchProps {
   selectedPatient?: string | null;
   onSelect: (id: Patient | null) => void;
+  disabled?: boolean;
 }
 
 export function PatientSearch({
   selectedPatient,
   onSelect,
+  disabled = false,
 }: PatientSearchProps) {
   const dispatch = useAppDispatch();
   const [search, setSearch] = useState("");
@@ -89,6 +91,7 @@ export function PatientSearch({
             size="icon"
             className="absolute right-1 top-1/2 -translate-y-1/2"
             onClick={handleClearSearch}
+            disabled={disabled}
           >
             <X className="h-4 w-4" />
           </Button>

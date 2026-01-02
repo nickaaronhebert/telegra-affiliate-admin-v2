@@ -6,6 +6,7 @@ import { useUploadPatientFileMutation } from "@/redux/services/patient";
 import type { PatientDetail } from "@/types/responses/patient";
 import { toast } from "sonner";
 import { useMemo, useRef } from "react";
+import NoData from "@/assets/icons/NoData";
 
 interface PatientFilesProps {
   patient: PatientDetail;
@@ -91,31 +92,38 @@ const PatientFiles = ({ patient }: PatientFilesProps) => {
         <div
           className={`bg-white  pb-1 overflow-y-auto rounded-lg ${containerHeight}`}
         >
-          <div className="flex flex-col gap-3 mt-4">
-            {patient?.files?.map((file) => {
-              const handleDownload = () => {
-                window.open(file.url, "_blank");
-              };
+          {patient?.files?.length > 0 ? (
+            <div className="flex flex-col gap-3 mt-4">
+              {patient?.files?.map((file) => {
+                const handleDownload = () => {
+                  window.open(file.url, "_blank");
+                };
 
-              return (
-                <div
-                  key={file.id}
-                  className="p-4 border rounded-lg border-black-100 flex items-center justify-between"
-                >
-                  <div className="flex items-center gap-4">
-                    <DocumentSvg />
-                    <span>{file.name}</span>
-                  </div>
-                  <button
-                    onClick={handleDownload}
-                    className="cursor-pointer hover:opacity-70 transition-opacity"
+                return (
+                  <div
+                    key={file.id}
+                    className="p-4 border rounded-lg border-black-100 flex items-center justify-between"
                   >
-                    <DownloadSvg />
-                  </button>
-                </div>
-              );
-            })}
-          </div>
+                    <div className="flex items-center gap-4">
+                      <DocumentSvg />
+                      <span>{file.name}</span>
+                    </div>
+                    <button
+                      onClick={handleDownload}
+                      className="cursor-pointer hover:opacity-70 transition-opacity"
+                    >
+                      <DownloadSvg />
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="flex items-center justify-center flex-col gap-2 mt-4">
+              <NoData />
+              <span className="text-gray-400">No Files Found</span>
+            </div>
+          )}
         </div>
       </div>
     </div>

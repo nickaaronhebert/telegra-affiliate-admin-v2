@@ -11,6 +11,7 @@ import { LOCAL_STORAGE_KEYS } from "@/constants";
 import { toast } from "sonner";
 import type { PatientDetail } from "@/types/responses/patient";
 import PaymentMethodCard from "@/components/common/PaymentMethodCard/PaymentMethodCard";
+import NoData from "@/assets/icons/NoData";
 
 interface PaymentMethodsProps {
   patient: PatientDetail;
@@ -98,30 +99,37 @@ const PaymentMethods = ({ patient }: PaymentMethodsProps) => {
           onPaymentMethodCreated={handlePaymentMethodCreated}
         />
       </div>
-      <div className="mt-4 space-y-3 overflow-y-auto rounded-lg h-[350px]">
-        {patient?.payment?.map((payment) => (
-          <PaymentMethodCard
-            key={payment.paymentId}
-            paymentInfo={payment}
-            onSelect={(data) => {
-              console.log("Selected payment method ID:", data);
-            }}
-            OnDelete={() => handleDeleteClick(payment)}
-          />
-        ))}
 
-        <ConfirmDialog
-          open={deleteConfirmModal}
-          onOpenChange={setDeleteConfirmModal}
-          title="Delete payment method?"
-          description="Are you sure you want to delete this patient's payment method? You cannot undo this action."
-          onConfirm={handleConfirmDelete}
-          confirmText="Delete payment method"
-          cancelText="Cancel"
-          confirmTextVariant="destructive"
-          cancelTextVariant="outline"
-        />
-      </div>
+      {Array.isArray(patient?.payment) && patient.payment.length > 0 ? (
+        <div className="mt-4 space-y-3 overflow-y-auto rounded-lg h-[350px]">
+          {patient.payment.map((payment) => (
+            <PaymentMethodCard
+              key={payment.paymentId}
+              paymentInfo={payment}
+              onSelect={(data) => {
+                console.log("Selected payment method ID:", data);
+              }}
+              OnDelete={() => handleDeleteClick(payment)}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="flex items-center justify-center flex-col h-[200px] gap-2">
+          <NoData />
+          <span className="text-gray-400">No Payment Methods</span>
+        </div>
+      )}
+      <ConfirmDialog
+        open={deleteConfirmModal}
+        onOpenChange={setDeleteConfirmModal}
+        title="Delete payment method?"
+        description="Are you sure you want to delete this patient's payment method? You cannot undo this action."
+        onConfirm={handleConfirmDelete}
+        confirmText="Delete payment method"
+        cancelText="Cancel"
+        confirmTextVariant="destructive"
+        cancelTextVariant="outline"
+      />
     </div>
   );
 };

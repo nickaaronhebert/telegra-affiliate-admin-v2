@@ -1,5 +1,5 @@
 import { Skeleton } from "@/components/ui/skeleton";
-import { cn } from "@/lib/utils";
+import { cn, getStatusColors } from "@/lib/utils";
 import type { ReactNode } from "react";
 
 interface DetailCardProps {
@@ -14,6 +14,8 @@ interface DetailCardProps {
     isLink?: boolean;
   }[];
   topChild?: ReactNode;
+  actions?: ReactNode;
+  icon?: ReactNode;
 }
 
 export function DetailsCard({
@@ -22,16 +24,21 @@ export function DetailsCard({
   id,
   isLoading,
   topChild = <></>,
+  actions = <></>,
+  icon = <></>,
 }: DetailCardProps) {
   return (
     <div
-      className="min-w-196.5"
+      className=""
       //   className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014]"
       id={id}
     >
-      <h2 className="text-base font-semibold p-5 border-b border-card-border flex items-center gap-2">
-        {/* <Profile color="black" width={16} height={16} /> */}
-        {title}
+      <h2 className="text-base font-semibold p-5 border-b border-card-border flex items-center gap-2 justify-between">
+        <div className="flex gap-2 items-center justify-center">
+          {icon}
+          {title}
+        </div>
+        {actions}
       </h2>
 
       {topChild}
@@ -41,18 +48,28 @@ export function DetailsCard({
           fields?.length > 0 ? "p-5" : "p-0"
         )}
       >
-        {fields.map(({ label, value, capitalize = true }) => (
+        {fields.map(({ label, value, capitalize = true, isBadge }) => (
           <div key={label}>
-            <h4 className="text-sm font-light text-muted-foreground">
+            <h4 className={`text-sm font-light text-muted-foreground`}>
               {label}
             </h4>
 
             <span
-              className={`text-sm font-semibold text-primary-foreground mt-3 ${
-                capitalize ? "capitalize" : ""
+              className={`text-sm font-semibold  mt-3 ${
+                capitalize ? "capitalize " : ""
+              }${
+                isBadge
+                  ? `w-fit px-3 py-1 rounded-l text-xs font-medium uppercase ${
+                      getStatusColors(value).badge
+                    }`
+                  : "text-primary-foreground"
               }`}
             >
-              {isLoading ? <Skeleton className="h-4 w-32 mt-3" /> : value}
+              {isLoading ? (
+                <Skeleton className="h-4 w-32 mt-3" />
+              ) : (
+                <>{isBadge ? getStatusColors(value).label : value}</>
+              )}
             </span>
           </div>
         ))}

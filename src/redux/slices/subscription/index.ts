@@ -82,6 +82,12 @@ const subscriptionSlice = createSlice({
       state.currentStep += 1;
     },
 
+    presetSubscription: (_state, action: PayloadAction<SubscriptionState>) => {
+      return {
+        ...action.payload,
+      };
+    },
+
     updatePatientDetails: (state, action: PayloadAction<PATIENT_DETAILS>) => {
       state.patient = action.payload;
       //   state.currentStep += 1;
@@ -129,18 +135,13 @@ const subscriptionSlice = createSlice({
     //   state.orderAmount = action.payload;
     // },
 
-    // presetOrder: (_state, action: PayloadAction<OrderState>) => {
-    //   return {
-    //     ...action.payload,
-    //   };
-    // },
-
     resetSubscription: () => initialState,
   },
 });
 
 export const {
   prevStep,
+  presetSubscription,
   updatePatientDetails,
   updateProductDetails,
   updateSubSelectedAddress,

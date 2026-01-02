@@ -2,9 +2,7 @@ import CubeSVG from "@/assets/icons/Cube";
 
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import {
-  useViewOrderByIdQuery,
-} from "@/redux/services/order";
+import { useViewOrderByIdQuery } from "@/redux/services/order";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
@@ -13,7 +11,6 @@ const menuItems = [
     title: "Order Overview",
     scrollToId: "orderOverview",
   },
-
 ];
 
 export default function ViewOrderDetails() {
@@ -22,12 +19,7 @@ export default function ViewOrderDetails() {
     "patientInformation" | "transmissionDetails" | "orderOverview"
   >("orderOverview");
 
-
-  const {
-    data: orderData,
-    isLoading,
-
-  } = useViewOrderByIdQuery(id as string);
+  const { data: orderData, isLoading } = useViewOrderByIdQuery(id as string);
 
   if (isLoading || !orderData) {
     return (
@@ -42,15 +34,16 @@ export default function ViewOrderDetails() {
       <div className="bg-lilac py-3 px-12 flex justify-between items-center">
         <div className="">
           <Link
-            to={"/org/orders"}
+            to={"/orders"}
             className="font-normal text-sm text text-muted-foreground"
           >
             {"<- Back to Orders"}
           </Link>
 
-          <h1 className="text-2xl font-bold mt-1">Order: {orderData?.ecommerceOrderId || orderData?.id} </h1>
+          <h1 className="text-2xl font-bold mt-1">
+            Order: {orderData?.ecommerceOrderId || orderData?.id}{" "}
+          </h1>
         </div>
-
       </div>
 
       <div className="flex gap-8 px-14 mt-6">
@@ -74,7 +67,7 @@ export default function ViewOrderDetails() {
               </div>
             </div>
           </div>
-          {menuItems.map((item:any, index) => {
+          {menuItems.map((item: any, index) => {
             const Icon = item?.icon;
             return (
               <Button
@@ -106,8 +99,6 @@ export default function ViewOrderDetails() {
             );
           })}
         </div>
-
-
       </div>
     </div>
   );

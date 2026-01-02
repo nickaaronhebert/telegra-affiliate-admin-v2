@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/form";
 import { Plus } from "lucide-react";
 import { PRODUCT_TYPES } from "@/constants";
+import { cn } from "@/lib/utils";
 
 // Constants
 export const PRODUCT_TYPE_OPTIONS = [
@@ -122,15 +123,22 @@ interface AddProductDetailsProps {
   onCancel: () => void;
   onContinue: (data: AddProductFormValues) => void;
   isSubmitting?: boolean;
+  initialData?: AddProductFormValues | null;
+  isEditMode?: boolean;
 }
 
 const AddProductDetails = ({
   onCancel,
   onContinue,
   isSubmitting = false,
+  initialData = null,
+  isEditMode = false,
 }: AddProductDetailsProps) => {
+  const [currentSchema, setCurrentSchema] = useState(addProductSchema);
+  const [isInitialized, setIsInitialized] = useState(false);
+
   const form = useForm({
-    resolver: zodResolver(addProductSchema),
+    resolver: zodResolver(currentSchema),
     mode: "onSubmit", // Only validate after field is touched and loses focus
     defaultValues: {
       name: "",
@@ -156,9 +164,44 @@ const AddProductDetails = ({
 
   const selectedProductType = watch("productType");
 
+  // Initialize form with initial data when in edit mode
+  useEffect(() => {
+    if (initialData && !isInitialized) {
+      // Reset form with initial data
+      form.reset({
+        name: initialData.name || "",
+        description: initialData.description || "",
+        sku: initialData.sku || "",
+        productType: initialData.productType || "",
+        regularPrice: initialData.regularPrice || "",
+        subscriptionPeriod: initialData.subscriptionPeriod || "",
+        subscriptionPeriodInterval: initialData.subscriptionPeriodInterval || "",
+        subscriptionLength: initialData.subscriptionLength || "",
+        variations: initialData.variations || [],
+      });
+      
+      // Update schema based on product type
+      if (initialData.productType) {
+        const newSchema = createAddProductSchema(initialData.productType);
+        setCurrentSchema(newSchema);
+      }
+      
+      setIsInitialized(true);
+    }
+  }, [initialData, form, isInitialized]);
+
   // Update form validation schema when product type changes
   useEffect(() => {
     if (selectedProductType) {
+      // Update schema based on product type
+      const newSchema = createAddProductSchema(selectedProductType);
+      setCurrentSchema(newSchema);
+
+      // Skip auto-reset logic if in edit mode and already initialized
+      if (isEditMode && isInitialized) {
+        return;
+      }
+
       // Reset variations when switching away from SUBSCRIPTION_VARIABLE
       if (selectedProductType !== PRODUCT_TYPES.SUBSCRIPTION_VARIABLE) {
         form.setValue("variations", [], { shouldValidate: true });
@@ -192,7 +235,7 @@ const AddProductDetails = ({
       //   form.trigger();
       // }, 0);
     }
-  }, [selectedProductType, form, append, fields.length]);
+  }, [selectedProductType, form, append, fields.length, isEditMode, isInitialized]);
 
 
 
@@ -214,7 +257,7 @@ const AddProductDetails = ({
     <div className="max-w-2xl mx-auto">
       <div className="mb-6">
         <h2 className="text-lg font-semibold text-gray-900">
-          Add Product Details
+          {isEditMode ? "Edit Product Details" : "Add Product Details"}
         </h2>
       </div>
 
@@ -233,7 +276,9 @@ const AddProductDetails = ({
                   <Input
                     {...field}
                     placeholder="Metformin"
-                    className="w-full"
+                    className={cn("w-full", isEditMode && "bg-gray-100 cursor-not-allowed")}
+                    readOnly={isEditMode}
+                    disabled={isEditMode}
                   />
                 </FormControl>
                 <FormMessage />
@@ -274,7 +319,13 @@ const AddProductDetails = ({
                     SKU <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="MET-50" className="w-full" />
+                    <Input
+                      {...field}
+                      placeholder="MET-50"
+                      className={cn("w-full", isEditMode && "bg-gray-100 cursor-not-allowed")}
+                      readOnly={isEditMode}
+                      disabled={isEditMode}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -290,9 +341,13 @@ const AddProductDetails = ({
                   <FormLabel className="text-sm font-medium text-gray-700">
                     Product Type <span className="text-red-500">*</span>
                   </FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    disabled={isEditMode}
+                  >
                     <FormControl>
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger className={cn("w-full", isEditMode && "bg-gray-100 cursor-not-allowed")}>
                         <SelectValue placeholder="Select Product Type" />
                       </SelectTrigger>
                     </FormControl>
@@ -518,6 +573,7 @@ const AddProductDetails = ({
                               placeholder="50"
                               type="number"
                               className="w-full"
+                              required
                             />
                           </FormControl>
                           <FormMessage />
@@ -630,7 +686,11 @@ const AddProductDetails = ({
               className="rounded-full min-h-[44px] px-6 text-sm font-medium text-white cursor-pointer"
               style={{ backgroundColor: "var(--primary)" }}
             >
-              {isSubmitting ? "Creating Product..." : "Continue to Mapping"}
+              {isSubmitting
+                ? isEditMode
+                  ? "Updating Product..."
+                  : "Creating Product..."
+                : "Continue to Mapping"}
             </Button>
           </div>
         </form>
