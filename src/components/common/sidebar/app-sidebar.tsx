@@ -179,7 +179,7 @@ export function AppSidebar() {
                                                     : "!text-[#000] hover:!text-[#5456AD] hover:bg-[#F7F1FD]"
                                                 }`}
                                         >
-                                            <SettingsSVG className={`w-[26px] h-[26px] ${location.pathname.startsWith('/settings') ? "text-[#5456AD]" : "group-hover:text-[#5456AD]"}`} />
+                                            <SettingsSVG className={`!w-[25px] !h-[25px] ${location.pathname.startsWith('/settings') ? "text-[#5456AD]" : "group-hover:text-[#5456AD]"}`} />
                                             {open && (
                                                 <>
                                                     <span className="font-['Inter'] font-medium text-[15px] leading-[22px] tracking-[-0.2px] flex-1">

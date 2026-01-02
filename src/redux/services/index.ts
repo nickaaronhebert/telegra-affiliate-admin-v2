@@ -92,7 +92,7 @@ export const baseApi = createApi({
     TAG_GET_PATIENT_CARDS,
   ],
   baseQuery: fetchBaseQuery({
-    baseUrl: import.meta.env.VITE_BASE_BACKEND_URL || "http://localhost:7009",
+    baseUrl: `${import.meta.env.VITE_BASE_BACKEND_URL}/v2` || "http://localhost:7009",
     prepareHeaders: (headers, { getState }) => {
       const masterKey = import.meta.env.VITE_MASTER_KEY;
       const token = (getState() as RootState)?.auth?.token;

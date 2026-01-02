@@ -6,6 +6,7 @@ export default function SubscriptionsSVG() {
       viewBox="0 0 26 26"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
+      className="!w-[25px] !h-[25px]"
     >
       <path
         d="M6 13C6 11.1435 6.73749 9.363 8.05023 8.05025C9.36298 6.7375 11.1434 6 12.9999 6C14.9568 6.00736 16.8351 6.77095 18.2421 8.13111L19.9999 9.88888"
