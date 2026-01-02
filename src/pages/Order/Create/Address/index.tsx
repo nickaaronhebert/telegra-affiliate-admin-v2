@@ -329,7 +329,6 @@ export default function SelectAddress({ userId }: SelectAddressProps) {
                     id="billing_address"
                     checked={billingAddress}
                     onCheckedChange={(checked) => {
-                      console.log("checked", checked);
                       if (!checked) {
                         form.setValue("billingAddress", {
                           address1: "",

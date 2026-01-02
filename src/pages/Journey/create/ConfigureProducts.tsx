@@ -10,7 +10,6 @@ const ConfigureProducts = ({
   selectedProductVariations,
   onProductVariationsChange,
 }: ConfigureProductsProps) => {
-  console.log("selectedProductVariations",selectedProductVariations);
   return (
     <>
       <div className="flex flex-col mb-6">

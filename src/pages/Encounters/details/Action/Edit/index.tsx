@@ -229,7 +229,6 @@ function UpdateEncounterOrder({
                 optionClass="max-h-[200px] overflow-y-auto p-1"
                 options={address}
                 onChange={(option: AddressOption) => {
-                  console.log("option", option);
                   if (option.address1) {
                     form.setValue("address1", option.address1);
                   }

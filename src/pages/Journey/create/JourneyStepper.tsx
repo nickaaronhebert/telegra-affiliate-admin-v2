@@ -49,7 +49,6 @@ const JourneyStepper = ({
         const validProductVariations = selectedProductVariations.filter(
           (item) => item.productVariation !== null
         );
-        console.log("Valid product variations:", validProductVariations);
         if (validProductVariations.length > 0) {
           const formattedProducts = validProductVariations.map((item) => ({
             productVariation: item.productVariation!.id,
