@@ -259,11 +259,44 @@ export const PAYMENT_MECHANISMS_TITLE = {
 } as const;
 
 export const ORDER_STATUS = {
-  ON_HOLD: "on-hold",
-  COMPLETED: "completed",
-  CANCELLED: "cancelled",
-  PROCESSING: "processing",
+  Started: "started",
+  RequiresOrderSubmission: "requires_order_submission",
+  RequiresAdminReview: "requires_admin_review",
+  RequiresFeeWriteOff: "requires_fee_write_off",
+  RequiresMedicalSpecialistAppointment:
+    "requires_medical_specialist_appointment",
+  RequiresProviderReview: "requires_provider_review",
+  RequiresPharmacyDispatch: "requires_pharmacy_dispatch",
+  RejectedByProvider: "rejected_by_provider",
+  RequiresPharmacyData: "requires_pharmacy_data",
+  RequiresPharmacyResponse: "requires_pharmacy_response",
+  RequiresFulfillment: "requires_fulfillment",
+  WaitingForAttachedQuestionnaire: "waiting_for_attached_questionnaire",
+  PharmacyApproved: "pharmacy_approved",
+  PharmacyRejected: "pharmacy_rejected",
+  PharmacyDeliveryInProgress: "pharmacy_delivery_in_progress",
+  PharmacyShipped: "pharmacy_shipped",
+  Delivered: "delivered",
+  Cancelled: "cancelled",
+  Completed: "completed",
+  Stale: "stale",
+  Delayed: "delayed",
+  RenewalPending: "renewal_pending",
+  ProcessedExternally: "processed_externally",
+  Failed: "failed",
+  Submitted: "submitted",
+  ShippingDepartment: "shipping_department",
+  RequiresWaitingRoomEgress: "requires_waiting_room_egress",
+  RequiresOrderProcessing: "requires_order_processing",
+  RequiresAffiliateReview: "requires_affiliate_review",
+  RequiresPrerequisiteCompletion: "requires_prerequisite_completion",
 } as const;
+
+export const postPractitionerReviewOrderStatuses = [
+  ORDER_STATUS.RequiresOrderProcessing,
+  ORDER_STATUS.Completed,
+  ORDER_STATUS.Cancelled,
+];
 
 export const STATUS_COLORS = {
   pending: {
@@ -311,3 +344,47 @@ export const STATUS_COLORS = {
 export const ECOMMERCE_PLATFORMS = {
   TELEGRA_COMMERCE: "telegra_commerce",
 };
+
+
+
+export const EVENT_TYPES = {
+  PrescriptionRenew : 'prescription_renew',
+  SubscriptionsRenew : 'subscription_renew',
+  FormStarted : 'form_started',
+  ProductRequest : 'product_request',
+  NewStatusSetToRequest : 'new_status_set_to_request',
+  NoAvailableProviders : 'no_available_providers',
+  ProviderAssigned : 'provider_was_assigned',
+  ProviderReassigned : 'provider_was_reassigned',
+  BillingDetailsCompleted : 'billing_details_completed',
+  PrescriptionCancelled : 'prescription_cancelled',
+  ShippingDetailsSet : 'shipping_details_set',
+  ShipmentDelivered : 'shipment_delivered',
+  PrescriptionSentToPharmacy : 'prescription_sent_to_pharmacy',
+  GeneratingPrescription : 'generating_prescription',
+  PharmacyFulfilledPrescription : 'pharmacy_fulfilled_prescription',
+  PharmacyProcessingPrescription : 'pharmacy_processing_prescription',
+  PharmacySentPrescription : 'pharmacy_sent_prescription',
+  PharmacyRejectedPrescription : 'pharmacy_rejected_prescription',
+  AddressAppendedToOrder : 'address_appended_to_order',
+  AddressAppendedToSubscription : 'address_appended_to_subscription',
+  OrderSubmitted : 'order_submitted',
+  OrderPaymentCollected : 'order_payment_collected',
+  OrderCreated : 'order_created',
+  PrescriptionDocumentGenerated : 'prescription_document_generated',
+  InitializePrescriptionRenewal : 'initialize_prescription_renewal',
+  UnhandledEvent : 'unhandled_event',
+  PrescriptionRefill : 'prescription_refill',
+  ConsultationStatusUpdated : 'consultation_status_updated',
+  SendConsultationsPrescriptions : 'send_consultations_prescriptions',
+  RecommendationAccepted : 'recommendation_accepted',
+  RecommendationRejected : 'recommendation_rejected',
+  // AFFILIATE
+  FormIntentResolved : 'form_intent_resolved',
+  ExternalOrderReceivedWoocommerce : 'external_order_received',
+  ExternalOrderReceivedWoocommerceError : 'external_order_received_error',
+  ExternalOrderReceivedGroupon : 'external_order_received_groupon',
+  AbandonedCart : 'abandoned_cart',
+  ConsultationBilledToPatient : 'consultation-billed-to-patient',
+  ConsultationBilledToAffiliate : 'consultation-billed-to-affiliate'
+}

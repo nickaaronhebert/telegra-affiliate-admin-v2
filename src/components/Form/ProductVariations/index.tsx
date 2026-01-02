@@ -70,12 +70,6 @@ export default function ProductVariations() {
                 placeholder="Select a medication"
                 reserveSpace={true}
                 className="w-50 min-h-14"
-                // onChange={(value) => {
-                //   const [_, price, name] = value.split("?");
-                //   console.log("price", price);
-                //   console.log("name", name);
-
-                // }}
               />
 
               <InputNumberElement

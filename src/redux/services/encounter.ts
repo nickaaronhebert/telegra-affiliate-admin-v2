@@ -276,6 +276,17 @@ export const encounterApi = baseApi.injectEndpoints({
         { type: TAG_GET_ENCOUNTER, id: encounterId },
       ],
     }),
+    submitEncounter: builder.mutation<any, string>({
+      query: (id) => {
+        return {
+          url: `/orders/${id}/submit`,
+          method: "POST",
+        };
+      },
+      invalidatesTags: (_result, _error, id) => [
+        { type: TAG_GET_ENCOUNTER, id: id },
+      ],
+    }),
   }),
 });
 
@@ -292,6 +303,7 @@ export const {
   useAttachQuestionnaireToEncounterMutation,
   useUpdateEncounterOrderMutation,
   useUpdateEncounterProductsMutation,
+  useSubmitEncounterMutation
 } = encounterApi;
 
 export default encounterApi;

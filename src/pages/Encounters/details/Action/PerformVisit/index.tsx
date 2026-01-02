@@ -3,14 +3,17 @@ import encounterApi from "@/redux/services/encounter";
 import { useAppDispatch } from "@/redux/store";
 import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
+import { ORDER_STATUS } from "@/constants";
 
 interface SendPerformVisitLinkProps {
   orderId: string;
   affiliateId: string;
+  status: string;
 }
 export default function SendPerformVisitLink({
   orderId,
   affiliateId,
+  status,
 }: SendPerformVisitLinkProps) {
   const dispatch = useAppDispatch();
   const iframeRef = useRef<HTMLIFrameElement>(null);
@@ -58,6 +61,7 @@ export default function SendPerformVisitLink({
         variant={"transparent"}
         onClick={() => setOpenVisitIframe(true)}
         className="min-w-31.75 text-sm font-semibold text-black border-black"
+        disabled={status === ORDER_STATUS.Started}
       >
         Perform Visit
       </Button>
@@ -76,7 +80,6 @@ export default function SendPerformVisitLink({
               boxShadow: "0px 2px 40px 0px #00000014",
               backdropFilter: "blur(10px)", // Apply blur to the background behind the modal
             }}
-            // style={{ boxShadow: "0px 2px 40px 0px #00000014" }}
           >
             <div className="flex justify-end">
               <X onClick={onCloseIframeModal} />
