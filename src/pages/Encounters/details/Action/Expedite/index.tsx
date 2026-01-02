@@ -1,5 +1,6 @@
 import { ConfirmDialog } from "@/components/common/Dialog";
 import { Button } from "@/components/ui/button";
+import { ORDER_STATUS } from "@/constants";
 import { useExpediteEncounterMutation } from "@/redux/services/encounter";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -20,7 +21,9 @@ export default function Expedite({ id, status }: SendInviteLinkProps) {
         variant={"transparent"}
         onClick={() => setOpenExpediateDialog(true)}
         className="min-w-27.5 text-sm font-semibold text-primary border-primary"
-        disabled={status === "cancelled"}
+        disabled={
+          status === ORDER_STATUS.Cancelled || status === ORDER_STATUS.Completed
+        }
       >
         Expedite
       </Button>

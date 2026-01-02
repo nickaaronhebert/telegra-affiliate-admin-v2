@@ -3,6 +3,7 @@ import {
   ExternalQuestionnaireSources,
   QuestionnaireInstanceStatuses,
   CommunicationTemplateKeys,
+  postPractitionerReviewOrderStatuses,
 } from "@/constants";
 import { useCommunicationTemplate } from "@/hooks/useCommunicationTemplate";
 import type { EncounterDetail } from "@/types/responses/encounter";
@@ -70,7 +71,9 @@ const EncounterQuestionnaires = ({
       (qi) => !encounterQuestionnaireIds.includes(qi.id)
     );
   }, [patient?.questionnaireInstances, encounter?.questionnaireInstances]);
-
+  const canAddQuestionnaires =
+    encounter?.status &&
+    !postPractitionerReviewOrderStatuses.includes(encounter?.status as any);
   return (
     <>
       <div
@@ -82,28 +85,30 @@ const EncounterQuestionnaires = ({
             <QuestionnaireSvg color="#000000" width={18} height={18} />
             <h1 className="text-base font-bold ">Patient Questionnaires</h1>
           </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              className="cursor-pointer"
-              onClick={() => setIsInviteModalOpen(true)}
-            >
-              Invite to Complete Questionnaire
-            </Button>
-            <Button
-              variant="outline"
-              className="cursor-pointer"
-              onClick={() => setIsAttachModalOpen(true)}
-              disabled={availableQuestionnairesForAttachment.length === 0}
-              title={
-                availableQuestionnairesForAttachment.length === 0
-                  ? "No questionnaires available"
-                  : ""
-              }
-            >
-              Attach Questionnaire
-            </Button>
-          </div>
+          {canAddQuestionnaires && (
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                className="cursor-pointer"
+                onClick={() => setIsInviteModalOpen(true)}
+              >
+                Invite to Complete Questionnaire
+              </Button>
+              <Button
+                variant="outline"
+                className="cursor-pointer"
+                onClick={() => setIsAttachModalOpen(true)}
+                disabled={availableQuestionnairesForAttachment.length === 0}
+                title={
+                  availableQuestionnairesForAttachment.length === 0
+                    ? "No questionnaires available"
+                    : ""
+                }
+              >
+                Attach Questionnaire
+              </Button>
+            </div>
+          )}
         </div>
         <div className="mt-3">
           <div

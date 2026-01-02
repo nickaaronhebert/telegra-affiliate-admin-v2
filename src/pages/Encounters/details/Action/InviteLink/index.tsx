@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { ORDER_STATUS } from "@/constants";
 import { SendInviteModal } from "@/pages/Patient/details/SendInviteModal";
 import { useSendOrderInviteMutation } from "@/redux/services/patient";
 import { useState } from "react";
@@ -17,7 +18,9 @@ export default function SendInviteLink({ id, status }: SendInviteLinkProps) {
         variant={"transparent"}
         onClick={() => setOpenInviteDialog(true)}
         className="min-w-35.75 text-sm font-semibold text-[#008CE3] border-[#008CE3]"
-        disabled={status === "cancelled"}
+        disabled={
+          status === ORDER_STATUS.Cancelled || status === ORDER_STATUS.Completed
+        }
       >
         Send Online Visit Link
       </Button>
