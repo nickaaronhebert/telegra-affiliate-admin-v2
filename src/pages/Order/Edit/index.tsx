@@ -186,7 +186,7 @@ export default function EditCommerceOrder() {
     <>
       <div className="bg-lilac py-3 px-12">
         <Link
-          to={"/org/orders"}
+          to={"/orders"}
           className="font-normal text-sm text text-muted-foreground"
         >
           {"<- Back to Orders"}

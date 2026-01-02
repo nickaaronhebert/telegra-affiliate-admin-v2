@@ -3,6 +3,7 @@ import { loadStripe, type Stripe } from "@stripe/stripe-js";
 import { useEffect, useState } from "react";
 import CustomCardForm from "./PaymentForm";
 import { usePaymentProcessorsQuery } from "@/redux/services/paymentMethod";
+import { LoadingSpinner } from "../ui/loading-spinner";
 
 interface AddStripeCardProps {
   handleClose: (arg: boolean) => void;
@@ -31,7 +32,11 @@ export default function AddStripeCard({
   }, [data]);
 
   if (!stripePromise) {
-    return <div>Loading payment form...</div>;
+    return (
+      <div className="flex justify-center items-center">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   return (
