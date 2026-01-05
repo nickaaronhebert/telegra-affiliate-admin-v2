@@ -69,7 +69,7 @@ export function labOrderColumns(): ColumnDef<LabOrderInterface>[] {
           <ul>
             {labPanels?.map((item) => {
               return (
-                <li id={item.id} className="text-xs font-medium">
+                <li key={item.id} id={item.id} className="text-xs font-medium">
                   {item?.title}
                 </li>
               );

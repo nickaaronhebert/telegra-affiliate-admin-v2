@@ -219,28 +219,26 @@ export default function LabOrderDetails() {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-5 max-h-75 overflow-y-auto">
                   {data?.labPanels?.map((item) => {
                     return (
-                      <>
-                        <div key={item.id} className="border rounded-lg w-full">
-                          <div className="text-primary bg-lilac p-2.5 rounded-tl-lg rounded-tr-lg">
-                            <span className="flex text-xs font-normal items-center gap-2">
-                              <LabOrderSvg
-                                color="#5456AD"
-                                width={10}
-                                height={10}
-                              />
-                              <span className="text-sm font-semibold">
-                                Lab Panel
-                              </span>{" "}
-                              - {item.title}
-                            </span>
-                          </div>
-                          <div className="p-3">
-                            <p className="text-xs font-normal max-h-20 overflow-y-auto">
-                              {item.description}
-                            </p>
-                          </div>
+                      <div key={item.id} className="border rounded-lg w-full">
+                        <div className="text-primary bg-lilac p-2.5 rounded-tl-lg rounded-tr-lg">
+                          <span className="flex text-xs font-normal items-center gap-2">
+                            <LabOrderSvg
+                              color="#5456AD"
+                              width={10}
+                              height={10}
+                            />
+                            <span className="text-sm font-semibold">
+                              Lab Panel
+                            </span>{" "}
+                            - {item.title}
+                          </span>
                         </div>
-                      </>
+                        <div className="p-3">
+                          <p className="text-xs font-normal max-h-20 overflow-y-auto">
+                            {item.description}
+                          </p>
+                        </div>
+                      </div>
                     );
                   })}
                 </div>
@@ -293,6 +291,7 @@ export default function LabOrderDetails() {
 
       {openEditLabOrder && (
         <ConfirmDialog
+          isLoading={isLoading || isFetching}
           open={openEditLabOrder}
           onOpenChange={setOpenEditLabOrder}
           title="Edit Lab Order"
