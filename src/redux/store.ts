@@ -11,6 +11,7 @@ import productVariationsReducer from "@/redux/slices/product-variations";
 import patientReducer from "@/redux/slices/patient";
 import communicationTemplatesReducer from "@/redux/slices/communicationTemplates";
 import affiliateReducer from "@/redux/slices/affiliate";
+import chatReducer from "@/redux/slices/chat";
 
 import {
   useDispatch,
@@ -30,6 +31,7 @@ export const store = configureStore({
     patient: patientReducer,
     communicationTemplates: communicationTemplatesReducer,
     affiliate: affiliateReducer,
+    chat: chatReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware().concat(baseApi.middleware),

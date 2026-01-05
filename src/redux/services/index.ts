@@ -43,6 +43,7 @@ import {
   TAG_GET_TEAM_MANAGEMENT,
   TAG_BRAND_IDENTITY,
   TAG_GET_PATIENT_CARDS,
+  TAG_PATIENT_CONVERSATIONS,
 } from "@/types/baseApiTags";
 
 export const baseApi = createApi({
@@ -90,6 +91,7 @@ export const baseApi = createApi({
     TAG_GET_TEAM_MANAGEMENT,
     TAG_BRAND_IDENTITY,
     TAG_GET_PATIENT_CARDS,
+    TAG_PATIENT_CONVERSATIONS,
   ],
   baseQuery: fetchBaseQuery({
     baseUrl: `${import.meta.env.VITE_BASE_BACKEND_URL}/v2` || "http://localhost:7009",

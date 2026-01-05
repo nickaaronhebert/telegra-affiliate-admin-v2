@@ -14,6 +14,7 @@ import {
   UserCog,
   Menu,
   ChevronLeft,
+  MessageCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
@@ -31,6 +32,7 @@ const navigationItems = [
   { name: "Lab Orders", href: "/lab-orders", icon: FlaskConical, section: "clinical" },
   { name: "Settings", href: "/settings", icon: Settings, section: "general" },
   { name: "Team Management", href: "/team", icon: UserCog, section: "general" },
+  { name: "Messages", href: "/message", icon: MessageCircle, section: "general" },
 ];
 
 const sectionLabels = {
