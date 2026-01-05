@@ -76,7 +76,6 @@ export default function SendPerformVisitLink({
               boxShadow: "0px 2px 40px 0px #00000014",
               backdropFilter: "blur(10px)", // Apply blur to the background behind the modal
             }}
-            // style={{ boxShadow: "0px 2px 40px 0px #00000014" }}
           >
             <div className="flex justify-end">
               <X onClick={onCloseIframeModal} />

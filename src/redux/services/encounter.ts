@@ -276,6 +276,28 @@ export const encounterApi = baseApi.injectEndpoints({
         { type: TAG_GET_ENCOUNTER, id: encounterId },
       ],
     }),
+    submitEncounter: builder.mutation<any, string>({
+      query: (id) => {
+        return {
+          url: `/orders/${id}/submit`,
+          method: "POST",
+        };
+      },
+      invalidatesTags: (_result, _error, id) => [
+        { type: TAG_GET_ENCOUNTER, id: id },
+      ],
+    }),
+      upgradeEncounter: builder.mutation<any, string>({
+      query: (id) => {
+        return {
+          url: `/orders/${id}/actions/elevateVisitType`,
+          method: "PUT",
+        };
+      },
+      invalidatesTags: (_result, _error, id) => [
+        { type: TAG_GET_ENCOUNTER, id: id },
+      ],
+    }),
   }),
 });
 
@@ -292,6 +314,8 @@ export const {
   useAttachQuestionnaireToEncounterMutation,
   useUpdateEncounterOrderMutation,
   useUpdateEncounterProductsMutation,
+  useSubmitEncounterMutation,
+  useUpgradeEncounterMutation,
 } = encounterApi;
 
 export default encounterApi;

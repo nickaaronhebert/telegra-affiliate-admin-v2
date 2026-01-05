@@ -10,17 +10,16 @@ const ConfigureProducts = ({
   selectedProductVariations,
   onProductVariationsChange,
 }: ConfigureProductsProps) => {
-  console.log("selectedProductVariations",selectedProductVariations);
   return (
-    <>
+    <div className="pb-20">
       <div className="flex flex-col mb-6">
-        <span className="text-lg font-semibold">Configure Products</span>
+        <span className="text-2xl font-medium">Configure Products</span>
         <span className="text-base text-[#63627F]">
           Set up product details and subscription preferences for this journey.
         </span>
       </div>
 
-      <div className="rounded-lg p-6 w-[50%] mx-auto bg-white border border-[#F4F4F4]">
+      <div className="rounded-lg p-6 w-[50%] mx-auto bg-white">
         <ProductVariationsSearch
           selectedData={selectedProductVariations}
           onSelect={(data: ProductVariationItem[]) => {
@@ -29,7 +28,7 @@ const ConfigureProducts = ({
           acceptMultiple={true}
         />
       </div>
-    </>
+    </div>
   );
 };
 

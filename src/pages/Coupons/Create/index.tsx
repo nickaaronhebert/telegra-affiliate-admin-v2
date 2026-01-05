@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -69,30 +69,29 @@ export default function CreateCoupon() {
 
   return (
     <>
-      <div className="px-[45px] py-[12px] bg-[var(--lilac)] mx-auto mb-6">
-  <div className="">
-    <Button
-      variant="ghost"
-      onClick={() => navigate("/coupons")}
-      className="text-sm text-[var(--muted-foreground)] p-0 hover:text-inherit hover:bg-transparent focus:outline-none pointer font-normal"
-    >
-    ← Back to Coupons
-    </Button>
-  </div>
+      <div className="bg-lilac py-3 px-12">
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/coupons")}
+          className="font-normal text-sm text-muted-foreground p-0 hover:text-inherit hover:bg-transparent focus:outline-none pointer"
+        >
+          {"<- Back to Coupons"}
+        </Button>
+        <h1 className="text-2xl font-bold mt-1">Add Coupon</h1>
+      </div>
 
-  <h1 className="text-lg font-semibold">Add Coupon</h1>
-</div>
-
-
-    <div className="max-w-4/5 mx-auto p-6">
-
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 ">
-          <Card className="border-0 p-10">
-            <CardContent className="space-y-6 w-4/5 justify-center mx-auto">
+      <div
+        className="m-10 rounded-[15px] max-w-[815px] mx-auto p-6 bg-white"
+        style={{
+          boxShadow: "0px 8px 10px 0px hsla(0, 0%, 0%, 0.08)",
+        }}
+      >
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <CardContent className="space-y-6">
                 
-            <CardHeader className="p-0">
-              <CardTitle>Add Coupon Details</CardTitle>
+            <CardHeader className="p-0 mb-4">
+              <CardTitle className="text-xl font-semibold">Add Coupon Details</CardTitle>
             </CardHeader>
             
               {/* Coupon Code */}
@@ -196,7 +195,7 @@ export default function CreateCoupon() {
 
             </div>
 
-              <CardHeader className="p-0">
+              <CardHeader className="p-0 mt-6 mb-4 pt-6 border-t">
             <p className="text-lg font-semibold">Advanced Options</p>
               </CardHeader>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -353,11 +352,8 @@ export default function CreateCoupon() {
               />
                   </div>
 
-                </CardContent>
-          </Card>
-
           {/* Action Buttons */}
-          <div className="flex gap-4 justify-end">
+          <div className="flex gap-4 justify-end pt-6">
             <Button
               type="button"
               variant="outline"
@@ -374,9 +370,11 @@ export default function CreateCoupon() {
               {isLoading ? "Creating..." : "Create Coupon"}
             </Button>
           </div>
-        </form>
-      </Form>
-    </div>
+
+            </CardContent>
+          </form>
+        </Form>
+      </div>
     </>
   );
 }

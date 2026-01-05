@@ -5,7 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -142,28 +142,29 @@ export default function EditCoupon() {
 
   return (
     <>
-      <div className="px-[45px] py-[12px] bg-[var(--lilac)] mx-auto mb-6">
-        <div className="">
-          <Button
-            variant="ghost"
-            onClick={() => navigate("/coupons")}
-            className="text-sm text-[var(--muted-foreground)] p-0 hover:text-inherit hover:bg-transparent focus:outline-none pointer font-normal"
-          >
-            ← Back to Coupons
-          </Button>
-        </div>
-
-        <h1 className="text-lg font-semibold">Edit Coupon</h1>
+      <div className="bg-lilac py-3 px-12">
+        <Button
+          variant="ghost"
+          onClick={() => navigate(ROUTES.COUPONS)}
+          className="font-normal text-sm text-muted-foreground p-0 hover:text-inherit hover:bg-transparent focus:outline-none"
+        >
+          {"<- Back to Coupons"}
+        </Button>
+        <h1 className="text-2xl font-bold mt-1">Edit Coupon</h1>
       </div>
 
-      <div className="max-w-4/5 mx-auto p-6">
+      <div
+        className="m-10 rounded-[15px] max-w-[815px] mx-auto p-6 bg-white"
+        style={{
+          boxShadow: "0px 8px 10px 0px hsla(0, 0%, 0%, 0.08)",
+        }}
+      >
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 ">
-            <Card className="border-0 p-10">
-              <CardContent className="space-y-6 w-4/5 justify-center mx-auto">
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <CardContent className="space-y-6">
 
-                <CardHeader className="p-0">
-                  <CardTitle>Edit Coupon Details</CardTitle>
+                <CardHeader className="p-0 mb-4">
+                  <CardTitle className="text-xl font-semibold">Edit Coupon Details</CardTitle>
                 </CardHeader>
 
                 {/* Coupon Code - Disabled */}
@@ -256,7 +257,7 @@ export default function EditCoupon() {
                   />
                 </div>
 
-                <CardHeader className="p-0">
+                <CardHeader className="p-0 mt-6 mb-4 pt-6 border-t">
                   <p className="text-lg font-semibold">Advanced Options</p>
                 </CardHeader>
 
@@ -437,7 +438,6 @@ export default function EditCoupon() {
                 </div>
 
               </CardContent>
-            </Card>
           </form>
         </Form>
       </div>

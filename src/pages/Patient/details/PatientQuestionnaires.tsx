@@ -18,7 +18,7 @@ interface PatientQuestionnairesProps {
 const getStatusDisplay = (status: string, valid: boolean) => {
   const isCompleted =
     status === QuestionnaireInstanceStatuses.Completed || valid;
-  const className = `px-2 py-1 rounded text-sm flex items-center h-[30px] ${
+  const className = `px-2 py-1 rounded text-sm flex items-center h-[30px] capitalize ${
     isCompleted
       ? "bg-green-100 text-green-800"
       : "bg-yellow-100 text-yellow-800"
