@@ -122,7 +122,7 @@ export function PatientMedicationsTable({
       ...(patient?.patientMedications || []),
       newMedication,
     ];
-    updateMedications(updatedMedications);
+    updateMedications(updatedMedications, "Medication added successfully!");
   };
 
   const handleEditMedication = (
@@ -138,10 +138,13 @@ export function PatientMedicationsTable({
     const updatedMedications = (patient?.patientMedications || []).filter(
       (_, i) => i !== index
     );
-    updateMedications(updatedMedications);
+    updateMedications(updatedMedications, "Medication deleted successfully!");
   };
 
-  const updateMedications = async (medications: PatientMedication[]) => {
+  const updateMedications = async (
+    medications: PatientMedication[],
+    successMessage = "Medications updated successfully!"
+  ) => {
     try {
       await updatePatientMedications({
         id: patient?.id,
@@ -150,7 +153,7 @@ export function PatientMedicationsTable({
           medicationsConfirmationDate: new Date().toISOString(),
         },
       }).unwrap();
-      toast.success("Medications updated successfully!");
+      toast.success(successMessage);
     } catch (error: any) {
       toast.error(error?.data?.message || "Failed to update medications");
     }

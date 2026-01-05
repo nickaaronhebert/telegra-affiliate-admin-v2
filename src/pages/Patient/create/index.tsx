@@ -96,7 +96,11 @@ export function CreatePatient({ open, onOpenChange }: CreatePatientProps) {
 
         <div className="p-5">
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-6"
+              noValidate
+            >
               <div className="space-y-6">
                 <div className="space-y-4">
                   <h3 className="text-lg font-semibold">Patient Details</h3>
@@ -111,7 +115,9 @@ export function CreatePatient({ open, onOpenChange }: CreatePatientProps) {
                           <FormItem>
                             <FormLabel className="font-semibold text-[var(--card-foreground)]">
                               First Name{" "}
-                              <span className="text-[var(--destructive)]">*</span>
+                              <span className="text-[var(--destructive)]">
+                                *
+                              </span>
                             </FormLabel>
                             <FormControl>
                               <Input
@@ -132,7 +138,9 @@ export function CreatePatient({ open, onOpenChange }: CreatePatientProps) {
                           <FormItem>
                             <FormLabel className="font-semibold text-[var(--card-foreground)]">
                               Last Name{" "}
-                              <span className="text-[var(--destructive)]">*</span>
+                              <span className="text-[var(--destructive)]">
+                                *
+                              </span>
                             </FormLabel>
                             <FormControl>
                               <Input
@@ -156,7 +164,9 @@ export function CreatePatient({ open, onOpenChange }: CreatePatientProps) {
                           <FormItem>
                             <FormLabel className="font-semibold text-[var(--card-foreground)]">
                               Date of Birth{" "}
-                              <span className="text-[var(--destructive)]">*</span>
+                              <span className="text-[var(--destructive)]">
+                                *
+                              </span>
                             </FormLabel>
                             <FormControl>
                               <Input
@@ -179,7 +189,9 @@ export function CreatePatient({ open, onOpenChange }: CreatePatientProps) {
                           <FormItem>
                             <FormLabel className="font-semibold text-[var(--card-foreground)]">
                               Biological Gender{" "}
-                              <span className="text-[var(--destructive)]">*</span>
+                              <span className="text-[var(--destructive)]">
+                                *
+                              </span>
                             </FormLabel>
                             <Select
                               onValueChange={field.onChange}
@@ -214,7 +226,9 @@ export function CreatePatient({ open, onOpenChange }: CreatePatientProps) {
                           <FormItem>
                             <FormLabel className="font-semibold text-[var(--card-foreground)]">
                               Identified Gender{" "}
-                              <span className="text-[var(--destructive)]">*</span>
+                              <span className="text-[var(--destructive)]">
+                                *
+                              </span>
                             </FormLabel>
                             <Select
                               onValueChange={field.onChange}
@@ -246,7 +260,9 @@ export function CreatePatient({ open, onOpenChange }: CreatePatientProps) {
                           <FormItem>
                             <FormLabel className="font-semibold text-[var(--card-foreground)]">
                               Email Address{" "}
-                              <span className="text-[var(--destructive)]">*</span>
+                              <span className="text-[var(--destructive)]">
+                                *
+                              </span>
                             </FormLabel>
                             <FormControl>
                               <Input
@@ -271,7 +287,9 @@ export function CreatePatient({ open, onOpenChange }: CreatePatientProps) {
                           <FormItem>
                             <FormLabel className="font-semibold text-[var(--card-foreground)]">
                               Phone Number{" "}
-                              <span className="text-[var(--destructive)]">*</span>
+                              <span className="text-[var(--destructive)]">
+                                *
+                              </span>
                             </FormLabel>
                             <FormControl>
                               <Input

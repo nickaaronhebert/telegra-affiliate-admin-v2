@@ -43,9 +43,17 @@ const editPatientSchema = z.object({
   }),
   gender: z.enum(["male", "female"]).optional(),
   email: z.string().email("Invalid email address"),
-  phone: z.string().min(1, "Phone number is required"),
-  height: z.number().positive("Height must be positive").optional(),
-  weight: z.number().positive("Weight must be positive").optional(),
+
+  phone: z.string().regex(/^\d{10}$/, "Phone number must be exactly 10 digits"),
+  height: z.coerce
+    .number()
+    .min(20, "Height must be at least 20 inches")
+    .optional(),
+
+  weight: z.coerce
+    .number()
+    .min(40, "Weight must be at least 40 lbs")
+    .optional(),
 });
 
 type EditPatientFormData = z.infer<typeof editPatientSchema>;
@@ -64,6 +72,7 @@ export function EditPatientModal({
   const [updatePatient, { isLoading }] = useUpdatePatientMutation();
 
   const form = useForm<EditPatientFormData>({
+    mode: "onTouched",
     resolver: zodResolver(editPatientSchema),
     defaultValues: {
       firstName: "",
@@ -86,8 +95,11 @@ export function EditPatientModal({
         dateOfBirth: patient.dateOfBirth
           ? new Date(patient.dateOfBirth).toISOString().split("T")[0]
           : "",
-        genderBiological: (patient.genderBiological as "male" | "female") || GENDER_OPTIONS.MALE.value,
-        gender: (patient.gender as "male" | "female") || GENDER_OPTIONS.MALE.value,
+        genderBiological:
+          (patient.genderBiological as "male" | "female") ||
+          GENDER_OPTIONS.MALE.value,
+        gender:
+          (patient.gender as "male" | "female") || GENDER_OPTIONS.MALE.value,
         email: patient.email || "",
         phone: patient.phone || "",
         height: patient.height ? Number(patient.height) : undefined,
@@ -333,16 +345,21 @@ export function EditPatientModal({
                               <FormControl>
                                 <Input
                                   type="number"
+                                  min={0}
                                   placeholder="60"
                                   className="border-gray-300"
                                   {...field}
-                                  onChange={(e) => {
-                                    const value = e.target.value;
-                                    field.onChange(
-                                      value ? Number(value) : undefined
-                                    );
-                                  }}
-                                  value={field.value || ""}
+                                  value={field.value ?? ""}
+                                  onChange={(e) =>
+                                    field.onChange(e.target.value)
+                                  }
+                                  // onChange={(e) => {
+                                  //   const value = e.target.value;
+                                  //   field.onChange(
+                                  //     value ? Number(value) : undefined
+                                  //   );
+                                  // }}
+                                  // value={field.value || ""}
                                 />
                               </FormControl>
                               <FormMessage />
@@ -361,16 +378,22 @@ export function EditPatientModal({
                               <FormControl>
                                 <Input
                                   type="number"
+                                  min={0}
                                   placeholder="500"
                                   className="border-gray-300"
                                   {...field}
-                                  onChange={(e) => {
-                                    const value = e.target.value;
-                                    field.onChange(
-                                      value ? Number(value) : undefined
-                                    );
-                                  }}
-                                  value={field.value || ""}
+                                  value={field.value ?? ""}
+                                  onChange={(e) =>
+                                    field.onChange(e.target.value)
+                                  }
+                                  // onChange={(e) => {
+                                  //   const value = e.target.value;
+                                  //   console.log("ww", value);
+                                  //   field.onChange(
+                                  //     value ? Number(value) : undefined
+                                  //   );
+
+                                  // }}
                                 />
                               </FormControl>
                               <FormMessage />

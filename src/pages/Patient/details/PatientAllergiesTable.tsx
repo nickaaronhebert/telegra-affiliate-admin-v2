@@ -101,7 +101,7 @@ export function PatientAllergiesTable({ patient }: PatientAllergiesTableProps) {
       ...(patient.medicationAllergies || []),
       newAllergy,
     ];
-    updateAllergies(updatedAllergies);
+    updateAllergies(updatedAllergies, "Allergy added successfully!");
   };
 
   const handleEditAllergy = (
@@ -117,10 +117,13 @@ export function PatientAllergiesTable({ patient }: PatientAllergiesTableProps) {
     const updatedAllergies = (patient.medicationAllergies || []).filter(
       (_, i) => i !== index
     );
-    updateAllergies(updatedAllergies);
+    updateAllergies(updatedAllergies, "Allergy deleted successfully!");
   };
 
-  const updateAllergies = async (allergies: MedicationAllergy[]) => {
+  const updateAllergies = async (
+    allergies: MedicationAllergy[],
+    successMessage = "Allergies updated successfully!"
+  ) => {
     try {
       await updatePatientAllergies({
         id: patient.id,
@@ -129,7 +132,7 @@ export function PatientAllergiesTable({ patient }: PatientAllergiesTableProps) {
           allergiesConfirmationDate: new Date().toISOString(),
         },
       }).unwrap();
-      toast.success("Allergies updated successfully!");
+      toast.success(successMessage);
     } catch (error: any) {
       toast.error(error?.data?.message || "Failed to update allergies");
     }
