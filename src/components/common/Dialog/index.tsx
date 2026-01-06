@@ -89,17 +89,18 @@ export const ConfirmDialog: React.FC<ReusableDialogProps> = ({
             <Button
               variant={cancelTextVariant}
               onClick={() => onOpenChange(false)}
-              className={cn("", cancelTextClass)}
+              className={cn("cursor-pointer", cancelTextClass)}
+              disabled={isLoading}
             >
               {cancelText}
             </Button>
             <Button
               onClick={onConfirm}
               variant={confirmTextVariant}
-              className={cn("", confirmTextClass)}
+              className={cn("cursor-pointer", confirmTextClass)}
               disabled={isLoading}
             >
-              {isLoading ? <LoadingSpinner /> : confirmText}
+              {isLoading ? <>Deleting..<LoadingSpinner /></> : confirmText}
             </Button>
           </DialogFooter>
         )}

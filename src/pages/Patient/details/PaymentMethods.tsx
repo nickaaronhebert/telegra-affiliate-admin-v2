@@ -22,7 +22,7 @@ const PaymentMethods = ({ patient }: PaymentMethodsProps) => {
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<any>(null);
   const [attachPaymentMethod, { isLoading: _isAttaching }] =
     useAttachPaymentMethodMutation();
-  const [removePaymentMethod] = useRemovePaymentMethodMutation();
+  const [removePaymentMethod, { isLoading: isDeleting }] = useRemovePaymentMethodMutation();
 
   const handlePaymentMethodCreated = async (paymentMethod: any) => {
     try {
@@ -129,6 +129,7 @@ const PaymentMethods = ({ patient }: PaymentMethodsProps) => {
         cancelText="Cancel"
         confirmTextVariant="destructive"
         cancelTextVariant="outline"
+        isLoading={isDeleting}
       />
     </div>
   );

@@ -86,7 +86,7 @@ export default function EditLabOrders({
   //   }),
   // });
 
-  const { data: addressData, isLoading: isAddressLoading } =
+  const { data: addressData } =
     useViewPatientByIdQuery(userId!, {
       skip: !userId,
       selectFromResult: ({ data, isLoading }) => ({

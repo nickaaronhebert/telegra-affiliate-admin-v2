@@ -40,7 +40,7 @@ const UserInformation = ({ patient }: UserInformationProps) => {
             <label className="text-sm font-medium text-gray-500">
               Patient Name
             </label>
-            <p className="text-sm font-normal">
+            <p className="text-sm font-normal break-all">
               {patient?.firstName} {patient?.lastName}
             </p>
           </div>
@@ -48,7 +48,7 @@ const UserInformation = ({ patient }: UserInformationProps) => {
             <label className="text-sm font-medium text-gray-600">
               Biological Gender
             </label>
-            <p className="text-sm font-normal capitalize">
+            <p className="text-sm font-normal capitalize ">
               {patient?.genderBiological}
             </p>
           </div>
@@ -67,7 +67,7 @@ const UserInformation = ({ patient }: UserInformationProps) => {
         <div className="space-y-4">
           <div>
             <label className="text-sm font-medium text-gray-600">Email</label>
-            <p className="text-sm font-normal">{patient?.email}</p>
+            <p className="text-sm font-normal break-all">{patient?.email}</p>
           </div>
 
           <div>
@@ -84,7 +84,7 @@ const UserInformation = ({ patient }: UserInformationProps) => {
             <label className="text-sm font-medium text-gray-600">
               Date of Birth
             </label>
-            <p className="text-sm font-normal">
+            <p className="text-sm font-normal break-all">
               {patient?.dateOfBirth
                 ? new Date(patient.dateOfBirth).toLocaleDateString()
                 : "N/A"}
