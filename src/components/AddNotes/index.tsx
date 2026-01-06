@@ -225,11 +225,10 @@ export default function AddNotes({
                   onChange={(e) => {
                     setValue((prev) => ({
                       ...prev,
-                      name: e.target.value, // Update only the `name` property
+                      name: e.target.value,
                     }));
                   }}
                   value={value?.name || ""}
-                  defaultValue={value?.name || ""}
                   placeholder="Enter Template Name"
                   className="bg-white min-h-11.5 border border-gray-300"
                 />
@@ -252,8 +251,8 @@ export default function AddNotes({
                     onClick={addNewTemplate}
                     disabled={
                       isCreateNewTemplateLoader ||
-                      !value?.name ||
-                      !templateContent
+                      value?.name?.trim() === "" ||
+                      !templateContent.trim().replace(/<[^>]*>/g, "").trim()
                     }
                   >
                     Create
@@ -263,7 +262,7 @@ export default function AddNotes({
                     variant={"ctrl"}
                     onClick={editTemplate}
                     disabled={
-                      isUpdateTemplateLoader || !value?.name || !templateContent
+                      isUpdateTemplateLoader || value?.name?.trim() === "" || !templateContent.trim().replace(/<[^>]*>/g, "").trim()
                     }
                     className="bg-black text-xs min-w-25"
                   >
@@ -286,7 +285,7 @@ export default function AddNotes({
               variant={"ctrl"}
               className="min-w-33 py-2.5 h-13 rounded-[50px] cursor-pointer"
               onClick={createNote}
-              disabled={isAddNotesLoader || !relatedEntity || !templateContent}
+              disabled={isAddNotesLoader || !relatedEntity || !templateContent || !templateContent.trim().replace(/<[^>]*>/g, "").trim()}
             >
               Save Note{" "}
             </Button>

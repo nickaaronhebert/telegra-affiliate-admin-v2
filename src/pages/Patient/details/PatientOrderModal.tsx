@@ -199,11 +199,13 @@ export function PatientOrderModal({
       const isAffiliatePayEnabled =
         paymentMechanism &&
         paymentMechanism === PAYMENT_MECHANISMS.AffiliatePay;
-      // Get the selected payment method ID (paymentId)
-      const selectedPaymentId =
-        data.paymentMethod && data.paymentMethod.trim()
-          ? data.paymentMethod
-          : null;
+      
+      // Validate payment method is selected when not using AffiliatePay
+      if (!isAffiliatePayEnabled && (!data.paymentMethod || !data.paymentMethod.trim())) {
+        toast.error("Please select a payment method");
+        return;
+      }
+
       const orderData = {
         address: {
           billing: {
@@ -227,7 +229,7 @@ export function PatientOrderModal({
           productVariation: pv.productVariation?.id,
           quantity: pv.quantity,
         })),
-        paymentMethod: isAffiliatePayEnabled ? null : selectedPaymentId,
+        paymentMethod: isAffiliatePayEnabled ? null : data.paymentMethod,
         isAddressInSelect: data.userAddress !== "none",
       };
       await createPatientOrder(orderData).unwrap();
