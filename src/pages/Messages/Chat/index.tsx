@@ -1,5 +1,5 @@
 import { type FC, useEffect, useMemo, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { useSendbirdStateContext } from "@sendbird/uikit-react";
 import { GroupChannel } from "@sendbird/uikit-react/GroupChannel";
 import GroupChannelList from "@sendbird/uikit-react/GroupChannelList";
@@ -41,24 +41,12 @@ import { toast } from "sonner";
 
 // Import Sendbird styles
 import "@sendbird/uikit-react/dist/index.css";
+import ChannelList from "./ChannelList";
 
 type TChatProps = {
   autoSelectChannelType?: string;
   displayJoinChannelButton?: boolean;
   displayPatientProfileButton?: boolean;
-};
-
-type TChannelListProps = {
-  setSelectedChannel: (channel: string) => void;
-  setSelectedChannelType: (channelType: string | undefined) => void;
-  affiliate: AffiliateMe | null;
-  displayPatientProfileButton?: boolean;
-  setSelectedPatientConversation: (
-    conversation: IPatientConversation | null | undefined
-  ) => void;
-  setConversationLoading: (loading: boolean) => void;
-  channelType: ChannelType;
-  fetchPatientConversation: (userId: string) => Promise<void>;
 };
 
 /**
@@ -98,55 +86,6 @@ const JoinButton: FC<{ handleJoinChannel: (prop: string) => void }> = ({
 };
 
 /**
- * Channel List Component
- */
-const ChannelList: FC<TChannelListProps> = ({
-  setSelectedChannel,
-  setSelectedChannelType,
-  affiliate,
-  displayPatientProfileButton,
-  setSelectedPatientConversation,
-  setConversationLoading,
-  channelType,
-  fetchPatientConversation,
-}) => {
-  return (
-    <GroupChannelList
-      onChannelCreated={() => {}}
-      onChannelSelect={async (channel) => {
-        setSelectedChannel(channel?.url || "");
-        setSelectedChannelType(channel?.customType);
-
-        if (displayPatientProfileButton) {
-          setSelectedPatientConversation(null);
-          setConversationLoading(true);
-          const patientMember = channel?.members.find((member) =>
-            member.userId.includes("pcv::")
-          );
-          if (patientMember) {
-            await fetchPatientConversation(patientMember.userId);
-          } else {
-            setConversationLoading(false);
-          }
-        }
-      }}
-      channelListQueryParams={{
-        includeEmpty: true,
-        limit: 100,
-        customTypesFilter: affiliate?.affiliateChatSystemEnabledChats?.length
-          ? channelType === "all"
-            ? affiliate?.affiliateChatSystemEnabledChats
-            : [channelType]
-          : [""],
-      }}
-      disableAutoSelect
-      allowProfileEdit={false}
-      renderHeader={() => <></>}
-    />
-  );
-};
-
-/**
  * Main Chat Component
  */
 const ChatComponent: FC<TChatProps> = ({
@@ -154,7 +93,6 @@ const ChatComponent: FC<TChatProps> = ({
   displayJoinChannelButton,
   displayPatientProfileButton,
 }) => {
-  const navigate = useNavigate();
   const location = useLocation();
 
   // Redux selectors
@@ -292,7 +230,7 @@ const ChatComponent: FC<TChatProps> = ({
                   <TabsTrigger
                     key={tab.value}
                     value={tab.value}
-                    className="rounded-none border-b-2 border-transparent px-4 py-2 data-[state=active]:border-primary data-[state=active]:bg-transparent cursor-pointer"
+                    className="rounded-none border-b-2 border-transparent p-1 data-[state=active]:border-primary data-[state=active]:bg-transparent cursor-pointer"
                   >
                     {tab.label}
                   </TabsTrigger>
@@ -379,13 +317,15 @@ const ChatComponent: FC<TChatProps> = ({
                   displayPatientProfileButton ? (
                     <Button
                       variant="outline"
+                      className="cursor-pointer mr-2"
                       size="sm"
                       onClick={() => {
-                        navigate(
+                        window.open(
                           `/patients/${
                             (selectedPatientConversation?.patient as Patient)
                               ?.id
-                          }`
+                          }`,
+                          "_blank"
                         );
                       }}
                       disabled={selectedPatientConversation === null}
