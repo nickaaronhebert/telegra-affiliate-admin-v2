@@ -48,11 +48,13 @@ const editPatientSchema = z.object({
   height: z.coerce
     .number()
     .min(20, "Height must be at least 20 inches")
+    .max(100, "The height must be less than 100 inches")
     .optional(),
 
   weight: z.coerce
     .number()
     .min(40, "Weight must be at least 40 lbs")
+    .max(660, "The weight must be less than 660 lbs")
     .optional(),
 });
 
