@@ -13,12 +13,12 @@ import { Button } from "@/components/ui/button";
 import RelatedOrder from "./RelatedOrder";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import Header from "@/components/common/Header";
-import { Badge } from "@/components/ui/badge";
 import dayjs from "@/lib/dayjs";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ConfirmDialog } from "@/components/common/Dialog";
 import { toast } from "sonner";
 import { CalendarRange, CircleUserRound } from "lucide-react";
+import { getStatusColors } from "@/lib/utils";
 
 const menuItems = [
   {
@@ -83,7 +83,6 @@ export default function SubscriptionDetail() {
       isLoading,
     }),
   });
-
   return (
     <div>
       <Header
@@ -194,15 +193,25 @@ export default function SubscriptionDetail() {
                       <h5 className="font-normal text-sm text-muted-foreground">
                         Status
                       </h5>
-                      <Badge>{data?.status}</Badge>
+                      <p
+                        className={`w-fit px-3 py-1 rounded-l text-xs font-medium uppercase  ${
+                          getStatusColors(data?.status as string).badge
+                        }`}
+                      >
+                        {getStatusColors(data?.status as string).label}
+                      </p>
                       {isLoading ? (
                         <Skeleton className="h-4 w-32 mt-3" />
                       ) : (
                         <h6 className="font-normal text-sm text-muted-foreground  mt-1">
-                          Parent Order{" "}
-                          <span className="text-xs text-[#008CE3]">
-                            {`#${data?.parentOrder?.ecommerceOrderId}`}
-                          </span>{" "}
+                          Parent Order
+                          <Link
+                            to={`/order/${data?.parentOrder?._id}`}
+                            className="text-xs text-[#008CE3] cursor-pointer text-sm font-semibold"
+                            target="_blank"
+                          >
+                            {` #${data?.parentOrder?.ecommerceOrderId}`}
+                          </Link>
                         </h6>
                       )}
                     </div>
@@ -235,6 +244,7 @@ export default function SubscriptionDetail() {
               title="Patient Details"
               id="patientOverview"
               isLoading={isLoading}
+              
               fields={[
                 {
                   label: "Patient Name",
