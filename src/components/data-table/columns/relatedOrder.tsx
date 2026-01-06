@@ -3,6 +3,7 @@ import type { ColumnDef } from "@tanstack/react-table";
 // import { Badge } from "@/components/ui/badge";
 
 import { Link } from "react-router-dom";
+import { getStatusColors } from "@/lib/utils";
 
 export interface RELATED_ORDER {
   id: string;
@@ -25,6 +26,7 @@ export function relatedOrderColumns(): ColumnDef<RELATED_ORDER>[] {
             <Link
               to={`/order/${id}`}
               className="text-sm font-medium text-[#008CE3] underline underline-offset-2"
+              target="_blank"
             >
               #{ecommerceOrderId}
             </Link>
@@ -43,37 +45,18 @@ export function relatedOrderColumns(): ColumnDef<RELATED_ORDER>[] {
         );
       },
     },
-
-    // {
-    //   accessorKey: "status",
-    //   header: "Status",
-
-    //   cell: ({ row }) => {
-    //     const { status } = row.original;
-    //     return (
-    //       <Badge className="px-2 py-1.5 text-xs font-semibold">{status}</Badge>
-    //     );
-    //   },
-    // },
     {
       accessorKey: "status",
       header: "Status",
       cell: ({ row }) => {
         const status = row.getValue("status") as string;
-        const statusColors = {
-          "on-hold": "bg-yellow-100 text-yellow-800",
-          completed: "bg-green-100 text-green-800",
-          cancelled: "bg-red-100 text-red-800",
-          processing: "bg-blue-100 text-blue-800",
-        };
         return (
           <span
             className={`px-2 py-1 rounded-full text-xs font-medium capitalize ${
-              statusColors[status as keyof typeof statusColors] ||
-              "bg-gray-100 text-gray-800"
+              getStatusColors(status).badge
             }`}
           >
-            {status}
+            {getStatusColors(status)?.label}
           </span>
         );
       },
