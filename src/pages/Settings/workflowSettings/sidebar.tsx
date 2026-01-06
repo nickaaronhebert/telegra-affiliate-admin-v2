@@ -1,7 +1,7 @@
 export default function HelpInformationSidebar() {
   return (
     <aside
-      className="w-full lg:w-[320px] shrink-0 p-6"
+      className="w-full lg:w-[320px] shrink-0 p-6 screen-h h-full"
       style={{ backgroundColor: "hsla(270, 32%, 94%, 1)" }}
     >
       <div className="space-y-4">

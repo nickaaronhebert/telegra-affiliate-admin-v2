@@ -462,7 +462,7 @@ export default function WebhookManagement({
               <Button
                 type="button"
                 variant="outline"
-                className="border-primary text-primary hover:bg-primary/5"
+                className="rounded-full min-h-[44px] px-6 text-sm font-medium pointer"
                 onClick={() => setIsDialogOpen(false)}
               >
                 Cancel
@@ -471,7 +471,7 @@ export default function WebhookManagement({
               <Button
                 type="submit"
                 disabled={isCreating || isUpdating}
-                className="bg-primary text-white hover:bg-primary/90"
+                className="rounded-full min-h-[44px] px-6 text-sm font-medium text-white cursor-pointer"
               >
                 {editingWebhook ? "Update" : "Create"}
               </Button>
