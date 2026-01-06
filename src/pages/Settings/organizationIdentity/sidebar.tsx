@@ -1,10 +1,10 @@
 export default function CompanyDetailsSidebar() {
   return (
     <aside
-      className="w-full lg:w-[320px] shrink-0 p-6"
+      className="w-full lg:w-[320px] shrink-0 p-6 h-full"
       style={{ backgroundColor: "hsla(270, 32%, 94%, 1)" }}
     >
-      <div className="space-y-6">
+      <div className="space-y-6 screen-h overflow-y-auto">
         {/* Title */}
         <h2 className="text-lg font-semibold text-gray-900">
           Help &amp; Information
