@@ -115,9 +115,9 @@ const ThemeSelection = ({
     defaultValue: string
   ): string => {
     if (!styles || styles.length === 0) return defaultValue;
-    const globalStyle = styles.find((s) => s.elementType === "global");
+    const globalStyle = styles.find((s: any) => s.elementType === "global");
     if (!globalStyle) return defaultValue;
-    const color = globalStyle.colors.find((c) => c.variableName === variableName);
+    const color = globalStyle.colors.find((c: any) => c.variableName === variableName);
     return color?.variableValue || defaultValue;
   };
 
