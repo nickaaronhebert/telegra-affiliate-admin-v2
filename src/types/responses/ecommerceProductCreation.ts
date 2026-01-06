@@ -250,4 +250,5 @@ export interface EcommerceProductDetailResponse {
   ecommercePlatform: string;
   ecommerceProductId: string;
   metadata?: EcommerceProductMetadata;
+  imageUrl?: string;
 }

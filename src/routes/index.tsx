@@ -42,6 +42,7 @@ import EncounterList from "@/pages/Encounters";
 import EncounterDetailsPage from "@/pages/Encounters/details";
 import TwoFactorAuthPage from "@/pages/Auth/TwoFactorAuth";
 import EditSubscription from "@/pages/Subscription/Edit";
+import MessagesPage from "@/pages/Messages";
 
 export const router = createBrowserRouter([
   {
@@ -219,6 +220,10 @@ export const router = createBrowserRouter([
       {
         path: ROUTES.NOT_FOUND,
         element: <NotFound />,
+      },
+      {
+        path: ROUTES.MESSAGE,
+        element: <MessagesPage />,
       },
     ],
   },

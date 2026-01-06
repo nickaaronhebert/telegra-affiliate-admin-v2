@@ -393,7 +393,8 @@ const CreateProductPage = () => {
         <h1 className="text-2xl font-bold mt-1">{isEditMode ? "Edit Product" : "Add Product"}</h1>
       </div>
       <div
-        className="mt-3 rounded-[15px] max-w-[815px] mx-auto p-6 bg-white"
+        className="m-10 rounded-[15px] max-w-[815px] mx-auto p-6 bg-white"
+        
         style={{
           boxShadow: "0px 8px 10px 0px hsla(0, 0%, 0%, 0.08)",
         }}
