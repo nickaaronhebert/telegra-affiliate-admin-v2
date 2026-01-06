@@ -1,6 +1,7 @@
 import type { PAYMENT_MECHANISMS } from "@/constants";
 
-type PaymentMechanismType = (typeof PAYMENT_MECHANISMS)[keyof typeof PAYMENT_MECHANISMS];
+type PaymentMechanismType =
+  (typeof PAYMENT_MECHANISMS)[keyof typeof PAYMENT_MECHANISMS];
 
 export interface EncounterUser {
   id: string;
@@ -209,7 +210,7 @@ export interface PatientForEncounter {
   firstName: string;
   lastName: string;
   picture: string;
-  genderBiological: 'male' | 'female' | 'other';
+  genderBiological: "male" | "female" | "other";
   gender?: string;
   height?: number;
   weight?: number;
@@ -305,6 +306,10 @@ export interface ProjectData {
   createdAt: string;
   updatedAt: string;
   id: string;
+  affiliateApprovalRequired?: boolean;
+  prescriptionDispersementMechanism?: string;
+  telegraApprovalRequired?: boolean;
+
 }
 
 export interface EncounterDetail {
@@ -331,6 +336,9 @@ export interface EncounterDetail {
   labOrders?: EncounterLabOrder[];
   files?: any[];
   notes?: any[];
+  affiliateApprovalDate?: string;
+  telegraApprovalDate?: string;
+
 }
 
 export interface Encounter {
