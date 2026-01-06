@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { Check } from "lucide-react";
 import type { z } from "zod";
 import type { journeySchema } from "@/schemas/journeySchema";
+import { useLazyGetFrontendConfigurationQuery } from "@/redux/services/brandIdentity";
+import { toast } from "sonner";
 
 interface ThemeSelectionProps {
   onBack: () => void;
@@ -31,6 +33,8 @@ const ThemeSelection = ({
     accent: currentTheme?.brandColors?.accent || "#d8b8f3",
     neutral: currentTheme?.brandColors?.neutral || "#fcfcff",
   });
+
+  const [getFrontendConfiguration, { isLoading: isLoadingFrontendConfig }] = useLazyGetFrontendConfigurationQuery();
 
   // Sync with form when component mounts or currentTheme changes
   useEffect(() => {
@@ -104,6 +108,45 @@ const ThemeSelection = ({
   // const applyFromAccountSettings = () => {
   //   console.log("Applying colors from account settings");
   // };
+
+  const getColorFromFrontendConfigStyles = (
+    styles: any[] | undefined,
+    variableName: string,
+    defaultValue: string
+  ): string => {
+    if (!styles || styles.length === 0) return defaultValue;
+    const globalStyle = styles.find((s) => s.elementType === "global");
+    if (!globalStyle) return defaultValue;
+    const color = globalStyle.colors.find((c) => c.variableName === variableName);
+    return color?.variableValue || defaultValue;
+  };
+
+  const handleApplyFromAccountSettings = async () => {
+    try {
+      const result = await getFrontendConfiguration().unwrap();
+      setBrandColors({
+        primary: getColorFromFrontendConfigStyles(
+          result.embeddedStyles,
+          "--theme-primary",
+          "#5456f4"
+        ),
+        accent: getColorFromFrontendConfigStyles(
+          result.embeddedStyles,
+          "--theme-secondary",
+          "#d8b8f3"
+        ),
+        neutral: getColorFromFrontendConfigStyles(
+          result.embeddedStyles,
+          "--theme-light",
+          "#fcfcff"
+        ),
+      });
+      toast.success("Brand settings applied successfully!", { duration: 1500 });
+    } catch (err) {
+      console.error("Failed to import brand settings:", err);
+      toast.error("Failed to import brand settings. Please try again.", { duration: 3000 });
+    }
+  };
 
   return (
     <>
@@ -213,14 +256,15 @@ const ThemeSelection = ({
             </div>
           </div>
 
-          {/* <div className="mt-4">
+          <div className="mt-4">
             <button
-              onClick={applyFromAccountSettings}
-              className="px-4 py-2 text-sm pointer font-medium bg-black text-white rounded hover:bg-gray-800 transition-colors"
+              onClick={handleApplyFromAccountSettings}
+              disabled={isLoadingFrontendConfig}
+              className="px-4 py-2 text-sm pointer font-medium bg-black text-white rounded hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              APPLY FROM MY ACCOUNT SETTINGS
+              {isLoadingFrontendConfig ? "IMPORTING..." : "APPLY FROM MY ACCOUNT SETTINGS"}
             </button>
-          </div> */}
+          </div>
         </div>
       </div>
     </>
