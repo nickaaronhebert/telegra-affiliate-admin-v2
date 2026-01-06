@@ -42,7 +42,7 @@ export default function Navbar() {
   return (
     <>
       <div
-        className="h-[80px] bg-white w-full fixed top-0 left-0 right-0 z-40"
+        className="h-[80px] bg-white w-full fixed top-0 left-0 right-0 z-[41] "
         style={{
           backdropFilter: "blur(50px)",
           boxShadow: "0px 4px 4px 0px #0000000A",
