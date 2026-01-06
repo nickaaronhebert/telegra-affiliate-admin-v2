@@ -6,7 +6,7 @@ export const Delete = () => (
     fill="none"
     xmlns="http://www.w3.org/2000/svg"
   >
-    <g clip-path="url(#clip0_7963_17270)">
+    <g clipPath="url(#clip0_7963_17270)">
       <path
         d="M2 4H14"
         stroke="#008CE3"

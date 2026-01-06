@@ -185,7 +185,7 @@ export const MultiSelect = React.forwardRef<
         modal={modalPopover}
       >
         <PopoverTrigger asChild>
-          <Button
+          <button
             ref={ref}
             {...props}
             onClick={handleTogglePopover}
@@ -255,7 +255,7 @@ export const MultiSelect = React.forwardRef<
                 <ChevronDown className="h-4 cursor-pointer text-muted-foreground mx-2" />
               </div>
             )}
-          </Button>
+          </button>
         </PopoverTrigger>
         <PopoverContent
           className="w-full p-0"

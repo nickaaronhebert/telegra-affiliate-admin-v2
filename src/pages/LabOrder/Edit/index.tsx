@@ -26,6 +26,10 @@ import ProductVariations from "@/components/Form/ProductVariations";
 
 import { toast } from "sonner";
 import { useViewAllStatesQuery } from "@/redux/services/state";
+import {
+  AddressDropdown,
+  type AddressOption,
+} from "@/components/DropDown/AddressDropdown";
 
 interface EditLabOrdersProps {
   handleClose: (arg: boolean) => void;
@@ -54,33 +58,56 @@ export default function EditLabOrders({
   handleClose,
 }: EditLabOrdersProps) {
   const [editLabOrder, { isLoading }] = useEditLabOrderMutation();
-  const { data: addressData } = useViewPatientByIdQuery(userId!, {
-    skip: !userId,
-    selectFromResult: ({ data }) => ({
-      data: {
-        address: data?.addresses?.map((address) => {
-          const address1 = address?.shipping?.address1 ?? ""; // Empty string if address1 is falsy
-          const address2 = address?.shipping?.address2 ?? ""; // Empty string if address2 is falsy
-          const city = address?.shipping?.city ?? ""; // Empty string if city is falsy
-          const state = address?.shipping?.state?.id ?? ""; // Empty string if state is falsy
-          const zipcode = address?.shipping?.zipcode ?? ""; // Empty string if zipcode is falsy
+  // const { data: addressData } = useViewPatientByIdQuery(userId!, {
+  //   skip: !userId,
+  //   selectFromResult: ({ data }) => ({
+  //     data: {
+  //       address: data?.addresses?.map((address) => {
+  //         const address1 = address?.shipping?.address1 ?? ""; // Empty string if address1 is falsy
+  //         const address2 = address?.shipping?.address2 ?? ""; // Empty string if address2 is falsy
+  //         const city = address?.shipping?.city ?? ""; // Empty string if city is falsy
+  //         const state = address?.shipping?.state?.id ?? ""; // Empty string if state is falsy
+  //         const zipcode = address?.shipping?.zipcode ?? ""; // Empty string if zipcode is falsy
 
-          // Create the id by concatenating non-empty values, delimited by '?'
-          const value = [address1, city, state, zipcode, address2]
-            .filter(Boolean) // Remove any falsy values ("" will be removed)
-            .join("?"); // Join them with the delimiter " ? "
+  //         // Create the id by concatenating non-empty values, delimited by '?'
+  //         const value = [address1, city, state, zipcode, address2]
+  //           .filter(Boolean) // Remove any falsy values ("" will be removed)
+  //           .join("?"); // Join them with the delimiter " ? "
 
-          const label = [address1, city, state, zipcode, address2]
-            .filter(Boolean)
-            .join(" ,");
-          return {
-            label,
-            value, // You can use the same id for the label or modify as needed
-          };
-        }),
-      },
-    }),
-  });
+  //         const label = [address1, city, state, zipcode, address2]
+  //           .filter(Boolean)
+  //           .join(" ,");
+  //         return {
+  //           label,
+  //           value, // You can use the same id for the label or modify as needed
+  //         };
+  //       }),
+  //     },
+  //   }),
+  // });
+
+  const { data: addressData, isLoading: isAddressLoading } =
+    useViewPatientByIdQuery(userId!, {
+      skip: !userId,
+      selectFromResult: ({ data, isLoading }) => ({
+        data: {
+          address: data?.addresses?.map((address) => {
+            return {
+              id: address?.id,
+              address1: address?.billing?.address1,
+              address2: address?.billing?.address2 || undefined,
+              city: address?.billing?.city,
+              state: {
+                id: address?.billing?.state?.id,
+                name: address?.billing?.state?.name,
+              },
+              zipcode: address?.billing?.zipcode,
+            };
+          }),
+        },
+        isLoading,
+      }),
+    });
 
   const { data: statesData } = useViewAllStatesQuery(undefined, {
     selectFromResult: ({ data }) => ({
@@ -170,7 +197,35 @@ export default function EditLabOrders({
         <div>
           <div className="flex gap-4">
             <div className="mt-3.5 w-[45%] space-y-3.5 ">
-              <SelectElement
+              <div>
+                <p className="text-sm font-semibold">
+                  Use Address
+                  <span className="text-destructive">*</span>
+                </p>
+              </div>
+              <AddressDropdown
+                optionClass="max-h-[200px] overflow-y-auto p-1"
+                options={addressData?.address || []}
+                onChange={(option: AddressOption) => {
+                  if (option.address1) {
+                    form.setValue("address.address1", option.address1);
+                  }
+                  if (option.address2) {
+                    form.setValue("address.address2", option.address2);
+                  }
+                  if (option.city) {
+                    form.setValue("address.city", option.city);
+                  }
+                  if (option.state && option.state.id) {
+                    form.setValue("address.state", option.state.id);
+                  }
+                  if (option.zipcode) {
+                    form.setValue("address.zipcode", option.zipcode);
+                  }
+                }}
+                placeholder="Choose Address"
+              />
+              {/* <SelectElement
                 name="patient"
                 options={addressData?.address || []}
                 label="User Address"
@@ -197,7 +252,7 @@ export default function EditLabOrders({
                     form.setValue("address.zipcode", zipcode);
                   }
                 }}
-              />
+              /> */}
               <div className="pt-4 space-y-1.5 border-t border-card-border">
                 <CenteredRow>
                   <InputElement
@@ -215,7 +270,7 @@ export default function EditLabOrders({
                     name={`address.address2`}
                     className="w-1/2 "
                     label="Address Line 2"
-                    isRequired={true}
+                    // isRequired={true}
                     messageClassName="text-right"
                     //   placeholder="1247 Broadway Street"
                     inputClassName="border-border min-h-[46px] placeholder:text-[#C3C1C6]"

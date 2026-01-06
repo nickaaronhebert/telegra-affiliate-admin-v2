@@ -1,4 +1,10 @@
-export default function VisaSVG({ width = 22, height = 22 }: { width?: number; height?: number }) {
+export default function VisaSVG({
+  width = 22,
+  height = 22,
+}: {
+  width?: number;
+  height?: number;
+}) {
   return (
     <svg
       width={width}
@@ -7,7 +13,7 @@ export default function VisaSVG({ width = 22, height = 22 }: { width?: number; h
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <g clip-path="url(#clip0_7723_16279)">
+      <g clipPath="url(#clip0_7723_16279)">
         <path
           d="M1.12821 3.94922H20.8718C21.4949 3.94922 22 4.45434 22 5.07742V16.9236C22 17.5467 21.4949 18.0518 20.8718 18.0518H1.12821C0.505126 18.0518 0 17.5467 0 16.9236V5.07742C0 4.45434 0.505126 3.94922 1.12821 3.94922Z"
           fill="#0E4595"
