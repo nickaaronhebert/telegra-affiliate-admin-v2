@@ -20,8 +20,8 @@ export const createPatientSchema = z.object({
     .email({ message: "Please enter a valid email address" }),
 
   phone: z.string().regex(/^\d{10}$/, "Phone number must be exactly 10 digits"),
-  height: z.number().min(20, "Height must be at least 20 inches").optional(),
-  weight: z.number().min(40, "Weight must be at least 40 lbs").optional(),
+  height: z.number().min(20, "Height must be at least 20 inches").max(100, "The height must be less than 100 inches").optional(),
+  weight: z.number().min(40, "Weight must be at least 40 lbs").max(660, "The weight must be less than 660 lbs").optional(),
 });
 
 export type CreatePatientFormData = z.infer<typeof createPatientSchema>;

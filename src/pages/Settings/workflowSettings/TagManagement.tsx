@@ -7,7 +7,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import {
     Select,
     SelectContent,
@@ -33,6 +32,13 @@ import type {
 } from "@/types/requests/tag";
 import { Badge } from "@/components/ui/badge";
 import { Plus } from "lucide-react";
+import { Label } from "@/components/ui/label"
+import {
+    RadioGroup,
+    RadioGroupItem,
+} from "@/components/ui/radio-group"
+import { Description } from "@radix-ui/react-dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 const COLOR_OPTIONS = [
     { label: "Red", text: "#C41E3A", background: "#FFA39E" },
@@ -277,181 +283,166 @@ export default function TagManagementSection({
 
             {/* Create / Edit Dialog */}
             <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                <DialogContent className="sm:max-w-md p-6 bg-white">
-                    <DialogHeader>
-                        <DialogTitle className="text-lg font-semibold">
+                <DialogContent className="sm:max-w-md  bg-white gap-0 rounded-2xl">
+                    <DialogHeader className=" border-b px-6 py-4 gap-0">
+                        <DialogTitle className="text-lg font-semibold gap-0">
                             {editingTag ? "Edit Tag" : "Create New Tag"}
                         </DialogTitle>
                     </DialogHeader>
-
                     <form
                         onSubmit={(e) => {
                             e.preventDefault();
                             handleSubmit();
                         }}
-                        className="space-y-5"
                     >
-                        {/* Tag Name */}
-                        <div className="space-y-1">
-                            <Label className="text-sm font-medium">Tag Name</Label>
-                            <Input
-                                placeholder="Enter tag name"
-                                value={form.name}
-                                onChange={(e) =>
-                                    setForm((s: ICreateTagRequest) => ({
-                                        ...s,
-                                        name: e.target.value,
-                                    }))
-                                }
-                                required
-                            />
-                        </div>
+                        <div className="p-6 space-y-5">
+                            {/* Tag Name */}
+                            <div className="space-y-1">
+                                <Label className="text-sm font-semibold gap-1">Tag Name<span className="text-red-500">*</span></Label>
+                                <Input
+                                    className="border-border"
+                                    placeholder="Enter tag name"
+                                    value={form.name}
+                                    onChange={(e) =>
+                                        setForm((s: ICreateTagRequest) => ({
+                                            ...s,
+                                            name: e.target.value,
+                                        }))
+                                    }
+                                    required
+                                />
+                            </div>
 
-                        {/* Color */}
-                        <div className="space-y-1">
-                            <Label className="text-sm font-medium">Color</Label>
-                            <Select
-                                value={form.color}
-                                onValueChange={(v) =>
-                                    setForm((s: ICreateTagRequest) => ({ ...s, color: v }))
-                                }
-                            >
-                                <SelectTrigger className="pointer w-full">
-                                    {form.color ? (
-                                        (() => {
-                                            const selected = COLOR_OPTIONS.find(c => c.text === form.color);
-                                            return selected ? (
+                            {/* Color */}
+                            <div className="space-y-1">
+                                <Label className="text-sm font-semibold gap-1">Color<span className="text-red-500">*</span></Label>
+                                <Select
+                                    value={form.color}
+                                    onValueChange={(v) =>
+                                        setForm((s: ICreateTagRequest) => ({ ...s, color: v }))
+                                    }
+                                >
+                                    <SelectTrigger className="pointer w-full border-border">
+                                        {form.color ? (
+                                            (() => {
+                                                const selected = COLOR_OPTIONS.find(c => c.text === form.color);
+                                                return selected ? (
+                                                    <div
+                                                        className="flex items-center w-full rounded gap-2"
+                                                    >
+                                                        <span
+                                                            className="text-xs font-semibold border rounded px-2 py-0.5"
+                                                            style={{
+                                                                color: selected.text,
+                                                                borderColor: selected.text,
+                                                                backgroundColor: selected.background,
+                                                            }}
+                                                        >
+                                                            Sample
+                                                        </span>
+                                                        <span className="text-sm font-semibold">{selected.label}</span>
+                                                    </div>
+                                                ) : (
+                                                    <SelectValue placeholder="Select a color" className="pointer" />
+                                                );
+                                            })()
+                                        ) : (
+                                            <SelectValue placeholder="Select a color" className="pointer" />
+                                        )}
+                                    </SelectTrigger>
+                                    <SelectContent className="pointer">
+                                        {COLOR_OPTIONS.map((c) => (
+                                            <SelectItem
+                                                key={c.text}
+                                                value={c.text}
+                                                className="w-full p-0"
+                                            >
                                                 <div
-                                                    className="flex items-center w-full rounded gap-2"
+                                                    className="flex items-center justify-between w-full px-3 py-2 rounded gap-2"
+                                                    style={{
+                                                        // backgroundColor: c.background,
+                                                        // color: c.text,
+                                                    }}
                                                 >
+
                                                     <span
                                                         className="text-xs font-semibold border rounded px-2 py-0.5"
                                                         style={{
-                                                            color: selected.text,
-                                                            borderColor: selected.text,
+                                                            color: c.text,
+                                                            borderColor: c.text,
+                                                            backgroundColor: c.background,
                                                         }}
                                                     >
                                                         Sample
                                                     </span>
-                                                    <span className="text-sm font-medium">{selected.label}</span>
+                                                    <span className="text-sm font-medium">{c.label}</span>
                                                 </div>
-                                            ) : (
-                                                <SelectValue placeholder="Select a color" className="pointer" />
-                                            );
-                                        })()
-                                    ) : (
-                                        <SelectValue placeholder="Select a color" className="pointer" />
-                                    )}
-                                </SelectTrigger>
-                                <SelectContent className="pointer">
-                                    {COLOR_OPTIONS.map((c) => (
-                                        <SelectItem
-                                            key={c.text}
-                                            value={c.text}
-                                            className="w-full p-0"
-                                        >
-                                            <div
-                                                className="flex items-center justify-between w-full px-3 py-2 rounded gap-2"
-                                                style={{
-                                                    // backgroundColor: c.background,
-                                                    // color: c.text,
-                                                }}
-                                            >
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
 
-                                                <span
-                                                    className="text-xs font-semibold border rounded px-2 py-0.5"
-                                                    style={{
-                                                        color: c.text,
-                                                        borderColor: c.text,
-                                                        backgroundColor: c.background,
-                                                    }}
-                                                >
-                                                    Sample
-                                                </span>
-                                                <span className="text-sm font-medium">{c.label}</span>
-                                            </div>
-                                        </SelectItem>
-                                    ))}
-                                </SelectContent>
-                            </Select>
-                        </div>
-
-                        {/* Owner Model */}
-                        <div className="space-y-2">
-                            <Label className="text-sm font-medium">Owner Model {editingTag && "(Cannot be changed)"}</Label>
-                            <div className="flex items-center gap-4">
-                                <button
-                                    type="button"
-                                    disabled={!!editingTag}
-                                    onClick={() => {
-                                        const affiliateId = getIdByOwnerModel("affiliate");
+                            {/* Owner Model */}
+                            <div className="space-y-2">
+                                <Label className="text-sm font-semibold">Tag Level {editingTag && "(Cannot be changed)"}<span className="text-red-500">*</span></Label>
+                                <RadioGroup
+                                    value={form.scope.owner.model}
+                                    onValueChange={(value) => {
+                                        const id = getIdByOwnerModel(value);
                                         setForm((s: ICreateTagRequest) => ({
                                             ...s,
                                             scope: {
                                                 ...s.scope,
                                                 owner: {
-                                                    model: "affiliate",
-                                                    id: affiliateId,
+                                                    model: value,
+                                                    id: id,
                                                 },
                                             },
                                         }));
                                     }}
-                                    className={`px-4 py-2 rounded border-2 font-medium transition-all ${
-                                        form.scope.owner.model === "affiliate"
-                                            ? "border-black bg-black text-white"
-                                            : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"
-                                    } ${editingTag ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
-                                >
-                                    Affiliate
-                                </button>
-                                <button
-                                    type="button"
                                     disabled={!!editingTag}
-                                    onClick={() => {
-                                        const userId = getIdByOwnerModel("user");
+                                    className=" items-center gap-4"
+                                >
+                                    <div className="flex items-top space-x-2 ">
+                                        <RadioGroupItem value="affiliate" id="affiliate" disabled={!!editingTag} />
+                                        <div className="space-y-0.5">
+                                            <Label htmlFor="affiliate" className="font-normal cursor-pointer">Affiliate</Label>
+                                            <Description className="text-[#3E4D61] text-xs">Available to all users within your affiliate</Description>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-top space-x-2">
+                                        <RadioGroupItem value="user" id="user" disabled={!!editingTag} />
+                                        <div className="space-y-0.5">
+                                            <Label htmlFor="user" className="font-normal cursor-pointer">User</Label>
+                                            <Description className="text-[#3E4D61] text-xs">Only available to you</Description>
+                                        </div>
+                                    </div>
+                                </RadioGroup>
+                            </div>
+
+                            {/* Description */}
+                            <div className="space-y-1">
+                                <Label className="text-sm font-semibold">Description</Label>
+                                <Textarea
+                                    className="border-border"
+                                    placeholder="Enter brief description for this tag"
+                                    value={form.description}
+                                    onChange={(e) =>
                                         setForm((s: ICreateTagRequest) => ({
                                             ...s,
-                                            scope: {
-                                                ...s.scope,
-                                                owner: {
-                                                    model: "user",
-                                                    id: userId,
-                                                },
-                                            },
-                                        }));
-                                    }}
-                                    className={`px-4 py-2 rounded border-2 font-medium transition-all ${
-                                        form.scope.owner.model === "user"
-                                            ? "border-black bg-black text-white"
-                                            : "border-gray-300 bg-white text-gray-700 hover:border-gray-400"
-                                    } ${editingTag ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}
-                                >
-                                    User
-                                </button>
+                                            description: e.target.value,
+                                        }))
+                                    }
+                                />
                             </div>
                         </div>
-
-                        {/* Description */}
-                        <div className="space-y-1">
-                            <Label className="text-sm font-medium">Description</Label>
-                            <Input
-                                placeholder="Optional description"
-                                value={form.description}
-                                onChange={(e) =>
-                                    setForm((s: ICreateTagRequest) => ({
-                                        ...s,
-                                        description: e.target.value,
-                                    }))
-                                }
-                            />
-                        </div>
-
                         {/* Actions */}
-                        <div className="flex justify-end gap-3 pt-6">
+                        <div className="flex justify-end gap-3 px-6 py-4 border-t">
                             <Button
                                 type="button"
                                 variant="outline"
-                                className="border-primary text-primary hover:bg-primary/5"
+                                className="rounded-full min-h-[44px] px-6 text-sm font-medium pointer"
                                 onClick={() => setIsDialogOpen(false)}
                             >
                                 Cancel
@@ -459,17 +450,17 @@ export default function TagManagementSection({
 
                             <Button
                                 type="submit"
-                                className="bg-primary text-white hover:bg-primary/90"
+                                className="rounded-full min-h-[44px] px-6 text-sm font-medium text-white cursor-pointer"
                             >
                                 {editingTag ? "Update" : "Create"}
                             </Button>
                         </div>
                     </form>
-                </DialogContent>
-            </Dialog>
+                </DialogContent >
+            </Dialog >
 
             {/* Delete Confirmation Dialog */}
-            <Dialog open={deleteConfirmDialog.isOpen} onOpenChange={(isOpen) => 
+            < Dialog open={deleteConfirmDialog.isOpen} onOpenChange={(isOpen) =>
                 setDeleteConfirmDialog({ ...deleteConfirmDialog, isOpen })
             }>
                 <DialogContent className="sm:max-w-md p-6 bg-white">
@@ -504,7 +495,7 @@ export default function TagManagementSection({
                         </div>
                     </div>
                 </DialogContent>
-            </Dialog>
+            </Dialog >
         </>
     );
 }

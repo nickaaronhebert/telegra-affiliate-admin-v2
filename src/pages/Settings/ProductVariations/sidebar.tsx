@@ -1,7 +1,7 @@
 export default function ProductVariationsSidebar() {
   return (
     <aside
-      className="w-full lg:w-[320px] shrink-0 p-6"
+      className="w-full lg:w-[320px] shrink-0 p-6 h-[calc(100vh-80px)]"
       style={{ backgroundColor: "hsla(270, 32%, 94%, 1)" }}
     >
       <div className="space-y-4">
