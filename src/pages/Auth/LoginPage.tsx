@@ -71,10 +71,10 @@ const LoginPage = () => {
         });
       } else if (response.user?.id) {
         // Already authenticated (2FA disabled)
-        navigate(ROUTES.DASHBOARD);
+        navigate(ROUTES.PATIENTS);
       } else {
         // Navigate to dashboard as fallback
-        navigate(ROUTES.DASHBOARD);
+        navigate(ROUTES.PATIENTS);
       }
     } catch (error: unknown) {
       console.error("Login failed:", error);
