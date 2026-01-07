@@ -28,6 +28,7 @@ import {
 } from "@/redux/services/billingDetails";
 import FinancialManagementSidebar from "./sidebar";
 import { ArrowRight, Plus } from "lucide-react";
+import { PAYMENT_PROCESSOR_KEYS } from "@/constants";
 
 // type PaymentRow = { name: string; value: string };
 
@@ -39,6 +40,7 @@ export default function FinancialManagementPage() {
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   // const [showSecretKey, setShowSecretKey] = useState(false);
+  const [isSecretKeyEdited, setIsSecretKeyEdited] = useState(false);
 
   const [formData, setFormData] = useState<UpdatePaymentProcessorRequest>({
     PROCESSOR_TYPE: "",
@@ -56,12 +58,12 @@ export default function FinancialManagementPage() {
     }, {});
   }, [paymentData]);
 
-  // ✅ Sync normalized data → form
+  // ✅ Sync normalized data → form (STRIPE_SECRET_KEY never comes from backend)
   useEffect(() => {
     if (normalizedPaymentData) {
       setFormData({
         PROCESSOR_TYPE: normalizedPaymentData.PROCESSOR_TYPE || "",
-        STRIPE_SECRET_KEY: normalizedPaymentData.STRIPE_SECRET_KEY || "",
+        STRIPE_SECRET_KEY: "",
         STRIPE_PUBLISHER_KEY: normalizedPaymentData.STRIPE_PUBLISHER_KEY || "",
       });
     }
@@ -71,17 +73,28 @@ export default function FinancialManagementPage() {
     if (normalizedPaymentData) {
       setFormData({
         PROCESSOR_TYPE: normalizedPaymentData.PROCESSOR_TYPE || "",
-        STRIPE_SECRET_KEY: normalizedPaymentData.STRIPE_SECRET_KEY || "",
+        STRIPE_SECRET_KEY: "",
         STRIPE_PUBLISHER_KEY: normalizedPaymentData.STRIPE_PUBLISHER_KEY || "",
       });
     }
+    setIsSecretKeyEdited(false);
     setIsDialogOpen(true);
   };
 
   const handleFormSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await updatePaymentProcessor(formData).unwrap();
+      // Only include STRIPE_SECRET_KEY if user actually edited it
+      const payload: Partial<UpdatePaymentProcessorRequest> = {
+        PROCESSOR_TYPE: formData.PROCESSOR_TYPE,
+        STRIPE_PUBLISHER_KEY: formData.STRIPE_PUBLISHER_KEY,
+      };
+
+      if (isSecretKeyEdited && formData.STRIPE_SECRET_KEY) {
+        payload.STRIPE_SECRET_KEY = formData.STRIPE_SECRET_KEY;
+      }
+
+      await updatePaymentProcessor(payload as UpdatePaymentProcessorRequest).unwrap();
       toast.success("Payment processor settings updated successfully");
       setIsDialogOpen(false);
     } catch {
@@ -96,7 +109,6 @@ export default function FinancialManagementPage() {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
-  const maskSecretKey = (key: string) => (key ? "•".repeat(100) : "");
 
   if (isLoading) {
     return (
@@ -163,7 +175,7 @@ export default function FinancialManagementPage() {
                           <Select
                             value={formData.PROCESSOR_TYPE}
                             onValueChange={(v) =>
-                              handleInputChange("PROCESSOR_TYPE", v)
+                              handleInputChange(PAYMENT_PROCESSOR_KEYS.PROCESSOR_TYPE as keyof UpdatePaymentProcessorRequest, v)
                             }
                           >
                             <SelectTrigger className="w-full">
@@ -178,13 +190,16 @@ export default function FinancialManagementPage() {
                         <div className="space-y-2">
                           <Label>Secret Key</Label>
                           <Input
+                            type="password"
                             value={formData.STRIPE_SECRET_KEY}
-                            onChange={(e) =>
+                            placeholder="••••••••••••••••"
+                            onChange={(e) => {
+                              setIsSecretKeyEdited(true);
                               handleInputChange(
-                                "STRIPE_SECRET_KEY",
+                                PAYMENT_PROCESSOR_KEYS.STRIPE_SECRET_KEY as keyof UpdatePaymentProcessorRequest,
                                 e.target.value
-                              )
-                            }
+                              );
+                            }}
                           />
                         </div>
 
@@ -194,7 +209,7 @@ export default function FinancialManagementPage() {
                             value={formData.STRIPE_PUBLISHER_KEY}
                             onChange={(e) =>
                               handleInputChange(
-                                "STRIPE_PUBLISHER_KEY",
+                                PAYMENT_PROCESSOR_KEYS.STRIPE_PUBLISHER_KEY as keyof UpdatePaymentProcessorRequest,
                                 e.target.value
                               )
                             }
@@ -246,22 +261,9 @@ export default function FinancialManagementPage() {
                     </Label>
 
                     <div className="relative flex items-center gap-2 max-w-[60%]">
-                      <span
-                        className="text-sm truncate block"
-                        title={
-                          normalizedPaymentData?.STRIPE_SECRET_KEY ||
-                          "Not configured"
-                        }
-                      >
-                        {/* {showSecretKey
-                          ? normalizedPaymentData?.STRIPE_SECRET_KEY ||
-                            "Not configured"
-                          : maskSecretKey(
-                              normalizedPaymentData?.STRIPE_SECRET_KEY || ""
-                            )} */}
-                        {maskSecretKey(
-                          normalizedPaymentData?.STRIPE_SECRET_KEY || ""
-                        ) || "Not configured"}
+                      <span className="text-sm truncate block">
+                        {/* Secret key never comes from backend, always show masked */}
+                        ••••••••••••••••••••••••••••••••
                       </span>
 
                       {/* <Button

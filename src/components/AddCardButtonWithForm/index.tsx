@@ -4,7 +4,7 @@ import { loadStripe, type Stripe } from "@stripe/stripe-js";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { generalInfo } from "@/utils/generalInfo";
-import { PaymentProcessors } from "@/constants";
+import { PAYMENT_PROCESSOR_KEYS, PaymentProcessors } from "@/constants";
 import { AuthNetButtonWithForm } from "@/components/AuthNetButtonWithForm";
 import AddStripeCard from "@/components/AddPaymentCard";
 import { usePaymentProcessorsQuery } from "@/redux/services/paymentMethod";
@@ -38,7 +38,7 @@ export const AddCardButtonWithForm = ({
   // Fetch payment processor config
   const { data: processorData } = usePaymentProcessorsQuery(undefined, {
     selectFromResult: ({ data }) => ({
-      data: data?.data?.find((item) => item.name === "STRIPE_PUBLISHER_KEY"),
+      data: data?.data?.find((item) => item.name === PAYMENT_PROCESSOR_KEYS.STRIPE_PUBLISHER_KEY),
     }),
   });
 

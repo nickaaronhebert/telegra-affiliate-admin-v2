@@ -33,18 +33,13 @@ import ProductsSVG from "@/assets/icons/Products";
 import PatientsSVG from "@/assets/icons/Patients";
 import EncountersSVG from "@/assets/icons/Encounters";
 import LabOrdersSVG from "@/assets/icons/LabOrders";
-import DashboardSVG from "@/assets/icons/Dashboard";
 import SettingsSVG from "@/assets/icons/Settings";
 import TeamManagementSVG from "@/assets/icons/TeamManagement";
 import { useGetAffiliateDetailsQuery } from "@/redux/services/organizationIdentity";
 import { ECOMMERCE_PLATFORMS } from "@/constants";
 import { ROUTES } from "@/constants/routes";
 
-const dashboardItem = {
-  title: "Dashboard",
-  url: ROUTES.DASHBOARD,
-  icon: DashboardSVG,
-};
+
 const commerce = [
   { title: "Orders", url: ROUTES.ORDERS, icon: OrdersSVG },
   { title: "Subscriptions", url: ROUTES.SUBSCRIPTIONS, icon: SubscriptionsSVG },
@@ -143,11 +138,11 @@ export function AppSidebar() {
 
       <SidebarContent className="px-1 bg-white">
         {/* Dashboard */}
-        <SidebarGroup>
+        {/* <SidebarGroup>
           <SidebarGroupContent>
             <SidebarMenu>{renderMenu([dashboardItem])}</SidebarMenu>
           </SidebarGroupContent>
-        </SidebarGroup>
+        </SidebarGroup> */}
 
         {/* COMMERCE - Only show if ecommerce module is enabled */}
         {checkEcommerceModule && (

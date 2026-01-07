@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import CustomCardForm from "./PaymentForm";
 import { usePaymentProcessorsQuery } from "@/redux/services/paymentMethod";
 import { LoadingSpinner } from "../ui/loading-spinner";
+import { PAYMENT_PROCESSOR_KEYS } from "@/constants";
 
 interface AddStripeCardProps {
   handleClose: (arg: boolean) => void;
@@ -20,7 +21,7 @@ export default function AddStripeCard({
 
   const { data } = usePaymentProcessorsQuery(undefined, {
     selectFromResult: ({ data }) => ({
-      data: data?.data?.find((item) => item.name === "STRIPE_PUBLISHER_KEY"),
+      data: data?.data?.find((item) => item.name === PAYMENT_PROCESSOR_KEYS.STRIPE_PUBLISHER_KEY),
     }),
   });
 
