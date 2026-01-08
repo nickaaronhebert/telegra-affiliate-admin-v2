@@ -41,7 +41,7 @@ const ProductMapping = ({
     error,
   } = useViewAllProductsQuery({
     page: 1,
-    perPage: 100, // Get enough products for mapping
+    perPage: 10000, // Get enough products for mapping
     q: "", // No search query, get all products
   });
 
