@@ -14,6 +14,9 @@ import { Tag } from "lucide-react";
 import { convertToCSV } from "@/lib/convertToCsv";
 import dayjs from "dayjs";
 import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { X, Calendar } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export type SearchFiltersProps = {
   adminId?: string;
@@ -28,6 +31,14 @@ export default function EncounterList() {
   const [searchParams] = useSearchParams();
   const [status, setStatus] = useState("started");
   const [filters, setSearchFilters] = useState<SearchFiltersProps | null>(null);
+  const [datePickerOpen, setDatePickerOpen] = useState(false);
+  const [dateRange, setDateRange] = useState<{
+    startDate: string;
+    endDate: string;
+  }>({
+    startDate: "",
+    endDate: "",
+  });
 
   const page = parseInt(searchParams.get("page") || "1", 10);
   const perPage = parseInt(searchParams.get("per_page") ?? "100", 10);
@@ -40,19 +51,47 @@ export default function EncounterList() {
     product: filters?.productId,
   });
   const columns = useMemo(() => encounterColumns(), []);
+
+  // Filter data based on date range
+  const getFilteredData = () => {
+    let filteredData = data?.result || [];
+    if (dateRange.startDate || dateRange.endDate) {
+      filteredData = filteredData.filter((item) => {
+        const itemDate = dayjs(item?.createdAt);
+
+        if (dateRange.startDate) {
+          const startDate = dayjs(dateRange.startDate).startOf("day");
+          if (itemDate.isBefore(startDate)) return false;
+        }
+
+        if (dateRange.endDate) {
+          const endDate = dayjs(dateRange.endDate).endOf("day");
+          if (itemDate.isAfter(endDate)) return false;
+        }
+
+        return true;
+      });
+    }
+    return filteredData;
+  };
+
+  const filteredData = getFilteredData();
+
   const { table } = useDataTable({
-    data: data?.result || [],
+    data: filteredData,
     columns,
-    pageCount: Math.ceil((data?.count || 0) / perPage) || -1,
+    pageCount: Math.ceil((filteredData?.length || 0) / perPage) || -1,
   });
 
   function handleDownloadClick() {
-    if (data?.result?.length === 0) {
-      toast.success("No data to download!!", {
+    if (filteredData.length === 0) {
+      toast.error("No data to download!!", {
         duration: 1500,
       });
+      return;
     }
-    const downloadedData = data?.result?.map((item) => {
+
+    const downloadedData = filteredData?.map((item) => {
       return {
         orderId: item?.id,
         name: `${item?.patient?.firstName} ${item?.patient?.lastName}`,
@@ -91,6 +130,68 @@ export default function EncounterList() {
             setFilters={setSearchFilters}
             filters={filters}
           />
+          
+          <div
+            className="relative inline-block"
+            onMouseEnter={() => setDatePickerOpen(true)}
+            onMouseLeave={() => setDatePickerOpen(false)}
+          >
+            {/* Date Picker Button */}
+            <div
+              style={{
+                boxShadow: "0px 8px 10px 0px hsla(0, 0%, 0%, 0.08)",
+              }}
+              className={cn(
+                "cursor-pointer text-sm font-normal text-[#63627F] min-w-52.5 border py-3 px-3.5 rounded-[6px] bg-white flex justify-between items-center"
+              )}
+            >
+              {dateRange.startDate || dateRange.endDate
+                ? `${dateRange.startDate ? dayjs(dateRange.startDate).format("MMM D") : "Start"} - ${dateRange.endDate ? dayjs(dateRange.endDate).format("MMM D") : "End"}`
+                : "All Dates"}
+              <Calendar className="h-4 w-4 ml-2" />
+            </div>
+
+            {/* Date Picker Dropdown */}
+            {datePickerOpen && (
+              <div className="absolute top-full right-0 p-5 z-50 rounded-md border bg-white shadow-lg">
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-1">
+                    <label className="text-xs font-medium text-muted-foreground">From Date</label>
+                    <Input
+                      type="date"
+                      value={dateRange.startDate}
+                      onChange={(e) =>
+                        setDateRange({ ...dateRange, startDate: e.target.value })
+                      }
+                      className="w-[200px] h-10"
+                    />
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label className="text-xs font-medium text-muted-foreground">To Date</label>
+                    <Input
+                      type="date"
+                      value={dateRange.endDate}
+                      onChange={(e) =>
+                        setDateRange({ ...dateRange, endDate: e.target.value })
+                      }
+                      className="w-[200px] h-10"
+                    />
+                  </div>
+                  {(dateRange.startDate || dateRange.endDate) && (
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setDateRange({ startDate: "", endDate: "" })}
+                      className="w-full"
+                    >
+                      <X size={16} className="mr-2" />
+                      Clear Dates
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
           <Button
             variant={"ctrl"}
             className="bg-black text-white text-sm"
@@ -106,9 +207,20 @@ export default function EncounterList() {
       <div className="my-2 flex gap-2 items-center">
         {(filters?.adminTitle ||
           filters?.productTitle ||
-          filters?.tagTitle) && (
+          filters?.tagTitle ||
+          dateRange.startDate ||
+          dateRange.endDate) && (
           <span className="text-[#3E4D61] font-semibold text-sm">
             Active Filters:
+          </span>
+        )}
+        {(dateRange.startDate || dateRange.endDate) && (
+          <span className="text-xs text-primary bg-blue-50 rounded-md border border-blue-200 flex gap-1 w-fit p-2">
+            {dateRange.startDate && dateRange.endDate
+              ? `${dayjs(dateRange.startDate).format("MMM D, YYYY")} - ${dayjs(dateRange.endDate).format("MMM D, YYYY")}`
+              : dateRange.startDate
+                ? `From ${dayjs(dateRange.startDate).format("MMM D, YYYY")}`
+                : `To ${dayjs(dateRange.endDate).format("MMM D, YYYY")}`}
           </span>
         )}
         {filters?.adminTitle && (
@@ -134,10 +246,15 @@ export default function EncounterList() {
 
         {(filters?.adminTitle ||
           filters?.productTitle ||
-          filters?.tagTitle) && (
+          filters?.tagTitle ||
+          dateRange.startDate ||
+          dateRange.endDate) && (
           <span
             className="font-medium text-sm text-primary underline underline-offset-2 cursor-pointer"
-            onClick={() => setSearchFilters(null)}
+            onClick={() => {
+              setSearchFilters(null);
+              setDateRange({ startDate: "", endDate: "" });
+            }}
           >
             Clear all
           </span>
