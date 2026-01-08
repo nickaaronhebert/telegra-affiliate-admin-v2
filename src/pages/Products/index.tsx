@@ -84,7 +84,7 @@ export default function Products() {
       </div>
       <div className="mt-3.5 bg-white shadow-[0px_2px_40px_0px_#00000014] pb-[12px] overflow-hidden">
         <DataTable table={table} isLoading={isLoading} />
-        <DataTablePagination table={table} />
+        <DataTablePagination table={table} totalRows={data?.count}/>
       </div>
     </div>
   );

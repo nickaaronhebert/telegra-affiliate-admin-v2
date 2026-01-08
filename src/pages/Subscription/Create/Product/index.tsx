@@ -110,19 +110,19 @@ export default function ProductVariation({ patientId }: ProductVariationProps) {
   async function onSubmit(values: z.input<typeof subscriptionSchema>) {
     dispatch(
       updateProductDetails({
-        order: values.order,
+        order: values?.order,
         schedule: {
-          interval: values.interval,
-          intervalCount: values.intervalCount as number,
-          startDate: values.startDate,
+          interval: values?.interval,
+          intervalCount: values?.intervalCount as number,
+          startDate: values?.startDate,
           endDate: values?.endDate,
         },
-        productVariations: values.productVariations.map((item) => {
+        productVariations: values?.productVariations.map((item) => {
           return {
-            productName: item.productName,
-            productVariation: item.productVariation,
-            pricePerUnitOverride: item.pricePerUnitOverride as number,
-            quantity: item.quantity as number,
+            productName: item?.productName,
+            productVariation: item?.productVariation,
+            pricePerUnitOverride: item?.pricePerUnitOverride as number,
+            quantity: item?.quantity as number,
           };
         }),
       })
