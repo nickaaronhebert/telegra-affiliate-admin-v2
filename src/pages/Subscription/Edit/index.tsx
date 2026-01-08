@@ -117,11 +117,11 @@ export default function EditSubscription() {
               interval: data?.schedule?.interval || "",
               intervalCount: data?.schedule?.intervalCount || 0,
               startDate: data?.schedule?.startDate
-                ? dayjs(data.schedule.startDate)?.format("MM/DD/YYYY")
+                ? dayjs(data.schedule.startDate)?.format("YYYY-MM-DD")
                 : "",
               endDate: data?.schedule?.endDate
-                ? dayjs(data.schedule.endDate)?.format("MM/DD/YYYY")
-                : undefined,
+                ? dayjs(data.schedule.endDate)?.format("YYYY-MM-DD")
+                : "",
             },
             productVariations: data?.productVariations?.map((item) => {
               return {
