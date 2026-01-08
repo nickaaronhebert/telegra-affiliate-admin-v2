@@ -274,6 +274,7 @@ export const ORDER_STATUS = {
   RequiresOrderProcessing: "requires_order_processing",
   RequiresAffiliateReview: "requires_affiliate_review",
   RequiresPrerequisiteCompletion: "requires_prerequisite_completion",
+  OnHold: "on-hold",
 } as const;
 
 export const postPractitionerReviewOrderStatuses = [
