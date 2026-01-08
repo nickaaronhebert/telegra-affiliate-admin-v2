@@ -86,28 +86,27 @@ export default function EditLabOrders({
   //   }),
   // });
 
-  const { data: addressData, isLoading: isAddressLoading } =
-    useViewPatientByIdQuery(userId!, {
-      skip: !userId,
-      selectFromResult: ({ data, isLoading }) => ({
-        data: {
-          address: data?.addresses?.map((address) => {
-            return {
-              id: address?.id,
-              address1: address?.billing?.address1,
-              address2: address?.billing?.address2 || undefined,
-              city: address?.billing?.city,
-              state: {
-                id: address?.billing?.state?.id,
-                name: address?.billing?.state?.name,
-              },
-              zipcode: address?.billing?.zipcode,
-            };
-          }),
-        },
-        isLoading,
-      }),
-    });
+  const { data: addressData } = useViewPatientByIdQuery(userId!, {
+    skip: !userId,
+    selectFromResult: ({ data, isLoading }) => ({
+      data: {
+        address: data?.addresses?.map((address) => {
+          return {
+            id: address?.id,
+            address1: address?.billing?.address1,
+            address2: address?.billing?.address2 || undefined,
+            city: address?.billing?.city,
+            state: {
+              id: address?.billing?.state?.id,
+              name: address?.billing?.state?.name,
+            },
+            zipcode: address?.billing?.zipcode,
+          };
+        }),
+      },
+      isLoading,
+    }),
+  });
 
   const { data: statesData } = useViewAllStatesQuery(undefined, {
     selectFromResult: ({ data }) => ({
