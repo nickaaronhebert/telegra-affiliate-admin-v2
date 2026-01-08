@@ -17,8 +17,9 @@ import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/common/Dialog";
 import { toast } from "sonner";
 import type { ReactNode } from "react";
+import UserInformationSvg from "@/assets/icons/UserInformation";
+import { ORDER_STATUS } from "@/constants";
 interface EntityDetailProps {
-  icon?: ReactNode;
   title: string;
   isLoading?: boolean;
   fields: {
@@ -38,6 +39,7 @@ interface EntityDetailProps {
     city: string;
     zipcode: string;
   };
+  patientId?: string;
 }
 
 interface AddressCardProps {
@@ -208,19 +210,28 @@ function PatientDetail({
   billingAddress,
   shippingAddress,
   isLoading,
-  icon = <></>,
+  patientId,
 }: EntityDetailProps) {
   return (
     <div
-      className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014]"
+      className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014] p-6 mb-2.5"
       id="patientInformation"
     >
-      <h2 className="text-base font-semibold p-5 border-b border-card-border flex items-center gap-2">
-        <div className="flex gap-2 items-center justify-center">
-          {icon}
-          {title}
+      <div className="flex gap-2 items-center border-b border-card-border pb-4 justify-between">
+        <div className="flex gap-2 justify-center items-center">
+          <UserInformationSvg color="#000000" width={18} height={18} />
+          <h1 className="text-base font-bold ">{title}</h1>
         </div>
-      </h2>
+        <div className="flex justify-center items-center gap-4">
+          <Link
+            to={`/patients/${patientId}`}
+            className="text-sm font-medium text-queued underline"
+            target="_blank"
+          >
+            View Patient
+          </Link>
+        </div>
+      </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7 p-5">
         {fields.map(({ label, value, capitalize }) => (
           <div key={label}>
@@ -337,7 +348,6 @@ export default function ViewEcommerceOrderDetails() {
   function handleEditClick() {
     navigate(`/edit-order/${id}`);
   }
-
   return (
     <div>
       <div className="bg-lilac py-3 px-12 flex justify-between items-center">
@@ -352,36 +362,26 @@ export default function ViewEcommerceOrderDetails() {
           <h1 className="text-2xl font-bold mt-1">View Commerce Order</h1>
         </div>
         <div className="space-x-2">
-          {data.isLockedin === false && (
-            <Button
-              className="rounded-full cursor-pointer text-black border-black p-5 bg-transparent hover:bg-transparent hover:text-black"
-              variant={"outline"}
-              onClick={handleEditClick}
-            >
-              Edit Commerce Order
-            </Button>
-          )}
+          {data.isLockedin === false &&
+            data.status !== ORDER_STATUS.Cancelled && (
+              <Button
+                className="rounded-full cursor-pointer text-black border-black p-5 bg-transparent hover:bg-transparent hover:text-black"
+                variant={"outline"}
+                onClick={handleEditClick}
+              >
+                Edit Commerce Order
+              </Button>
+            )}
           {data?.isCancelable && (
             <Button
               className="rounded-full cursor-pointer text-destructive border-destructive p-5 bg-transparent hover:bg-transparent hover:text-destructive"
               variant={"outline"}
               onClick={() => setCancelOrder(true)}
-
-              // onClick={handleOrderTransmission}
             >
               Cancel Order
             </Button>
           )}
         </div>
-        {/* {data?.transmissionMethod === "manual" &&
-          data?.status === "Transmittable" && (
-            <Button
-              className="rounded-full cursor-pointer text-white p-5"
-              onClick={handleOrderTransmission}
-            >
-              Transmit Order
-            </Button>
-          )} */}
       </div>
       <div className="flex gap-8 px-14 mt-6">
         <div
@@ -401,10 +401,6 @@ export default function ViewEcommerceOrderDetails() {
                     `Order #${data?.ecommerceOrderId ?? "-"}`
                   )}
                 </h4>
-                {/* <h6 className="text-xs font-normal text-[#3E4D61]">
-                  {transmissionsLength} Transmission{" "}
-                  {transmissionsLength! > 1 ? "s" : ""}
-                </h6> */}
               </div>
             </div>
           </div>
@@ -475,8 +471,8 @@ export default function ViewEcommerceOrderDetails() {
             ]}
           />
           <PatientDetail
-            icon={<Users size={16} />}
             isLoading={isLoadingOrder}
+            patientId={data?.patient?.id || ""}
             title="Patient Details"
             fields={[
               {
