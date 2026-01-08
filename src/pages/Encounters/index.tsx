@@ -263,7 +263,7 @@ export default function EncounterList() {
 
       <div className="mt-2.5 bg-white shadow-[0px_2px_40px_0px_#00000014] pb-3">
         <DataTable table={table} isLoading={isLoading || isFetching} />
-        <DataTablePagination table={table} totalRows={data?.count} />
+        <DataTablePagination table={table} totalRows={filteredData.length} />
       </div>
     </div>
   );
