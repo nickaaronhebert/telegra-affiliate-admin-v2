@@ -121,15 +121,15 @@ export function organizationSubscriptionColumns(): ColumnDef<SubscriptionDetails
         return <p className="text-xs font-medium">{formattedDate}</p>;
       },
     },
-    {
-      accessorKey: "nextPayment",
-      header: "Next Renewal",
-      cell: ({ row }) => {
-        const nextPayment = dayjs(row.original.nextPayment);
-        const formattedDate = nextPayment.format("MMMM D, YYYY");
-        return <p className="text-xs font-medium">{formattedDate}</p>;
-      },
-    },
+    // {
+    //   accessorKey: "nextPayment",
+    //   header: "Next Renewal",
+    //   cell: ({ row }) => {
+    //     const nextPayment = dayjs(row.original.nextPayment);
+    //     const formattedDate = nextPayment.format("MMMM D, YYYY");
+    //     return <p className="text-xs font-medium">{formattedDate}</p>;
+    //   },
+    // },
     {
       accessorKey: "order",
       header: "Order",
