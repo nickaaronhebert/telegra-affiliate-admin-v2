@@ -46,6 +46,10 @@ interface EditLabOrdersProps {
     state: string;
     zipcode: string;
   };
+  afterResultOrders?: {
+    productVariation: string;
+    quantity: string;
+  }[];
 }
 export default function EditLabOrders({
   userId,
@@ -55,6 +59,7 @@ export default function EditLabOrders({
   labOrderId,
   affiliate,
   address,
+  afterResultOrders,
   handleClose,
 }: EditLabOrdersProps) {
   const [editLabOrder, { isLoading }] = useEditLabOrderMutation();
@@ -86,28 +91,27 @@ export default function EditLabOrders({
   //   }),
   // });
 
-  const { data: addressData } =
-    useViewPatientByIdQuery(userId!, {
-      skip: !userId,
-      selectFromResult: ({ data, isLoading }) => ({
-        data: {
-          address: data?.addresses?.map((address) => {
-            return {
-              id: address?.id,
-              address1: address?.billing?.address1,
-              address2: address?.billing?.address2 || undefined,
-              city: address?.billing?.city,
-              state: {
-                id: address?.billing?.state?.id,
-                name: address?.billing?.state?.name,
-              },
-              zipcode: address?.billing?.zipcode,
-            };
-          }),
-        },
-        isLoading,
-      }),
-    });
+  const { data: addressData } = useViewPatientByIdQuery(userId!, {
+    skip: !userId,
+    selectFromResult: ({ data, isLoading }) => ({
+      data: {
+        address: data?.addresses?.map((address) => {
+          return {
+            id: address?.id,
+            address1: address?.billing?.address1,
+            address2: address?.billing?.address2 || undefined,
+            city: address?.billing?.city,
+            state: {
+              id: address?.billing?.state?.id,
+              name: address?.billing?.state?.name,
+            },
+            zipcode: address?.billing?.zipcode,
+          };
+        }),
+      },
+      isLoading,
+    }),
+  });
 
   const { data: statesData } = useViewAllStatesQuery(undefined, {
     selectFromResult: ({ data }) => ({
@@ -146,8 +150,10 @@ export default function EditLabOrders({
       },
       lab: labName,
       labPanels: labPanels || [],
-      afterResultsOrderProductVariations: [],
-      createOrderAfterResults: false,
+      afterResultsOrderProductVariations: afterResultOrders
+        ? afterResultOrders
+        : [],
+      createOrderAfterResults: afterResultOrders?.length ? true : false,
     },
   });
 
@@ -167,6 +173,7 @@ export default function EditLabOrders({
         shipping: values.address,
       },
       affiliate: affiliate as string,
+      immediateProcessing: true,
       lab: labId,
       labPanels: values?.labPanels as string[],
       createOrderAfterResults: values?.createOrderAfterResults,
@@ -379,7 +386,7 @@ export default function EditLabOrders({
               <ProductVariations />
             </div>
           </div>
-          <div className="flex justify-end mt-10 border-t border-card-border border-dashed pt-10">
+          <div className="flex justify-end mt-5 border-t border-card-border border-dashed pt-5 pr-5">
             <Button
               type="submit"
               disabled={isLoading}

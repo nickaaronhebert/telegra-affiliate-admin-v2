@@ -1,19 +1,23 @@
-import { useViewAllEcommerceProductVariationsQuery } from "@/redux/services/product";
+// import { useViewAllEcommerceProductVariationsQuery } from "@/redux/services/product";
 import { useFieldArray, useFormContext } from "react-hook-form";
 import SelectElement from "../SelectElement";
 import InputNumberElement from "../InputNumberElement";
 import { Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useGetProductVariationsListQuery } from "@/redux/services/productVariationsList";
 
 export default function ProductVariations() {
-  const { data } = useViewAllEcommerceProductVariationsQuery(
+  const { data } = useGetProductVariationsListQuery(
     { page: 1, limit: 100 },
     {
       selectFromResult: ({ data }) => ({
-        data: data?.mappings?.map((item) => {
+        data: data?.productVariations?.map((item) => {
+          const description = item?.description;
+          const title = item?.product?.title;
+
           return {
-            label: item.name,
-            value: `${item.id}?${item.regularPrice}?${item.name}`,
+            label: `${description ? description : title}`,
+            value: `${item?.id}`,
           };
         }),
       }),

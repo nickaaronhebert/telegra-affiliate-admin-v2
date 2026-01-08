@@ -2,6 +2,7 @@ import { DetailsCard } from "@/components/common/Card";
 import { ConfirmDialog } from "@/components/common/Dialog";
 import { useViewLabOrderDetailsQuery } from "@/redux/services/labOrder";
 import { useState } from "react";
+import { Pill } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
 import EditLabOrders from "./Edit";
 import Header from "@/components/common/Header";
@@ -82,6 +83,7 @@ export default function LabOrderDetails() {
       toast.error(error?.data?.message || "Failed to delete note");
     }
   };
+
   return (
     <>
       <Header
@@ -246,6 +248,30 @@ export default function LabOrderDetails() {
             )}
           </div>
 
+          <div className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014]">
+            <DetailsCard
+              id=""
+              title="Post Result Order"
+              icon={<Pill size={16} />}
+              fields={[]}
+            />
+
+            <div className="p-4 grid grid-cols-1 md:grid-cols-2 max-h-75 overflow-y-auto">
+              {data?.afterResultsOrderProductVariations?.map((item) => {
+                return (
+                  <div className="p-2 space-y-1">
+                    <p className="text-sm font-semibold">
+                      {item?.productVariation?.description}
+                    </p>
+                    <p className="text-sm font-normal">
+                      Quantity: {item?.quantity}
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
           <div className="bg-white rounded-[10px] shadow-[0px_2px_40px_0px_#00000014] relative">
             <DetailsCard
               id="notesOverview"
@@ -314,6 +340,12 @@ export default function LabOrderDetails() {
               state: data?.address?.shipping?.state?.id || "",
               zipcode: data?.address?.shipping?.zipcode || "",
             }}
+            afterResultOrders={data?.afterResultsOrderProductVariations?.map(
+              (item) => ({
+                productVariation: item?.productVariation?.id,
+                quantity: String(item?.quantity),
+              })
+            )}
           />
         </ConfirmDialog>
       )}
