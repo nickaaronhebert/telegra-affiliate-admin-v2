@@ -22,19 +22,26 @@ import GeneralOverviewSvg from "@/assets/icons/GeneralOverview";
 import EncounterGeneralOverview from "./EncounterGeneralOverview";
 import SendInviteLink from "./Action/InviteLink";
 import Expedite from "./Action/Expedite";
+import ApproveOrder from "./Action/Approve";
+import PrerequisitesRequired from "./Action/PrerequisitesRequired";
+import Delay from "./Action/Delay";
+import SendToPharmacy from "./Action/SendToPharmacy";
 import CancelEncounter from "./Action/Cancel";
 import EditOrder from "./Action/Edit";
 import TimelineSvg from "@/assets/icons/Timeline";
 import EncounterTimeline from "./EncounterTimeline";
 import SendPerformVisitLink from "./Action/PerformVisit";
 import {
+  COMMUNICATION_TEMPLATE_KEYS,
   EVENT_TYPES,
   ORDER_STATUS,
+  PROJECT_PRESCRIPTION_DISPERSEMENT_MECHANISM,
   VISIT_STATUS,
   VISIT_TYPES,
 } from "@/constants";
 import SubmitOrder from "./Action/Submit";
 import UpgradeOrder from "./Action/Upgrade";
+import { useCommunicationTemplate } from "@/hooks/useCommunicationTemplate";
 
 const menuItems = [
   {
@@ -81,6 +88,27 @@ const availableEvaluateVisitTypeStatuses = [
   ORDER_STATUS.RequiresProviderReview,
   ORDER_STATUS.RequiresPrerequisiteCompletion,
 ];
+const unavailablePrerequisitesStatuses = [
+  ORDER_STATUS.Started,
+  ORDER_STATUS.RequiresOrderSubmission,
+  ORDER_STATUS.RequiresOrderProcessing,
+  ORDER_STATUS.Completed,
+  ORDER_STATUS.Cancelled,
+  ORDER_STATUS.RequiresPrerequisiteCompletion,
+  ORDER_STATUS.RequiresProviderReview,
+];
+
+const unavailableDelayOrderStatuses = [
+  ORDER_STATUS.Started,
+  ORDER_STATUS.RequiresOrderSubmission,
+  ORDER_STATUS.Delayed,
+  ORDER_STATUS.Completed,
+  ORDER_STATUS.RequiresProviderReview,
+  ORDER_STATUS.RequiresOrderProcessing,
+  ORDER_STATUS.RequiresAdminReview,
+  ORDER_STATUS.RequiresPrerequisiteCompletion,
+];
+
 const EncounterDetailsPage = () => {
   const { id } = useParams();
   const [activeTab, setActiveTab] = useState<
@@ -98,6 +126,10 @@ const EncounterDetailsPage = () => {
     isLoading,
     error,
   } = useViewEncounterByIdQuery(id as string);
+
+  const isActiveOrderLink = useCommunicationTemplate(
+    COMMUNICATION_TEMPLATE_KEYS.ORDER_LINK as any
+  );
 
   const { data: patient, isLoading: isPatientLoading } =
     useViewPatientByIdQuery(encounter?.patient?.id as string, {
@@ -172,13 +204,6 @@ const EncounterDetailsPage = () => {
         </div>
 
         <div className="flex items-center justify-end gap-2.5 flex-wrap">
-          {availableEvaluateVisitTypeStatuses.includes(
-            encounter?.status as any
-          ) &&
-            hasAsynchronousVisit && <UpgradeOrder id={encounter?.id} />}
-          {encounter.status === ORDER_STATUS.RequiresOrderSubmission && (
-            <SubmitOrder id={encounter?.id} />
-          )}
           <EditOrder
             encounterId={encounter?.id}
             projectId={encounter?.project?.id}
@@ -196,9 +221,59 @@ const EncounterDetailsPage = () => {
               affiliateId={encounter?.affiliate?.id}
             />
           )}
-          <SendInviteLink id={encounter?.id} status={encounter?.status} />
-          <Expedite id={encounter?.id} status={encounter?.status} />
-          <CancelEncounter id={encounter?.id} status={encounter?.status} />
+          {encounter?.status === ORDER_STATUS.Started && isActiveOrderLink && (
+            <SendInviteLink id={encounter?.id} status={encounter?.status} />
+          )}
+
+          {encounter.status === ORDER_STATUS.RequiresOrderSubmission && (
+            <SubmitOrder id={encounter?.id} />
+          )}
+          {availableEvaluateVisitTypeStatuses.includes(
+            encounter?.status as any
+          ) &&
+            hasAsynchronousVisit && <UpgradeOrder id={encounter?.id} />}
+
+          {encounter?.status === ORDER_STATUS.RequiresOrderProcessing &&
+            encounter?.project?.affiliateApprovalRequired &&
+            !encounter?.affiliateApprovalDate && (
+              <ApproveOrder id={encounter?.id} status={encounter?.status} />
+            )}
+
+          {!unavailablePrerequisitesStatuses.includes(
+            encounter?.status as any
+          ) && (
+            <PrerequisitesRequired
+              id={encounter?.id}
+              status={encounter?.status}
+            />
+          )}
+
+          {!unavailableDelayOrderStatuses.includes(
+            encounter?.status as any
+          ) && <Delay id={encounter?.id} status={encounter?.status} />}
+          {
+            (encounter?.status !== ORDER_STATUS.RequiresProviderReview &&
+              encounter?.status !== ORDER_STATUS.RequiresOrderProcessing &&
+              encounter?.status !== ORDER_STATUS.RequiresAdminReview,
+            (<Expedite id={encounter?.id} status={encounter?.status} />))
+          }
+
+          {(encounter?.project?.prescriptionDispersementMechanism ===
+            PROJECT_PRESCRIPTION_DISPERSEMENT_MECHANISM.Manual &&
+          encounter?.project?.affiliateApprovalRequired
+            ? !!encounter?.affiliateApprovalDate
+            : true && encounter?.project?.telegraApprovalRequired
+            ? !!encounter?.telegraApprovalDate
+            : true) &&
+            encounter?.status === ORDER_STATUS.RequiresOrderProcessing && (
+              <SendToPharmacy id={encounter?.id} status={encounter?.status} />
+            )}
+
+          {encounter?.status !== ORDER_STATUS.RequiresProviderReview &&
+            encounter?.status !== ORDER_STATUS.RequiresOrderProcessing &&
+            encounter?.status !== ORDER_STATUS.RequiresAdminReview && (
+              <CancelEncounter id={encounter?.id} status={encounter?.status} />
+            )}
         </div>
       </div>
 

@@ -1,6 +1,5 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import {
-  DashboardPage,
   SubscriptionsPage,
   CouponsPage,
   CouponDetailsPage,
@@ -84,10 +83,10 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      {
-        path: ROUTES.DASHBOARD_PATH,
-        element: <DashboardPage />,
-      },
+      // {
+      //   path: ROUTES.DASHBOARD_PATH,
+      //   element: <DashboardPage />,
+      // },
       {
         path: ROUTES.ORDERS_PATH,
         element: <Order />,

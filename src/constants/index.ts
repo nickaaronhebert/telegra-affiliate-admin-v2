@@ -1,6 +1,5 @@
 import User from "@/assets/icons/User";
 import Affiliation from "@/assets/icons/User";
-import Dashboard from "@/assets/icons/User";
 import Transmission from "@/assets/icons/User";
 import Orders from "@/assets/icons/User";
 import Transactions from "@/assets/icons/User";
@@ -9,7 +8,6 @@ import type { IconSVG } from "@/types/global/icon";
 import InvoicesMain from "@/assets/icons/User";
 import PatientIcon from "@/assets/icons/User";
 import { Settings } from "lucide-react";
-import MedicationLibrary from "@/assets/icons/User";
 import Home from "@/assets/icons/User";
 
 export interface TabConfig {
@@ -22,27 +20,8 @@ export const tabsConfig: TabConfig[] = [
   { id: "personal", label: "Personal Details", icon: User },
 ] as const;
 
-export const platformAdminItems = [
-  { title: "Dashboard", url: "/admin/dashboard", icon: Dashboard },
-
-  {
-    title: "Medication",
-    url: "/admin/medications",
-    icon: MedicationLibrary,
-  },
-  {
-    title: "Invitation",
-    url: "/admin/invitations",
-    icon: Transmission,
-  },
-  {
-    title: "Encountered Products",
-    url: "/admin/encountered",
-    icon: User,
-  },
-];
 export const organisationAdminItems = [
-  { title: "Dashboard", url: "/org/dashboard", icon: Dashboard },
+  // { title: "Dashboard", url: "/org/dashboard", icon: Dashboard },
   { title: "Orders", url: "/org/orders", icon: Orders },
   { title: "Transmissions", url: "/org/transmissions", icon: Transmission },
   { title: "Encounter", url: "/org/encounter", icon: Affiliation },
@@ -241,6 +220,11 @@ export const PaymentProcessors = {
   AuthNet: "authnet",
 };
 
+export const PAYMENT_PROCESSOR_KEYS = {
+  STRIPE_PUBLISHER_KEY: "STRIPE_PUBLISHER_KEY",
+  STRIPE_SECRET_KEY: "STRIPE_SECRET_KEY",
+  PROCESSOR_TYPE: "PROCESSOR_TYPE",
+};
 export const AuthNetEnvironment = {
   Sandbox: "sandbox",
   Production: "production",
@@ -290,6 +274,7 @@ export const ORDER_STATUS = {
   RequiresOrderProcessing: "requires_order_processing",
   RequiresAffiliateReview: "requires_affiliate_review",
   RequiresPrerequisiteCompletion: "requires_prerequisite_completion",
+  OnHold: "on-hold",
 } as const;
 
 export const postPractitionerReviewOrderStatuses = [
@@ -399,4 +384,26 @@ export const VISIT_STATUS = {
   Expired: "expired",
   Completed: "completed",
   CompletedForFutureUsage: "completed_for_future_usage",
+};
+
+export const PROJECT_PRESCRIPTION_DISPERSEMENT_MECHANISM = {
+  Manual: "manual",
+  Automatic: "automatic",
+};
+
+export const COMMUNICATION_TEMPLATE_KEYS = {
+  USER_INVITED: "USER_INVITED",
+  AFFILIATE_ADDED: "AFFILIATE_ADDED",
+  FORGOT_PASSWORD: "FORGOT_PASSWORD",
+  TWO_FACTOR_VERIFICATION: "TWO_FACTOR_VERIFICATION",
+  ORDER_LINK: "ORDER_LINK",
+  INVITE_PATIENT_COMPLETE_QUESTIONNAIRE:
+    "INVITE_PATIENT_COMPLETE_QUESTIONNAIRE",
+  REQUEST_SUBMITTED: "REQUEST_SUBMITTED",
+  BILLING_UPDATE_LINK: "BILLING_UPDATE_LINK",
+  MESSAGE_RECEIVED: "MESSAGE_RECEIVED",
+  PRESCRIPTION_APPROVED: "PRESCRIPTION_APPROVED",
+  CONSULTATION_FEE_TAKEN: "CONSULTATION_FEE_TAKEN",
+  PRESCRIPTION_SENT_TO_PHARMACY: "PRESCRIPTION_SENT_TO_PHARMACY",
+  SHIPPING_DETAILS_SET: "SHIPPING_DETAILS_SET",
 };

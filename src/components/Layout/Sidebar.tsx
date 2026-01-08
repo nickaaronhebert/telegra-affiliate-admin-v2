@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import {
-  LayoutDashboard,
   ShoppingCart,
   CreditCard,
   Percent,
@@ -21,7 +20,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { TelegraLogo } from "@/assets/icons/TelegraLogo";
 
 const navigationItems = [
-  { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, section: "main" },
+  // { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard, section: "main" },
   { name: "Orders", href: "/orders", icon: ShoppingCart, section: "commerce" },
   { name: "Subscriptions", href: "/subscriptions", icon: CreditCard, section: "commerce" },
   { name: "Coupons", href: "/coupons", icon: Percent, section: "commerce" },

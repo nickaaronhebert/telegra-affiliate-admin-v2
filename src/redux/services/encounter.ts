@@ -159,6 +159,45 @@ export const encounterApi = baseApi.injectEndpoints({
       ],
     }),
 
+    approveEncounter: builder.mutation<
+      any,
+      {
+        id: string;
+      }
+    >({
+      query: ({ id }) => {
+        return {
+          url: `/orders/${id}/actions/approve`,
+          method: "PUT",
+        };
+      },
+      invalidatesTags: (_result, _error, data) => [
+        { type: TAG_GET_ENCOUNTER, id: data.id },
+      ],
+    }),
+
+    updateEncounterStatus: builder.mutation<
+      any,
+      {
+        id: string;
+        token: string;
+        status: string;
+      }
+    >({
+      query: ({ id, token, status }) => {
+        return {
+          url: `/orders/${id}/status?access_token=${token}`,
+          method: "PUT",
+          body: {
+            status,
+          },
+        };
+      },
+      invalidatesTags: (_result, _error, data) => [
+        { type: TAG_GET_ENCOUNTER, id: data.id },
+      ],
+    }),
+
     cancelEncounter: builder.mutation<any, string>({
       query: (id) => {
         return {
@@ -287,7 +326,7 @@ export const encounterApi = baseApi.injectEndpoints({
         { type: TAG_GET_ENCOUNTER, id: id },
       ],
     }),
-      upgradeEncounter: builder.mutation<any, string>({
+    upgradeEncounter: builder.mutation<any, string>({
       query: (id) => {
         return {
           url: `/orders/${id}/actions/elevateVisitType`,
@@ -298,6 +337,20 @@ export const encounterApi = baseApi.injectEndpoints({
         { type: TAG_GET_ENCOUNTER, id: id },
       ],
     }),
+    sendToPharmacy: builder.mutation<any, { orderIdentifier: string }>({
+      query: ({ orderIdentifier }) => {
+        return {
+          url: `/orders/actions/sendToPharmacyRecipients`,
+          method: "POST",
+          body: {
+            orderIdentifier,
+          },
+        };
+      },
+      invalidatesTags: (_result, _error, { orderIdentifier }) => [
+        { type: TAG_GET_ENCOUNTER, id: orderIdentifier },
+      ],
+    }),
   }),
 });
 
@@ -306,6 +359,8 @@ export const {
   useViewEncounterByIdQuery,
   useLazyViewEncounterByIdQuery,
   useExpediteEncounterMutation,
+  useApproveEncounterMutation,
+  useUpdateEncounterStatusMutation,
   useCancelEncounterMutation,
   useGetEncounterTransactionQuery,
   useLazyGetEncounterTransactionQuery,
@@ -316,6 +371,7 @@ export const {
   useUpdateEncounterProductsMutation,
   useSubmitEncounterMutation,
   useUpgradeEncounterMutation,
+  useSendToPharmacyMutation,
 } = encounterApi;
 
 export default encounterApi;

@@ -62,7 +62,7 @@ export function DetailsCard({
                   ? `w-fit px-3 py-1 rounded-l text-xs font-medium uppercase ${
                       getStatusColors(value).badge
                     }`
-                  : "text-primary-foreground"
+                  : "text-primary-foreground break-all"
               }`}
             >
               {isLoading ? (

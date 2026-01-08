@@ -8,7 +8,7 @@ export const createOrderSchema = z.object({
   state: z.string().min(1, "State is required"),
   zipcode: z.string().min(1, "Zip code is required"),
   project: z.string().optional(),
-  paymentMethod: z.string().optional().nullable(),
+  paymentMethod: z.string().min(1, "Payment method is required"),
   productVariations: z.array(z.object({
     id: z.string(),
     productVariation: z.object({

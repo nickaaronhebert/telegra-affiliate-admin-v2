@@ -1,5 +1,5 @@
 // Main Pages
-export { DashboardPage } from "./DashboardPage";
+// export { DashboardPage } from "./DashboardPage";
 export { SubscriptionsPage } from "./SubscriptionsPage";
 export { default as CouponsPage } from "./Coupons";
 export { default as CouponDetailsPage } from "./Coupons/details";

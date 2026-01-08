@@ -1,7 +1,7 @@
 export default function FinancialManagementSidebar() {
   return (
     <aside
-      className="w-[320px] shrink-0 p-6"
+      className="w-[320px] shrink-0 p-6 h-[calc(100vh-80px)]"
       style={{ backgroundColor: "hsla(270, 32%, 94%, 1)" }}
     >
       <div className="space-y-4">

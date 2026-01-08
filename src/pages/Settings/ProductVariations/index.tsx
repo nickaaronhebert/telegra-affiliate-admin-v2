@@ -52,7 +52,7 @@ export default function ProductVariations() {
             </div>
             {/* Table */}
             <div className="bg-white p-4 rounded-md overflow-hidden">
-              <DataTable table={table} isLoading={isLoading} />
+              <DataTable table={table} isLoading={isLoading} scrollClass={true} />
               <DataTablePagination table={table} />
             </div>
           </div>

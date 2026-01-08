@@ -11,7 +11,7 @@ const GuestRoute = ({ children }: GuestRouteProps) => {
   const token = getLocalStorage(LOCAL_STORAGE_KEYS.ACCESS_TOKEN);
 
   if (token) {
-    return <Navigate to={ROUTES.DASHBOARD} replace />;
+    return <Navigate to={ROUTES.PATIENTS} replace />;
   }
 
   return <>{children}</>;

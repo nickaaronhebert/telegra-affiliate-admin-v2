@@ -22,7 +22,7 @@ const MessagesPage = () => {
           userId={affiliateDetails.settings.participantIdentifier}
           accessToken={affiliateDetails.settings.participantSecondaryIdentifier}
         >
-          <ChatComponent />
+          <ChatComponent displayPatientProfileButton={true}/>
         </SendbirdProvider>
       ) : (
         <div className="flex items-center justify-center h-[calc(100vh-200px)]">

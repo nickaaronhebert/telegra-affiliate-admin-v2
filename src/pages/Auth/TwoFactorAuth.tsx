@@ -101,7 +101,7 @@ const TwoFactorAuthPage = () => {
             // Redux automatically handles token storage via the auth slice extraReducer
             toast.success('Verification successful');
             codeForm.reset();
-            navigate(ROUTES.DASHBOARD);
+            navigate(ROUTES.PATIENTS);
         } catch (error: any) {
             const message = error?.data?.message || 'Invalid OTP code';
             toast.error(message);
