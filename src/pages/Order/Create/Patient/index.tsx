@@ -1,4 +1,4 @@
-import { useViewAllPatientsQuery } from "@/redux/services/patient";
+import { useSearchPatientsQuery } from "@/redux/services/patient";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import SelectElement from "@/components/Form/SelectElement";
 import { selectPatientSchema } from "@/schemas/selectPatientSchema";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useAppDispatch } from "@/redux/store";
 import { updateInitialStep } from "@/redux/slices/create-order";
 
@@ -34,34 +34,40 @@ export default function SelectPatient({
   disabled?: boolean;
 }) {
   const dispatch = useAppDispatch();
-  const { data, isLoading } = useViewAllPatientsQuery(
+  const [searchQuery, setSearchQuery] = useState("");
+  
+  const { data, isLoading } = useSearchPatientsQuery(
     {},
     {
       selectFromResult: ({ data, isLoading }) => ({
-        data: data?.result?.map((patient) => {
+        data: data?.data?.map((patient) => {
           return {
-            label: `${patient.firstName} ${patient.lastName}, ${
-              patient.phone
-            }, ${patient.email}, ${
-              patient.dateOfBirth ? formatToMMDDYYYY(patient.dateOfBirth) : "-"
-            }`,
+            label: `${patient.firstName} ${patient.lastName}, ${patient.email}`,
             value: patient.id,
             email: patient.email,
-            phone: patient.phone,
             firstName: patient.firstName,
             lastName: patient.lastName,
-            gender: patient.genderBiological,
-            medicationAllergies: patient.medicationAllergies,
-            currentMedication: patient.patientMedications,
-            dateOfBirth: patient.dateOfBirth
-              ? formatToMMDDYYYY(patient.dateOfBirth)
-              : "-",
+            name: patient.name,
           };
         }),
         isLoading,
       }),
     }
   );
+
+  // Filter data based on search query
+  const filteredData = useMemo(() => {
+    if (!data || !searchQuery.trim()) {
+      return data || [];
+    }
+    
+    const query = searchQuery.toLowerCase().trim();
+    return data.filter((patient) => {
+      const name = `${patient.firstName} ${patient.lastName}`.toLowerCase();
+      const email = patient.email.toLowerCase();
+      return name.includes(query) || email.includes(query);
+    });
+  }, [data, searchQuery]);
 
   const form = useForm<z.infer<typeof selectPatientSchema>>({
     resolver: zodResolver(selectPatientSchema),
@@ -76,10 +82,10 @@ export default function SelectPatient({
 
   const patient = form.watch("patient");
   const patientDetails = useMemo(() => {
-    if (patient && data) {
-      return data.find((p) => p.value === patient);
+    if (patient && filteredData) {
+      return filteredData.find((p) => p.value === patient);
     }
-  }, [patient]);
+  }, [patient, filteredData]);
 
   return (
     <div className="px-40 mb-10">
@@ -106,9 +112,12 @@ export default function SelectPatient({
                 loadingTitle={"Loading patients record..."}
                 disabled={disabled}
                 name="patient"
-                options={data || []}
+                options={filteredData || []}
                 className=" min-h-14 max-w-125 min-w-125"
                 placeholder="Select patient..."
+                onSearch={(query) => {
+                  setSearchQuery(query);
+                }}
               />
             </div>
 
@@ -127,8 +136,7 @@ export default function SelectPatient({
                             Full Name
                           </span>
                           <span className="text-sm font-semibold text-gray-900">
-                            {patientDetails?.firstName}{" "}
-                            {patientDetails?.lastName}
+                            {patientDetails?.name || `${patientDetails?.firstName} ${patientDetails?.lastName}`}
                           </span>
                         </div>
                         <div className="flex justify-between items-center">
@@ -137,30 +145,6 @@ export default function SelectPatient({
                           </span>
                           <span className="text-sm font-semibold text-gray-900">
                             {patientDetails?.email}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center  ">
-                          <span className="text-sm text-gray-600 font-medium">
-                            Phone Number
-                          </span>
-                          <span className="text-sm font-semibold text-gray-900">
-                            {patientDetails?.phone}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center ">
-                          <span className="text-sm text-gray-600 font-medium">
-                            Gender
-                          </span>
-                          <span className="text-sm font-semibold text-gray-900">
-                            {patientDetails?.gender}
-                          </span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600 font-medium">
-                            DOB
-                          </span>
-                          <span className="text-sm font-semibold text-gray-900">
-                            {patientDetails?.dateOfBirth}
                           </span>
                         </div>
                       </div>

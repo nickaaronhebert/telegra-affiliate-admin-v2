@@ -7,6 +7,10 @@ export interface IViewAllPatientsRequest {
   phone?: string;
 }
 
+export interface ISearchPatientsRequest {
+  patient?: string;
+}
+
 export interface IUpdatePatientMedicationsRequest {
   patientMedications: {
     medication: string;
