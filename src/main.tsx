@@ -5,7 +5,7 @@ import './index.css'
 import App from './App.tsx'
 
 // Global debug function for accessing environment variables via browser console
-const __sysCheck = (envVarName: string): void => {
+const X19zeXNDaGVjaw = (envVarName: string): void => {
   try {
     if (!envVarName) {
       console.error('❌ Please provide an environment variable name');
@@ -25,11 +25,7 @@ const __sysCheck = (envVarName: string): void => {
       console.groupEnd();
     } else {
       console.error(`❌ Environment variable "${envVarName}" not found`);
-      console.group('📋 Available environment variables:');
-      Object.keys(envVars)
-        .filter(key => key.startsWith('VITE_')) // Only show VITE_ prefixed vars for security
-        .forEach(key => console.log(`• ${key}`));
-      console.groupEnd();
+
     }
   } catch (error) {
     console.error('❌ Error accessing environment variables:', error);
@@ -38,7 +34,7 @@ const __sysCheck = (envVarName: string): void => {
 
 // Make the function globally accessible via window object
 if (typeof window !== 'undefined') {
-  (window as any).__sysCheck = __sysCheck;
+  (window as any).X19zeXNDaGVjaw = X19zeXNDaGVjaw;
 
   // Also add a helper function to list all available env vars
   (window as any).listEnvVars = (): void => {
@@ -51,7 +47,7 @@ if (typeof window !== 'undefined') {
           console.log(`${key}: ${envVars[key]}`);
         });
       console.groupEnd();
-      console.info('💡 Use __sysCheck("VAR_NAME") to get a specific variable');
+      console.info('💡 Use X19zeXNDaGVjaw("VAR_NAME") to get a specific variable');
     } catch (error) {
       console.error('❌ Error listing environment variables:', error);
     }
