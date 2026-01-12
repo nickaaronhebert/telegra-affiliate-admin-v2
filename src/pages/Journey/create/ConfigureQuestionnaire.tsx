@@ -85,7 +85,6 @@ const ConfigureQuestionnaire = ({
               <Label className="text-sm font-medium text-gray-900">
                 Pre-Purchase Questions
               </Label>
-              <span className="text-red-500 text-sm">*</span>
             </div>
             <p className="text-xs text-gray-600">
               (Questionnaire before User Submits their Information)
@@ -105,7 +104,6 @@ const ConfigureQuestionnaire = ({
               <Label className="text-sm font-medium text-gray-900">
                 Post-Purchase Questions
               </Label>
-              <span className="text-red-500 text-sm">*</span>
             </div>
             <p className="text-xs text-gray-600">
               Questionnaire after User Submits their information

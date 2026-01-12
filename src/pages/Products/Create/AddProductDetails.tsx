@@ -173,13 +173,14 @@ const AddProductDetails = ({
         append({
           name: "",
           regularPrice: "",
-          subscriptionPeriod: "",
+          subscriptionPeriod: "month",
           periodLength: "1",
           subscriptionLength: "0",
         });
       }
       if (selectedProductType === PRODUCT_TYPES.SUBSCRIPTION_FIXED) {
         form.setValue("subscriptionPeriodInterval", "1");
+        form.setValue("subscriptionPeriod", "month");
         form.setValue("subscriptionLength", "0");
       }
 
