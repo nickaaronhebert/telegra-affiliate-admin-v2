@@ -12,7 +12,7 @@ metadata:
 spec:
     ingressClassName: alb
     rules:
-        - host: '{{ if ne $.Values.telegraEnv "prod" }}{{ $.Values.telegraEnv }}-{{ end }}affiliate-admin-v2.{{ $.Values.domainName }}'
+        - host: 'command{{ if ne $.Values.telegraEnv "prod" }}-{{ $.Values.telegraEnv }}{{ end }}.{{ $.Values.domainName }}'
           http:
             paths:
               - path: /
