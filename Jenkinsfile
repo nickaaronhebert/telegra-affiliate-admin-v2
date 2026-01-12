@@ -36,7 +36,7 @@ timestamps {
     ansiColor('xterm') {
         node (AGENT) {
             def parentSlackMessage = notifySlack('STARTED')
-            notifyDiscord('STARTED Build')
+
             try {
                 stage('Checkout') {
                     step([$class: 'WsCleanup'])
@@ -139,7 +139,6 @@ timestamps {
             } finally {
                 echo "DONE"
                 notifySlack(currentBuild.result, parentSlackMessage)
-                notifyDiscord(currentBuild.result)
             }
 
         }
@@ -178,26 +177,6 @@ def notifySlack(String buildStatus, parentSlackMessage = null) {
     }
 }
 
-def notifyDiscord(String buildStatus) {
-    buildStatus = buildStatus ?: 'SUCCESS' // build status of null means success
-    if (ENV_KIND == 'prod') {
-        WEBHOOKURL = "https://discord.com/api/webhooks/1336647506133647360/v03gYHoGdeOogKcBpAU5F4FCoz12LTeE_m9pup7jpNXdg1uXqzjP6qY5CL7F6d8tbOlu"
-    } else {
-        WEBHOOKURL = "https://discord.com/api/webhooks/1336647506133647360/v03gYHoGdeOogKcBpAU5F4FCoz12LTeE_m9pup7jpNXdg1uXqzjP6qY5CL7F6d8tbOlu"
-    }
-
-    def message = "Deployment for ${ENV_KIND} `${env.JOB_NAME}` ${buildStatus}: #${env.BUILD_NUMBER}"
-    if (buildStatus == 'STARTED') {
-    } else if (buildStatus == 'SUCCESS') {
-    } else if (buildStatus == 'UNSTABLE') {
-        message = '@telemd-builds '+message;
-    } else {
-        message = '@telemd-builds '+message;
-    }
-
-    // we need not use discord for current builds system.
-    // discordSend(description: "$message", footer: "Details: ${env.BUILD_URL}", link: "${env.BUILD_URL}", result: buildStatus, title: "${buildStatus}: ${env.JOB_NAME}", webhookURL: "$WEBHOOKURL")
-}
 
 // Pushes images
 def pushImages(String service, String registry, String repoPrefix, String tag) {
