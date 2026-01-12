@@ -22,7 +22,7 @@ if (env.BRANCH_NAME == 'main') {
     ENV_KIND = 'prod'
     AGENT = 'main'
 } else if (env.BRANCH_NAME == 'staging') {
-      ENV_KIND = 'dev'
+      ENV_KIND = 'staging'
       AGENT = 'jenkins-agent'
 } else if (env.BRANCH_NAME == 'development') {
     ENV_KIND = 'dev'
