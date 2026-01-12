@@ -79,6 +79,18 @@ export interface PatientsResponse {
   count: number;
 }
 
+export interface SearchPatientResult {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  name: string;
+}
+
+export type SearchPatientsResponse = {
+  data: SearchPatientResult[];
+};
+
 export interface PatientMedication {
   medication: string;
   dosage: string;
