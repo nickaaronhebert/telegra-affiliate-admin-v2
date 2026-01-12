@@ -15,7 +15,7 @@ export const ecommerceProductVariation = z.object({
       message: "Invalid Number",
     })
     .int("Invalid Number")
-    .min(0, "Invalid Number"),
+    .gt(0, "Price must be greater than 0"),
 });
 
 export const productsSchema = z.object({
