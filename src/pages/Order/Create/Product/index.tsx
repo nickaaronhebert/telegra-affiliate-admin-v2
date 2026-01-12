@@ -32,16 +32,17 @@ export default function SelectProductVariation({
   disabled = false,
 }: SelectProductVariationProps) {
   const dispatch = useAppDispatch();
-  const { data } = useViewAllEcommerceProductVariationsQuery(
+  const { data, isLoading } = useViewAllEcommerceProductVariationsQuery(
     { page: 1, limit: 100 },
     {
-      selectFromResult: ({ data }) => ({
+      selectFromResult: ({ data, isLoading }) => ({
         data: data?.mappings?.map((item) => {
           return {
             label: item.name,
             value: `${item.id}?${item.regularPrice}?${item.name}`,
           };
         }),
+        isLoading,
       }),
     }
   );
@@ -87,7 +88,7 @@ export default function SelectProductVariation({
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="">
           <div className="flex flex-col items-center">
-            <div className=" min-w-[650px] max-w-[650px]">
+            <div className=" min-w-162.5 max-w-162.5">
               <div className=" flex justify-between mb-3">
                 <p className="text-[20px] font-semibold">Select Medication</p>
                 <Button
@@ -128,12 +129,14 @@ export default function SelectProductVariation({
                     <div className=" flex gap-4">
                       <SelectElement
                         disabled={disabled}
+                        isLoading={isLoading}
+                        loadingTitle="Loading Medication Records..."
                         name={`productVariations.${index}.productVariation`}
                         options={data || []}
                         label="Select Medication"
                         isRequired={true}
                         placeholder="Select a medication"
-                        className="w-[270px] min-h-14"
+                        className="w-67.5 min-h-14"
                         onChange={(value) => {
                           const [_, price, name] = value.split("?");
                           if (price) {
@@ -185,14 +188,14 @@ export default function SelectProductVariation({
               type="button"
               variant={"outline"}
               onClick={() => dispatch(prevStep())}
-              className="rounded-full min-h-12 min-w-[130px] text-[14px] font-semibold cursor-pointer "
+              className="rounded-full min-h-12 min-w-32.5 text-[14px] font-semibold cursor-pointer "
             >
               Back
             </Button>
 
             <Button
               type="submit"
-              className="rounded-full min-h-12 min-w-[130px] text-[14px] font-semibold text-white cursor-pointer"
+              className="rounded-full min-h-12 min-w-32.5 text-[14px] font-semibold text-white cursor-pointer"
               // disabled={!form.formState.isValid}
             >
               Next

@@ -3,47 +3,136 @@ import { labOrderSchema } from "@/schemas/editLabOrderSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import type z from "zod";
-import { Form } from "@/components/ui/form";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
 import { useViewPatientByIdQuery } from "@/redux/services/patient";
 import SelectElement from "@/components/Form/SelectElement";
 import { CenteredRow } from "@/components/ui/centered-row";
 import InputElement from "@/components/Form/InputElement";
+import {
+  useEditLabOrderMutation,
+  useViewAllLabPanelsQuery,
+} from "@/redux/services/labOrder";
+import MultiSelectElement from "@/components/Form/MultiSelectElement";
+import { Switch } from "@/components/ui/switch";
+import ProductVariations from "@/components/Form/ProductVariations";
+
+import { toast } from "sonner";
+import { useViewAllStatesQuery } from "@/redux/services/state";
+import {
+  AddressDropdown,
+  type AddressOption,
+} from "@/components/DropDown/AddressDropdown";
 
 interface EditLabOrdersProps {
+  handleClose: (arg: boolean) => void;
   userId?: string;
   labId: string;
   labName: string;
+  labPanels: string[];
+  labOrderId: string;
+  affiliate: string;
+  address: {
+    address1: string;
+    address2?: string;
+    city: string;
+    state: string;
+    zipcode: string;
+  };
+  afterResultOrders?: {
+    productVariation: string;
+    quantity: string;
+  }[];
 }
 export default function EditLabOrders({
   userId,
-  // labId,
+  labId,
   labName,
+  labPanels,
+  labOrderId,
+  affiliate,
+  address,
+  afterResultOrders,
+  handleClose,
 }: EditLabOrdersProps) {
+  const [editLabOrder, { isLoading }] = useEditLabOrderMutation();
+  // const { data: addressData } = useViewPatientByIdQuery(userId!, {
+  //   skip: !userId,
+  //   selectFromResult: ({ data }) => ({
+  //     data: {
+  //       address: data?.addresses?.map((address) => {
+  //         const address1 = address?.shipping?.address1 ?? ""; // Empty string if address1 is falsy
+  //         const address2 = address?.shipping?.address2 ?? ""; // Empty string if address2 is falsy
+  //         const city = address?.shipping?.city ?? ""; // Empty string if city is falsy
+  //         const state = address?.shipping?.state?.id ?? ""; // Empty string if state is falsy
+  //         const zipcode = address?.shipping?.zipcode ?? ""; // Empty string if zipcode is falsy
+
+  //         // Create the id by concatenating non-empty values, delimited by '?'
+  //         const value = [address1, city, state, zipcode, address2]
+  //           .filter(Boolean) // Remove any falsy values ("" will be removed)
+  //           .join("?"); // Join them with the delimiter " ? "
+
+  //         const label = [address1, city, state, zipcode, address2]
+  //           .filter(Boolean)
+  //           .join(" ,");
+  //         return {
+  //           label,
+  //           value, // You can use the same id for the label or modify as needed
+  //         };
+  //       }),
+  //     },
+  //   }),
+  // });
+
   const { data: addressData } = useViewPatientByIdQuery(userId!, {
     skip: !userId,
-    selectFromResult: ({ data }) => ({
+    selectFromResult: ({ data, isLoading }) => ({
       data: {
         address: data?.addresses?.map((address) => {
-          const address1 = address?.shipping?.address1 ?? ""; // Empty string if address1 is falsy
-          const address2 = address?.shipping?.address2 ?? ""; // Empty string if address2 is falsy
-          const city = address?.shipping?.city ?? ""; // Empty string if city is falsy
-          const state = address?.shipping?.state?.name ?? ""; // Empty string if state is falsy
-          const zipcode = address?.shipping?.zipcode ?? ""; // Empty string if zipcode is falsy
-
-          // Create the id by concatenating non-empty values, delimited by '?'
-          const value = [address1, city, state, zipcode, address2]
-            .filter(Boolean) // Remove any falsy values ("" will be removed)
-            .join("?"); // Join them with the delimiter " ? "
-
-          const label = [address1, city, state, zipcode, address2]
-            .filter(Boolean)
-            .join(" ,");
           return {
-            label,
-            value, // You can use the same id for the label or modify as needed
+            id: address?.id,
+            address1: address?.billing?.address1,
+            address2: address?.billing?.address2 || undefined,
+            city: address?.billing?.city,
+            state: {
+              id: address?.billing?.state?.id,
+              name: address?.billing?.state?.name,
+            },
+            zipcode: address?.billing?.zipcode,
           };
         }),
       },
+      isLoading,
+    }),
+  });
+
+  const { data: statesData } = useViewAllStatesQuery(undefined, {
+    selectFromResult: ({ data }) => ({
+      data: data?.map((item) => {
+        return {
+          label: item?.name,
+          value: item?.id,
+        };
+      }), // Adjust the `map` function if you want to transform `item`
+    }),
+  });
+
+  const { data } = useViewAllLabPanelsQuery(labId, {
+    skip: !labId,
+    selectFromResult: ({ data }) => ({
+      data: data?.map((item) => {
+        return {
+          label: item.title,
+          value: item.id,
+        };
+      }),
     }),
   });
   const form = useForm<z.infer<typeof labOrderSchema>>({
@@ -52,37 +141,108 @@ export default function EditLabOrders({
     defaultValues: {
       prefill: "",
       address: {
-        address1: "",
-        address2: undefined,
-        city: "",
-        state: "",
-        zipcode: "",
+        address1: address?.address1 || "",
+        address2: address?.address2 || undefined,
+        city: address?.city || "",
+        state: address?.state || "",
+        zipcode: address?.zipcode || "",
         country: "United States",
       },
       lab: labName,
-      labPanels: [],
-      afterResultsOrderProductVariations: [],
+      labPanels: labPanels || [],
+      afterResultsOrderProductVariations: afterResultOrders
+        ? afterResultOrders
+        : [],
+      createOrderAfterResults: afterResultOrders?.length ? true : false,
     },
   });
 
   async function onSubmit(values: z.infer<typeof labOrderSchema>) {
-    console.log("Selected Patient:", values);
+    const productVariations = values?.afterResultsOrderProductVariations?.map(
+      (item) => {
+        return {
+          productVariation: item.productVariation,
+          quantity: Number(item.quantity),
+        };
+      }
+    );
+    const payload = {
+      patient: userId as string,
+      address: {
+        billing: values.address,
+        shipping: values.address,
+      },
+      affiliate: affiliate as string,
+      immediateProcessing: true,
+      lab: labId,
+      labPanels: values?.labPanels as string[],
+      createOrderAfterResults: values?.createOrderAfterResults,
+      afterResultsOrderProductVariations: productVariations,
+      labOrderId,
+    };
+    await editLabOrder(payload)
+      .then(() => {
+        toast.success(" Lab Order Updated Successfully", {
+          duration: 1500,
+        });
+        handleClose(false);
+      })
+      .catch((err) => {
+        console.log("err", err);
+        toast.error("Something went wrong", {
+          duration: 1500,
+        });
+      });
   }
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="">
+      <form
+        onSubmit={form.handleSubmit(onSubmit)}
+        className=" max-h-150 overflow-y-auto"
+      >
         <div>
           <div className="flex gap-4">
             <div className="mt-3.5 w-[45%] space-y-3.5 ">
-              <SelectElement
+              <div>
+                <p className="text-sm font-semibold">
+                  Use Address
+                  <span className="text-destructive">*</span>
+                </p>
+              </div>
+              <AddressDropdown
+                optionClass="max-h-[200px] overflow-y-auto p-1"
+                options={addressData?.address || []}
+                onChange={(option: AddressOption) => {
+                  if (option.address1) {
+                    form.setValue("address.address1", option.address1);
+                  }
+                  if (option.address2) {
+                    form.setValue("address.address2", option.address2);
+                  }
+                  if (option.city) {
+                    form.setValue("address.city", option.city);
+                  }
+                  if (option.state && option.state.id) {
+                    form.setValue("address.state", option.state.id);
+                  }
+                  if (option.zipcode) {
+                    form.setValue("address.zipcode", option.zipcode);
+                  }
+                }}
+                placeholder="Choose Address"
+              />
+              {/* <SelectElement
                 name="patient"
                 options={addressData?.address || []}
+                label="User Address"
                 className=" min-h-14 w-95 "
                 placeholder="Select patient..."
                 onChange={(value) => {
                   const [address1, city, state, zipcode, address2] =
                     value?.split("?");
+
+                  console.log("state", state);
                   if (address1) {
                     form.setValue("address.address1", address1);
                   }
@@ -99,7 +259,7 @@ export default function EditLabOrders({
                     form.setValue("address.zipcode", zipcode);
                   }
                 }}
-              />
+              /> */}
               <div className="pt-4 space-y-1.5 border-t border-card-border">
                 <CenteredRow>
                   <InputElement
@@ -117,7 +277,7 @@ export default function EditLabOrders({
                     name={`address.address2`}
                     className="w-1/2 "
                     label="Address Line 2"
-                    isRequired={true}
+                    // isRequired={true}
                     messageClassName="text-right"
                     //   placeholder="1247 Broadway Street"
                     inputClassName="border-border min-h-[46px] placeholder:text-[#C3C1C6]"
@@ -136,14 +296,14 @@ export default function EditLabOrders({
                     reserveSpace={true}
                   />
 
-                  <InputElement
+                  <SelectElement
                     name={`address.state`}
-                    className="w-1/2 "
+                    options={statesData || []}
                     label="State"
                     isRequired={true}
-                    messageClassName="text-right "
+                    errorClassName="text-right "
                     //   placeholder="1247 Broadway Street"
-                    inputClassName="border-border !h-[46px] placeholder:text-[#C3C1C6]"
+                    className="min-w-45 border-border placeholder:text-[#C3C1C6]"
                     reserveSpace={true}
                   />
                 </CenteredRow>
@@ -173,7 +333,8 @@ export default function EditLabOrders({
                 </CenteredRow>
               </div>
             </div>
-            <div className="w-[45%] ">
+
+            <div className="w-[45%] mt-3.5 space-y-3.5 ">
               <InputElement
                 name={"lab"}
                 className="w-full"
@@ -182,14 +343,54 @@ export default function EditLabOrders({
                 isRequired={true}
                 messageClassName="text-right "
                 //   placeholder="1247 Broadway Street"
-                inputClassName="border-border bg-border !h-[46px] placeholder:text-[#C3C1C6]"
+                inputClassName="border-border bg-border min-h-14 placeholder:text-[#C3C1C6]"
               />
+
+              <MultiSelectElement
+                name="labPanels"
+                options={data || []}
+                label="Lab Panels"
+                messageClassName="text-right"
+              />
+
+              <div>
+                <FormField
+                  control={form.control}
+                  name="createOrderAfterResults"
+                  render={({ field }) => (
+                    <FormItem className=" rounded-lg border p-4">
+                      <div className="flex items-start justify-between space-y-0.5">
+                        <div>
+                          <FormLabel className="text-base">
+                            Create Post-Results Order
+                          </FormLabel>
+                          <FormDescription>
+                            If activated, the Admin can choose what product
+                            variations will be added to the order that gets
+                            created after the results are returned.
+                          </FormDescription>
+                        </div>
+                        <FormControl>
+                          <Switch
+                            checked={field.value}
+                            onCheckedChange={field.onChange}
+                          />
+                        </FormControl>
+                      </div>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <ProductVariations />
             </div>
           </div>
-          <div className="flex justify-end mt-10 border-t border-card-border border-dashed pt-10">
+          <div className="flex justify-end mt-5 border-t border-card-border border-dashed pt-5 pr-5">
             <Button
               type="submit"
-              disabled={!form.formState.isValid}
+              disabled={isLoading}
+              // disabled={!form.formState.isValid}
               className="rounded-full min-h-12 min-w-32.5 text-[14px] font-semibold text-white cursor-pointer"
             >
               Next

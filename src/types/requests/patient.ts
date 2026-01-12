@@ -7,6 +7,10 @@ export interface IViewAllPatientsRequest {
   phone?: string;
 }
 
+export interface ISearchPatientsRequest {
+  patient?: string;
+}
+
 export interface IUpdatePatientMedicationsRequest {
   patientMedications: {
     medication: string;
@@ -28,6 +32,12 @@ export interface IUpdatePatientAllergiesRequest {
 }
 
 export interface ISendOrderInviteRequest {
+  inviteType: 'email' | 'sms';
+}
+
+export interface ISendQuestionnaireInviteRequest {
+  id: string;
+  questionnaire: string;
   inviteType: 'email' | 'sms';
 }
 

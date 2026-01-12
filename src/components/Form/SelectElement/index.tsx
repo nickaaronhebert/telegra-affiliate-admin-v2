@@ -45,6 +45,8 @@ interface SelectElementProps
   separator?: string;
   searchValue?: string;
   reserveSpace?: boolean;
+  isLoading?: boolean;
+  loadingTitle?: string;
 }
 
 const SelectElement: React.FC<SelectElementProps> = ({
@@ -61,7 +63,9 @@ const SelectElement: React.FC<SelectElementProps> = ({
   errorClassName,
   onSearch,
   onChange,
+  isLoading = false,
   reserveSpace = false,
+  loadingTitle = "Loading your results...",
   displayKeys = ["label"], // Default to showing only label
   separator = " , ",
   ...props
@@ -101,7 +105,7 @@ const SelectElement: React.FC<SelectElementProps> = ({
               onChange?.(value); // Call custom onChange if provided
               onSearch?.("");
             }}
-            defaultValue={props.defaultValue || field.value}
+            value={field.value || ""}
             disabled={props.disabled}
           >
             <FormControl className={cn("bg-white", props.className)}>
@@ -135,16 +139,45 @@ const SelectElement: React.FC<SelectElementProps> = ({
                 //   }}
                 // />
               )}
-              {options && options?.length === 0 && (
+
+              {isLoading ? (
+                <div className="px-2 py-1 text-sm text-muted-foreground">
+                  {loadingTitle || "Loading..."}
+                </div>
+              ) : options && options.length > 0 ? (
+                options.map((option) => (
+                  <SelectItem key={option.value} value={`${option.value}`}>
+                    {getDisplayText(option)}
+                  </SelectItem>
+                ))
+              ) : (
                 <div className="flex justify-center p-5 text-sm text-[#9EA5AB]">
                   No Records Found
                 </div>
               )}
-              {options.map((option) => (
+
+              {/* {options && options?.length === 0 && (
+                <div className="flex justify-center p-5 text-sm text-[#9EA5AB]">
+                  No Records Found
+                </div>
+              )}
+
+              {isLoading ? (
+                <div className="px-2 py-1 text-sm text-muted-foreground">
+                  {loadingTitle}
+                </div>
+              ) : (
+                options.map((option) => (
+                  <SelectItem key={option.value} value={`${option.value}`}>
+                    {getDisplayText(option)}
+                  </SelectItem>
+                ))
+              )} */}
+              {/* {options.map((option) => (
                 <SelectItem key={option.value} value={`${option.value}`}>
                   {getDisplayText(option)}
                 </SelectItem>
-              ))}
+              ))} */}
             </SelectContent>
           </Select>
           {description && <FormDescription>{description}</FormDescription>}

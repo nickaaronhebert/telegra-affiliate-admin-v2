@@ -1,0 +1,4 @@
+apiVersion: v1
+description: Telegra Affiliate Admin V2
+name: telegra_affiliate_admin_v2
+version: 0.1.0

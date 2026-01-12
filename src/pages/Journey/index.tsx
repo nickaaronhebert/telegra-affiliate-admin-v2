@@ -75,7 +75,7 @@ export default function Journey() {
         {/* ⬇️ Show full spinner until data loads */}
         <DataTable table={table} isLoading={isLoading || isFetching} />
 
-        <DataTablePagination table={table} />
+        <DataTablePagination table={table} totalRows={data?.count}/>
       </div>
     </>
   );

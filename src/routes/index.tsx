@@ -1,10 +1,8 @@
 import { createBrowserRouter, Navigate } from "react-router-dom";
 import {
-  DashboardPage,
   SubscriptionsPage,
   CouponsPage,
   CouponDetailsPage,
-  EncountersPage,
   SettingsPage,
 } from "@/pages";
 import SidebarLayout from "@/components/common/sidebar/sidebar-layout";
@@ -29,10 +27,21 @@ import PatientDetailsPage from "@/pages/Patient/details";
 import EditJourneyPage from "@/pages/Journey/edit";
 import ViewEcommerceOrderDetails from "@/pages/Order/details";
 import EditCommerceOrder from "@/pages/Order/Edit";
+import { OrganizationIdentityPage } from "@/pages/Settings/organizationIdentity";
+import ProductVariations from "@/pages/Settings/ProductVariations";
+import WorkflowSettingsPage from "@/pages/Settings/workflowSettings";
+import FinancialManagementPage from "@/pages/Settings/FinancialManagement";
 import CreateSubscription from "@/pages/Subscription/Create";
 import SubscriptionDetail from "@/pages/Subscription/Detail";
 import ViewAllLabOrders from "@/pages/LabOrder";
 import LabOrderDetails from "@/pages/LabOrder/details";
+import NotFound from "@/pages/NotFound";
+import TeamManagement from "@/pages/TeamManagement";
+import EncounterList from "@/pages/Encounters";
+import EncounterDetailsPage from "@/pages/Encounters/details";
+import TwoFactorAuthPage from "@/pages/Auth/TwoFactorAuth";
+import EditSubscription from "@/pages/Subscription/Edit";
+import MessagesPage from "@/pages/Messages";
 
 export const router = createBrowserRouter([
   {
@@ -59,6 +68,10 @@ export const router = createBrowserRouter([
         path: ROUTES.RESET_PASSWORD_PATH,
         element: <ResetPassword />,
       },
+      {
+        path: ROUTES.TWO_FA_PATH,
+        element: <TwoFactorAuthPage />,
+      },
     ],
   },
 
@@ -70,10 +83,10 @@ export const router = createBrowserRouter([
       </ProtectedRoute>
     ),
     children: [
-      {
-        path: ROUTES.DASHBOARD_PATH,
-        element: <DashboardPage />,
-      },
+      // {
+      //   path: ROUTES.DASHBOARD_PATH,
+      //   element: <DashboardPage />,
+      // },
       {
         path: ROUTES.ORDERS_PATH,
         element: <Order />,
@@ -95,6 +108,10 @@ export const router = createBrowserRouter([
         element: <SubscriptionsPage />,
       },
       {
+        path: ROUTES.SUBSCRIPTION_EDIT,
+        element: <EditSubscription />,
+      },
+      {
         path: ROUTES.COUPONS_PATH,
         element: <CouponsPage />,
       },
@@ -110,6 +127,14 @@ export const router = createBrowserRouter([
         path: ROUTES.PRODUCTS_PATH,
         element: <Products />,
       },
+      {
+        path: ROUTES.PRODUCT_VARIATIONS_PATH,
+        element: <ProductVariations />,
+      },
+      {
+        path: ROUTES.WORKFLOW_SETTINGS_PATH,
+        element: <WorkflowSettingsPage />,
+      },
 
       {
         path: ROUTES.COUPONS_EDIT,
@@ -117,6 +142,10 @@ export const router = createBrowserRouter([
       },
       {
         path: ROUTES.PRODUCTS_CREATE,
+        element: <CreateProductPage />,
+      },
+      {
+        path: ROUTES.PRODUCTS_CREATE_EDIT,
         element: <CreateProductPage />,
       },
       {
@@ -140,12 +169,16 @@ export const router = createBrowserRouter([
         element: <PatientsPage />,
       },
       {
-        path: "patients/:id",
+        path: ROUTES.PATIENT_DETAIL,
         element: <PatientDetailsPage />,
       },
       {
-        path: ROUTES.ENCOUNTERS_PATH,
-        element: <EncountersPage />,
+        path: ROUTES.ENCOUNTERS,
+        element: <EncounterList />,
+      },
+      {
+        path: ROUTES.ENCOUNTERS_DETAIL,
+        element: <EncounterDetailsPage />,
       },
       // {
       //   path: ROUTES.LAB_ORDERS_PATH,
@@ -154,6 +187,18 @@ export const router = createBrowserRouter([
       {
         path: ROUTES.SETTINGS_PATH,
         element: <SettingsPage />,
+      },
+      {
+        path: ROUTES.TEAM,
+        element: <TeamManagement />,
+      },
+      {
+        path: ROUTES.ORGANIZATION_IDENTITY_PATH,
+        element: <OrganizationIdentityPage />,
+      },
+      {
+        path: ROUTES.FINANCIAL_MANAGEMENT_PATH,
+        element: <FinancialManagementPage />,
       },
       {
         path: ROUTES.CREATE_SUBSCRIPTION,
@@ -170,6 +215,14 @@ export const router = createBrowserRouter([
       {
         path: ROUTES.LAB_ORDER_DETAILS,
         element: <LabOrderDetails />,
+      },
+      {
+        path: ROUTES.NOT_FOUND,
+        element: <NotFound />,
+      },
+      {
+        path: ROUTES.MESSAGE,
+        element: <MessagesPage />,
       },
     ],
   },

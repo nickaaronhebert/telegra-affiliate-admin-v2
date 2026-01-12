@@ -21,6 +21,9 @@ import {
 } from "@/redux/slices/create-order";
 import { toast } from "sonner";
 import { useViewPatientByIdQuery } from "@/redux/services/patient";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { useViewAllStatesQuery } from "@/redux/services/state";
+import SelectElement from "@/components/Form/SelectElement";
 
 interface SelectAddressProps {
   userId: string;
@@ -37,9 +40,9 @@ export default function SelectAddress({ userId }: SelectAddressProps) {
   const [billingAddress, setBillingAddress] = useState(
     !order?.selectedAddress?.newBillingAddress
   );
-  const { data } = useViewPatientByIdQuery(userId, {
+  const { data, isLoading } = useViewPatientByIdQuery(userId, {
     skip: !userId,
-    selectFromResult: ({ data }) => ({
+    selectFromResult: ({ data, isLoading }) => ({
       data: {
         // defaultAddress: data?.addresses?.filter((address) => {
         //   return address.defaultAddress === true;
@@ -55,6 +58,20 @@ export default function SelectAddress({ userId }: SelectAddressProps) {
           };
         }),
       },
+
+      isLoading,
+    }),
+  });
+
+  const { data: statesData } = useViewAllStatesQuery(undefined, {
+    selectFromResult: ({ data, isLoading }) => ({
+      data: data?.map((item) => {
+        return {
+          label: item?.name,
+          value: item?.id,
+        };
+      }), // Adjust the `map` function if you want to transform `item`
+      isLoading,
     }),
   });
 
@@ -133,53 +150,14 @@ export default function SelectAddress({ userId }: SelectAddressProps) {
       <div>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="">
-            <div className="max-w-[500px] mx-auto">
+            <div className="max-w-125 mx-auto">
               <p className="font-semibold text-xl">Address</p>
               <div className="my-3">
-                <p className="text-sm font-semibold my-1">
-                  Shipping Address <span className="text-red-500">*</span>
-                </p>
+                <div className="flex justify-between">
+                  <p className="text-sm font-semibold my-1">
+                    Shipping Address <span className="text-red-500">*</span>
+                  </p>
 
-                <RadioGroup
-                  value={selectedAddress}
-                  onValueChange={(value: string) => {
-                    form.setValue("newShippingAddress", false);
-                    form.setValue("shippingAddress", undefined);
-
-                    setSelectedAddress(value);
-                  }}
-                >
-                  {data?.address?.map((address, index) => {
-                    return (
-                      <div
-                        key={address.id}
-                        className={cn(
-                          "flex py-4 px-5 justify-between w-full border  rounded-2xl",
-                          selectedAddress === address.id
-                            ? "border-[#008CE3] bg-[#E5F3FC]"
-                            : "border-[#DFDFDFE0]"
-                        )}
-                      >
-                        <div className="space-y-3">
-                          <Label
-                            className="text-[#042769]"
-                            htmlFor={address.id}
-                          >{`Address - ${index + 1}`}</Label>
-                          <p className="text-xs font-normal">
-                            {`${address.address1}, ${
-                              address.address2 ? address.address2 + "," : ""
-                            } ${address.city}, ${address.state} - ${
-                              address.zipcode
-                            }`}
-                          </p>
-                        </div>
-                        <RadioGroupItem value={address.id} id={address.id} />
-                      </div>
-                    );
-                  })}
-                </RadioGroup>
-
-                <div className="flex justify-end my-2">
                   <span
                     className="text-xs font-normal text-[#008CE3] cursor-pointer"
                     onClick={() => {
@@ -203,6 +181,51 @@ export default function SelectAddress({ userId }: SelectAddressProps) {
                     </span>
                   </span>
                 </div>
+
+                {isLoading ? (
+                  <div className="min-h-32 flex items-center justify-center">
+                    <LoadingSpinner />
+                  </div>
+                ) : (
+                  <RadioGroup
+                    value={selectedAddress}
+                    onValueChange={(value: string) => {
+                      form.setValue("newShippingAddress", false);
+                      form.setValue("shippingAddress", undefined);
+
+                      setSelectedAddress(value);
+                    }}
+                  >
+                    {data?.address?.map((address, index) => {
+                      return (
+                        <div
+                          key={address.id}
+                          className={cn(
+                            "flex py-4 px-5 justify-between w-full border  rounded-2xl",
+                            selectedAddress === address.id
+                              ? "border-[#008CE3] bg-[#E5F3FC]"
+                              : "border-[#DFDFDFE0]"
+                          )}
+                        >
+                          <div className="space-y-3">
+                            <Label
+                              className="text-[#042769]"
+                              htmlFor={address.id}
+                            >{`Address - ${index + 1}`}</Label>
+                            <p className="text-xs font-normal">
+                              {`${address.address1}, ${
+                                address.address2 ? address.address2 + "," : ""
+                              } ${address.city}, ${address.state} - ${
+                                address.zipcode
+                              }`}
+                            </p>
+                          </div>
+                          <RadioGroupItem value={address.id} id={address.id} />
+                        </div>
+                      );
+                    })}
+                  </RadioGroup>
+                )}
               </div>
 
               {newShippingAddress && (
@@ -243,7 +266,7 @@ export default function SelectAddress({ userId }: SelectAddressProps) {
                       inputClassName="border-border !h-[46px] placeholder:text-[#C3C1C6]"
                     />
 
-                    <InputElement
+                    {/* <InputElement
                       name={`shippingAddress.state`}
                       className="w-60 "
                       label="State"
@@ -252,6 +275,19 @@ export default function SelectAddress({ userId }: SelectAddressProps) {
                       placeholder="1247 Broadway Street"
                       reserveSpace={true}
                       inputClassName="border-border !h-[46px] placeholder:text-[#C3C1C6]"
+                    /> */}
+                    <SelectElement
+                      options={statesData || []}
+                      name={`shippingAddress.state`}
+                      className="w-60 "
+                      label="State"
+                      isRequired={true}
+                      errorClassName="text-right"
+                      placeholder="Select State"
+                      reserveSpace={true}
+                      triggerClassName="border border-border"
+                      labelClassName="!placeholder:text-muted-foreground"
+                      // className="border-border !h-[46px] placeholder:text-[#C3C1C6]"
                     />
                   </CenteredRow>
 
@@ -293,7 +329,6 @@ export default function SelectAddress({ userId }: SelectAddressProps) {
                     id="billing_address"
                     checked={billingAddress}
                     onCheckedChange={(checked) => {
-                      console.log("checked", checked);
                       if (!checked) {
                         form.setValue("billingAddress", {
                           address1: "",
@@ -355,7 +390,7 @@ export default function SelectAddress({ userId }: SelectAddressProps) {
                         inputClassName="border-border !h-[46px] placeholder:text-[#C3C1C6]"
                       />
 
-                      <InputElement
+                      {/* <InputElement
                         name={`billingAddress.state`}
                         className="w-60 "
                         label="State"
@@ -364,6 +399,19 @@ export default function SelectAddress({ userId }: SelectAddressProps) {
                         placeholder="1247 Broadway Street"
                         reserveSpace={true}
                         inputClassName="border-border !h-[46px] placeholder:text-[#C3C1C6]"
+                      /> */}
+                      <SelectElement
+                        options={statesData || []}
+                        name={`billingAddress.state`}
+                        className="w-60 "
+                        label="State"
+                        isRequired={true}
+                        errorClassName="text-right"
+                        placeholder="Select State"
+                        reserveSpace={true}
+                        triggerClassName="border border-border"
+                        labelClassName="!placeholder:text-muted-foreground"
+                        // className="border-border !h-[46px] placeholder:text-[#C3C1C6]"
                       />
                     </CenteredRow>
 
@@ -399,15 +447,16 @@ export default function SelectAddress({ userId }: SelectAddressProps) {
                 type="button"
                 variant={"outline"}
                 onClick={() => dispatch(prevStep())}
-                className="rounded-full min-h-12 min-w-[130px] text-[14px] font-semibold cursor-pointer"
+                className="rounded-full min-h-12 min-w-32.5 text-[14px] font-semibold cursor-pointer"
               >
                 Back
               </Button>
 
               <Button
                 type="submit"
+                disabled={isLoading}
                 // disabled={!form.formState.isValid}
-                className="rounded-full min-h-12 min-w-[130px] text-[14px] font-semibold text-white cursor-pointer"
+                className="rounded-full min-h-12 min-w-32.5 text-[14px] font-semibold text-white cursor-pointer"
               >
                 Next
               </Button>

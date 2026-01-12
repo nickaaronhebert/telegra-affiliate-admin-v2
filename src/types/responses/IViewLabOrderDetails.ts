@@ -1,3 +1,4 @@
+import type { Note } from "@/redux/services/notes";
 import type { Patient } from "../global/commonTypes";
 
 export interface LabOrderDetails {
@@ -22,7 +23,8 @@ export interface LabOrderDetails {
       address1: string;
       address2: string;
       city: string;
-      state: { name: string };
+      zipcode: string;
+      state: { name: string; id: string };
     };
   };
 
@@ -45,6 +47,8 @@ export interface LabOrderDetails {
     };
     quantity: number;
   }[];
+
+  notes: Note[];
 }
 
 export interface IViewLabOrderDetails extends LabOrderDetails {}

@@ -3,8 +3,17 @@ import type { User } from "../global/commonTypes";
 export interface LoginResponse {
   token?: string;
   user?: User;
-
   statusCode: number;
+}
+
+export interface SendOtpResponse {
+  message: string;
+  statusCode?: number;
+}
+
+export interface VerifyOtpResponse {
+  token: string;
+  user: User;
 }
 
 export interface LogoutResponse {
@@ -26,3 +35,5 @@ export interface ResendOtpResponse {
 
 export * from "./coupon";
 export * from "./subscription";
+export * from "./organizationIdentity";
+export * from "./communicationTemplates";

@@ -1,8 +1,8 @@
-import { Search, Bell, ChevronDown, LogOut } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
-import { Input } from '@/components/ui/input';
-import { Button } from '@/components/ui/button';
-import { useAuth } from '@/hooks';
+import { Search, Bell, ChevronDown, LogOut } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks";
 
 export const Navbar = () => {
   const navigate = useNavigate();
@@ -10,7 +10,9 @@ export const Navbar = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    setTimeout(() => {
+      navigate("/login");
+    }, 2000);
   };
   return (
     <header className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
@@ -43,7 +45,12 @@ export const Navbar = () => {
           <ChevronDown className="h-4 w-4 text-gray-600" />
         </div>
 
-        <Button variant="ghost" size="sm" onClick={handleLogout} className="p-2 ml-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={handleLogout}
+          className="p-2 ml-2"
+        >
           <LogOut className="h-4 w-4 text-gray-600" />
         </Button>
       </div>

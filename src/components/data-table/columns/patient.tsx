@@ -1,7 +1,7 @@
-
 import type { ColumnDef } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 import type { Patient } from "@/types/responses/patient";
+import dayjs from "@/lib/dayjs";
 
 export function patientColumns(): ColumnDef<Patient>[] {
   return [
@@ -48,14 +48,11 @@ export function patientColumns(): ColumnDef<Patient>[] {
       accessorKey: "createdAt",
       header: "Created On",
       cell: ({ row }) => {
-        const formattedDate = new Date(
-          row.getValue("createdAt")
-        ).toLocaleDateString("en-US", {
-          year: "numeric",
-          month: "short",
-          day: "numeric",
-        });
-        return <p className="text-xs font-medium">{formattedDate}</p>;
+        return (
+          <p className="text-xs font-medium">
+            {dayjs(row.getValue("createdAt"))?.format("MMMM D, YYYY")}
+          </p>
+        );
       },
     },
   ];
@@ -88,7 +85,7 @@ export function organizationPatientColumns(): ColumnDef<Patient>[] {
 
       cell: ({ row }) => {
         const { createdAt } = row.original;
-        const gender = (row.original as any).gender || 'N/A';
+        const gender = (row.original as any).gender || "N/A";
         const formattedDate = new Date(createdAt).toLocaleDateString("en-US");
         return (
           <p className="text-xs font-medium">{`${gender}, ${formattedDate}`}</p>
@@ -102,7 +99,8 @@ export function organizationPatientColumns(): ColumnDef<Patient>[] {
 
       cell: ({ row }) => {
         const { email } = row.original;
-        const phoneNumber = (row.original as any).phoneNumber || row.original.phone;
+        const phoneNumber =
+          (row.original as any).phoneNumber || row.original.phone;
         const addresses = (row.original as any).addresses || [];
         const defaultAddress = addresses.filter(
           (address: any) => address.isDefault === true

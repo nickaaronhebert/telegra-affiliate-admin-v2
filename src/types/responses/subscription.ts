@@ -47,68 +47,110 @@ export interface Schedule {
 
 export interface Subscription {
   id: string;
-  order: Order;
-  patient: Patient;
-  productVariations: any[];
-  billingDetails: Address;
-  shippingDetails: Address;
-  schedule: Schedule;
+  ecommerceSubscriptionId: string;
+  // order: Order;
+  patient: {
+    id: string;
+    firstName: string;
+    lastName: string;
+  };
+  productVariations: {
+    _id: string;
+    name: string;
+  }[];
   status: string;
   totalAmount: number;
-  paymentProcessor: string;
-  affiliate: string;
-  // ecommerceSubscriptionId: string;
-  renewalOrders: any[];
+  currency: string;
+  interval: string;
+  intervalCount: string;
+  startDate: string;
+  nextPayment: string;
+  endDate: string;
   createdAt: string;
-  updatedAt: string;
+  parentOrder: {
+    _id: string;
+    ecommerceOrderId: string;
+  };
 }
 
 export interface SubscriptionDetails {
   id: string;
-  order: {
-    id: string;
+  ecommerceSubscriptionId: string;
+  status: string;
+  totalAmount: number;
+  schedule: Schedule;
+  parentOrder: {
+    _id: string;
     ecommerceOrderId: string;
     totalAmount: number | null;
-    amount: number | null;
-    currency: string;
+    status: string;
   };
-  patient: Patient;
-  productVariations: {
-    parentProduct: {
-      id: string;
-      name: string;
-      ecommerceProductId: string;
-      isSubscription: boolean;
-    };
+  patient: {
     id: string;
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    dateOfBirth: string;
+    genderBiological: string;
+    medicationAllergies: string[];
+    patientMedications: string[];
+  };
+  address: {
+    _id: string;
+    billing: {
+      address1: string;
+      address2: string;
+      city: string;
+      state: {
+        _id: string;
+        name: string;
+        abbreviation: string;
+      };
+      zipcode: string;
+      _id: string;
+      createdAt: string;
+      updatedAt: string;
+    };
+    shipping: {
+      address1: string;
+      address2: string;
+      city: string;
+      state: {
+        _id: string;
+        name: string;
+        abbreviation: string;
+      };
+      zipcode: string;
+      _id: string;
+      createdAt: string;
+      updatedAt: string;
+    };
+  };
+  productVariations: {
+    _id: string;
     name: string;
-    regularPrice: string;
+    regularPrice: number;
     productType: string;
-    currentPrice: string;
-    isSubscription: boolean;
     quantity: number;
     pricePerUnitOverride: number;
     billingCycleLength: number;
-    total: number;
   }[];
-  billingDetails: Address;
-  shippingDetails: Address;
-  schedule: Schedule;
-  status: string;
-  totalAmount: number;
   paymentProcessor: string;
-  affiliate: string;
-  // ecommerceSubscriptionId: string;
-  renewalOrders: any[];
+  paymentIntent: string;
   createdAt: string;
   updatedAt: string;
+  relatedOrders: {
+    id: string;
+    ecommerceOrderId: string;
+    status: string;
+    totalAmount: number;
+    currency: string;
+    type: string;
+  }[];
 }
 
-export interface IGetSubscriptionById extends SubscriptionDetails {
-  // data: SubscriptionDetails;
-  message: string;
-  code: string;
-}
+export interface IGetSubscriptionById extends SubscriptionDetails {}
 
 export interface ICreateSubscriptionResponse {
   message: string;

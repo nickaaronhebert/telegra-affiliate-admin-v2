@@ -1,4 +1,3 @@
-import { useViewPatientPaymentMethodQuery } from "@/redux/services/paymentMethod";
 import { useAppDispatch, useTypedSelector } from "@/redux/store";
 import { selectOrderPaymentSchema } from "@/schemas/selectOrderPayment";
 import { Spinner } from "@/components/ui/spinner";
@@ -27,28 +26,34 @@ import {
   resetOrder,
   updateOrderAmount,
 } from "@/redux/slices/create-order";
-import { Input } from "@/components/ui/input";
-import { useRef } from "react";
+// import { Input } from "@/components/ui/input";
+import { useRef, useState } from "react";
 import { useValidateCouponMutation } from "@/redux/services/coupon";
 import { useNavigate } from "react-router-dom";
+import { ConfirmDialog } from "@/components/common/Dialog";
+import AddStripeCard from "@/components/AddPaymentCard";
+import { LoadingSpinner } from "@/components/ui/loading-spinner";
+import { useViewPatientPaymentCardsQuery } from "@/redux/services/paymentMethod";
 
 // const stripePromise = loadStripe(
 //   import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY as string
 // );
 
 export default function SelectPaymentDetails() {
+  const [addCardModal, setAddCardModal] = useState(false);
   const [createOrder, { isLoading }] = useCreateOrderMutation();
   const [validateCoupon] = useValidateCouponMutation();
   const navigate = useNavigate();
   const couponRef = useRef<HTMLInputElement>(null);
   const dispatch = useAppDispatch();
   const order = useTypedSelector((state) => state.order);
-  const userJson = localStorage.getItem("user");
-  const user = userJson ? JSON.parse(userJson) : null;
-  const { data } = useViewPatientPaymentMethodQuery({
-    patient: order.initialStep.patient as string,
-    affiliate: user?.affiliate,
-  });
+  // const userJson = localStorage.getItem("user");
+  // const user = userJson ? JSON.parse(userJson) : null;
+  const { data, isLoading: isPatiendCardLoading } =
+    useViewPatientPaymentCardsQuery({
+      patient: order.initialStep.patient as string,
+      // affiliate: user?.affiliate,
+    });
 
   const totalAmount = order?.stepOne?.productVariations
     ?.reduce((acc, cVal) => acc + cVal.pricePerUnitOverride * cVal.quantity, 0)
@@ -148,21 +153,21 @@ export default function SelectPaymentDetails() {
 
   return (
     <div>
-      <div className="max-w-[500px] mx-auto">
+      <div className="max-w-125 mx-auto">
         <div>
           <p className="text-sm font-semibold">
             Coupon <span className="text-red-500 ">*</span>
           </p>
           <div className="flex gap-2 mb-7 mt-1">
-            <Input
+            <input
               ref={couponRef}
-              className="min-h-11 placeholder:text-[#C3C1C6] border border-[#9EA5AB]"
+              className="min-h-11 min-w-91 placeholder:text-[#C3C1C6] border border-[#9EA5AB] px-2 rounded-[6px] text-sm"
               placeholder="Enter Coupon Code"
             />
 
             <Button
               onClick={handleCouponClick}
-              className="min-w-[130px] rounded-[5px] bg-black px-6 py-1.5 text-white min-h-11"
+              className="min-w-32.5 rounded-[5px] bg-black px-6 py-1.5 text-white min-h-11"
             >
               Apply
             </Button>
@@ -221,70 +226,98 @@ export default function SelectPaymentDetails() {
         </div>
       </div>
 
-      <Form {...form}>
-        <form className="mt-4" onSubmit={form.handleSubmit(onSubmit)}>
-          <FormField
-            control={form.control}
-            name="payment"
-            render={({ field }) => (
-              <FormItem className="space-y-2 max-w-[500px] mx-auto">
-                <FormLabel>Select Payment Method</FormLabel>
-                <FormControl>
-                  <RadioGroup
-                    className="flex flex-col space-y-1"
-                    defaultValue={field.value}
-                    onValueChange={field.onChange}
-                  >
-                    {data?.map((item) => {
-                      return (
-                        <div
-                          className={cn(
-                            "px-3.5 py-4 flex justify-between border  rounded-[6px]",
-                            field.value === item.paymentId
-                              ? " border-[#008CE3] bg-[#E5F3FC]"
-                              : "border-[#DFDFDFE0]"
-                          )}
-                        >
-                          <Label htmlFor={item.paymentId}>
-                            <CreditCard stroke="#3E4D61" size={14} />
-                            <span>{`Credit Ending in ${item.last4}`}</span>
-                          </Label>
-                          <RadioGroupItem
-                            id={item.paymentId}
-                            value={item.paymentId}
-                          />
-                        </div>
-                      );
-                    })}
-                  </RadioGroup>
-                </FormControl>
-
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <div className="flex justify-between mt-4 border-t border-card-border border-dashed pt-6">
-            <Button
-              type="button"
-              variant={"outline"}
-              onClick={() => dispatch(prevStep())}
-              className="rounded-full min-h-12 min-w-[130px] text-[14px] font-semibold cursor-pointer"
-            >
-              Back
-            </Button>
-
-            <Button
-              type="submit"
-              disabled={isLoading}
-              // disabled={!form.formState.isValid}
-              className="rounded-full min-h-12 min-w-[130px] text-[14px] font-semibold text-white cursor-pointer"
-            >
-              {isLoading ? <Spinner /> : <span>Create Order</span>}
-            </Button>
+      <div className=" relative ">
+        {isPatiendCardLoading ? (
+          <div className="flex justify-center items-center min-h-50 mt-4">
+            <LoadingSpinner />
           </div>
-          {/* <Button type="submit">Submit</Button> */}
-        </form>
-      </Form>
+        ) : (
+          <Form {...form}>
+            <form className="mt-4" onSubmit={form.handleSubmit(onSubmit)}>
+              <FormField
+                control={form.control}
+                name="payment"
+                render={({ field }) => (
+                  <FormItem className="space-y-2 max-w-125 mx-auto">
+                    <FormLabel>Select Payment Method</FormLabel>
+                    <FormControl>
+                      <RadioGroup
+                        className="flex flex-col space-y-1 max-h-50 overflow-y-auto"
+                        defaultValue={field.value}
+                        onValueChange={field.onChange}
+                      >
+                        {data?.data?.paymentMethods?.map((item) => {
+                          return (
+                            <div
+                              key={item.id}
+                              className={cn(
+                                "px-3.5 py-4 flex justify-between border  rounded-[6px]",
+                                field.value === item.id
+                                  ? " border-[#008CE3] bg-[#E5F3FC]"
+                                  : "border-[#DFDFDFE0]"
+                              )}
+                            >
+                              <Label htmlFor={item.id}>
+                                <CreditCard stroke="#3E4D61" size={14} />
+                                <span>{`Credit Ending in ${item.last4}`}</span>
+                              </Label>
+                              <RadioGroupItem id={item.id} value={item.id} />
+                            </div>
+                          );
+                        })}
+                      </RadioGroup>
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex justify-between mt-4 border-t border-card-border border-dashed pt-6">
+                <Button
+                  type="button"
+                  variant={"outline"}
+                  onClick={() => dispatch(prevStep())}
+                  className="rounded-full min-h-12 min-w-32.5 text-[14px] font-semibold cursor-pointer"
+                >
+                  Back
+                </Button>
+
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  // disabled={!form.formState.isValid}
+                  className="rounded-full min-h-12 min-w-32.5 text-[14px] font-semibold text-white cursor-pointer"
+                >
+                  {isLoading ? <Spinner /> : <span>Create Order</span>}
+                </Button>
+              </div>
+              {/* <Button type="submit">Submit</Button> */}
+            </form>
+          </Form>
+        )}
+
+        <Button
+          type="button"
+          variant={"link"}
+          className="z-10 cursor-pointer absolute right-28 -top-3  text-xs font-normal underline underline-offset-1 text-[#008CE3]"
+          onClick={() => setAddCardModal(true)}
+        >
+          Add Payment Method
+        </Button>
+      </div>
+
+      <ConfirmDialog
+        open={addCardModal}
+        onOpenChange={setAddCardModal}
+        title="Add Credit Card"
+        onConfirm={() => {}}
+        showFooter={false}
+      >
+        <AddStripeCard
+          handleClose={setAddCardModal}
+          patientId={order.initialStep.patient as string}
+        />
+      </ConfirmDialog>
     </div>
   );
 }

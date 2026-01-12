@@ -57,16 +57,26 @@ const EditJourneyPage = () => {
         name: j.name || "",
         productVariations:
           j.productVariations?.map((pv: any) => ({
-            productVariation: typeof pv.productVariation === "object" ? pv.productVariation.id : pv.productVariation,
-            quantity: pv.quantity,
+            productVariation: typeof pv.productVariation === "object" ? pv.productVariation.id : pv.productVariation || pv.id,
+            quantity: pv.quantity || 1,
             pricePerUnitOverride: pv.pricePerUnitOverride,
             billingCycleLength: pv.billingCycleLength,
           })) || [],
         preCheckoutQuestionnaire:
           j.preCheckoutQuestionnaire?.map((q: any) => ({
-            questionnaire: typeof q.questionnaire === "object" ? q.questionnaire.id : q.questionnaire,
-            isPreAuthQuestionnaire: q.isPreAuthQuestionnaire,
+            questionnaire: typeof q.questionnaire === "object" ? q.questionnaire._id || q.questionnaire.id : q.questionnaire || q._id,
+            isPreAuthQuestionnaire: q.isPreAuthQuestionnaire || false,
           })) || [],
+        theme: j.theme || {
+          layout: "GUIDED_CARDS",
+          inheritFromAffiliate: false,
+          brandColors: {
+            primary: "#5456f4",
+            accent: "#d8b8f3",
+            neutral: "#fcfcff",
+          },
+        },
+        metadata: j.metadata || {},
       });
     }
   }, [journeyData, form]);
@@ -110,7 +120,9 @@ const EditJourneyPage = () => {
           .map((pv) => ({
             productVariation: pv.productVariation,
             quantity: pv.quantity,
-            pricePerUnitOverride: pv.pricePerUnitOverride,
+            ...(pv.pricePerUnitOverride && {
+              pricePerUnitOverride: pv.pricePerUnitOverride,
+            }),
             ...(pv.billingCycleLength && {
               billingCycleLength: pv.billingCycleLength,
             }),
@@ -121,6 +133,8 @@ const EditJourneyPage = () => {
             questionnaire: q.questionnaire,
             isPreAuthQuestionnaire: q.isPreAuthQuestionnaire,
           })),
+        ...(values.theme && { theme: values.theme }),
+        ...(values.metadata && { metadata: values.metadata }),
       };
 
       console.log("Submitting journey update with data:", journeyUpdateData);
@@ -173,29 +187,31 @@ const EditJourneyPage = () => {
         </h1>
       </div>
 
-      <div
-        className="mt-2 rounded-[15px] mx-auto p-6"
-      >
-        {currentStep === EDIT_JOURNEY_STEPS.JOURNEY_NAME && (
-          <EditJourneyName form={form} onNext={handleJourneyNameNext} />
-        )}
+      <div className="px-10">
+        <div
+          className="rounded-[15px] mx-auto p-6"
+        >
+          {currentStep === EDIT_JOURNEY_STEPS.JOURNEY_NAME && (
+            <EditJourneyName form={form} onNext={handleJourneyNameNext} />
+          )}
 
-        {currentStep === EDIT_JOURNEY_STEPS.LOADING && (
-          <PrepareEditJourney />
-        )}
+          {currentStep === EDIT_JOURNEY_STEPS.LOADING && (
+            <PrepareEditJourney />
+          )}
 
-        {currentStep === EDIT_JOURNEY_STEPS.STEPPER && journeyData && (
-          <EditJourneyStepper
-            form={form}
-            onSubmit={handleStepperSubmit}
-            isSubmitting={isUpdating}
-            existingJourneyData={journeyData}
-          />
-        )}
+          {currentStep === EDIT_JOURNEY_STEPS.STEPPER && journeyData && (
+            <EditJourneyStepper
+              form={form}
+              onSubmit={handleStepperSubmit}
+              isSubmitting={isUpdating}
+              existingJourneyData={journeyData}
+            />
+          )}
 
-        {currentStep === EDIT_JOURNEY_STEPS.SUCCESS && (
-          <EditJourneySuccess onEditAnother={handleEditAnother} />
-        )}
+          {currentStep === EDIT_JOURNEY_STEPS.SUCCESS && (
+            <EditJourneySuccess onEditAnother={handleEditAnother} />
+          )}
+        </div>
       </div>
     </>
   );

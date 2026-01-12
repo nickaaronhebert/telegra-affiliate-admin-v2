@@ -7,18 +7,22 @@ import type {
 } from "@/types/responses/subscription";
 import type { ICreateSubscriptionRequest } from "@/types/requests/subscription";
 import { TAG_GET_SUBSCRIPTIONS } from "@/types/baseApiTags";
+import type { IEditSubscriptionPayload } from "@/types/requests/IEditSubscription";
 
 const subscriptionApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
-    viewAllSubscriptions: builder.query<IViewAllSubscriptionsResponse, ICommonSearchQuery>({
+    viewAllSubscriptions: builder.query<
+      IViewAllSubscriptionsResponse,
+      ICommonSearchQuery
+    >({
       query: ({ page, perPage, q }) => {
         const params = new URLSearchParams({
           page: page.toString(),
           limit: perPage.toString(),
         });
-        
+
         if (q) {
-          params.append('q', q);
+          params.append("q", q);
         }
 
         return {
@@ -29,12 +33,12 @@ const subscriptionApi = baseApi.injectEndpoints({
       providesTags: (result) => {
         return result
           ? [
-            ...result?.result?.map(({ id }) => ({
-              type: TAG_GET_SUBSCRIPTIONS,
-              id,
-            })),
-            { type: TAG_GET_SUBSCRIPTIONS, id: "LIST" },
-          ]
+              ...result?.result?.map(({ id }) => ({
+                type: TAG_GET_SUBSCRIPTIONS,
+                id,
+              })),
+              { type: TAG_GET_SUBSCRIPTIONS, id: "LIST" },
+            ]
           : [{ type: TAG_GET_SUBSCRIPTIONS, id: "LIST" }];
       },
     }),
@@ -46,10 +50,15 @@ const subscriptionApi = baseApi.injectEndpoints({
           method: "GET",
         };
       },
-      providesTags: (_result, _error, id) => [{ type: TAG_GET_SUBSCRIPTIONS, id }],
+      providesTags: (_result, _error, id) => [
+        { type: TAG_GET_SUBSCRIPTIONS, id },
+      ],
     }),
 
-    createSubscription: builder.mutation<ICreateSubscriptionResponse, ICreateSubscriptionRequest>({
+    createSubscription: builder.mutation<
+      ICreateSubscriptionResponse,
+      ICreateSubscriptionRequest
+    >({
       query: (body) => {
         return {
           url: `/ecommerceSubscriptions`,
@@ -61,6 +70,29 @@ const subscriptionApi = baseApi.injectEndpoints({
         result ? [{ type: TAG_GET_SUBSCRIPTIONS, id: "LIST" }] : [],
     }),
 
+    updateSubscription: builder.mutation<any, IEditSubscriptionPayload>({
+      query: ({ id, ...body }) => {
+        return {
+          url: `/ecommerceSubscriptions/${id}`,
+          method: "PUT",
+          body,
+        };
+      },
+      invalidatesTags: (_result, _error, data) => [
+        { type: TAG_GET_SUBSCRIPTIONS, id: data.id },
+      ],
+    }),
+
+    cancelSubscription: builder.mutation({
+      query: (id: string) => {
+        return {
+          url: `/ecommerceSubscriptions/${id}/cancel`,
+          method: "PATCH",
+        };
+      },
+      invalidatesTags: (result) =>
+        result ? [{ type: TAG_GET_SUBSCRIPTIONS, id: "LIST" }] : [],
+    }),
   }),
 });
 
@@ -68,6 +100,8 @@ export const {
   useViewAllSubscriptionsQuery,
   useViewSubscriptionByIdQuery,
   useCreateSubscriptionMutation,
+  useCancelSubscriptionMutation,
+  useUpdateSubscriptionMutation,
 } = subscriptionApi;
 
 export default subscriptionApi;

@@ -194,7 +194,6 @@ export function useDataTable<TData, TValue>({
         newParams[key] = null;
       }
     }
-    // console.log("filres", newParams);
     navigate(`${location.pathname}?${createQueryString(newParams)}`, {
       replace: true,
     });

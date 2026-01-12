@@ -5,6 +5,7 @@ import { ROUTES } from "@/constants/routes";
 import { useViewPatientByIdQuery } from "@/redux/services/patient";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import ErrorComponent from "@/components/Error";
 import UserInformation from "./UserInformation";
 import UserInformationSvg from "@/assets/icons/UserInformation";
 import OrderInformationSvg from "@/assets/icons/OrderInformation";
@@ -94,13 +95,28 @@ const PatientDetailsPage = () => {
     | "notesInformation"
   >("userInformation");
 
-  const { data: patient, isLoading } = useViewPatientByIdQuery(id as string);
+  const {
+    data: patient,
+    isLoading,
+    error,
+  } = useViewPatientByIdQuery(id as string);
 
-  if (isLoading || !patient) {
+  if (isLoading) {
     return (
       <div className="h-[100vh] flex justify-center items-center">
         <LoadingSpinner />
       </div>
+    );
+  }
+
+  if (error || !patient) {
+    return (
+      <ErrorComponent
+        error={error}
+        message={error ? "Failed to load patient details. Please try again." : "Patient not found."}
+        backToPath={ROUTES.PATIENTS_PATH}
+        backToText="Back to Patients"
+      />
     );
   }
   return (
@@ -187,7 +203,7 @@ const PatientDetailsPage = () => {
           <Transaction patient={patient} />
           <PatientQuestionnaires patient={patient} />
           <PatientFiles patient={patient} />
-          <PaymentMethods />
+          <PaymentMethods patient={patient} />
           <Notes patient={patient} />
         </div>
       </div>

@@ -33,7 +33,17 @@ import {
   TAG_GET_LAB_ORDER,
   TAG_GET_NOTES,
   TAG_GET_STATES,
-  TAG_GET_PROJECTS
+  TAG_GET_PROJECTS,
+  TAG_GET_PRODUCT_VARIATIONS_LIST,
+  TAG_PAYMENT_PROCESSOR,
+  TAG_GET_TAGS,
+  TAG_GET_PAYMENT_METHODS,
+  TAG_AFFILIATE_DETAILS,
+  TAG_GET_TEMPLATES,
+  TAG_GET_TEAM_MANAGEMENT,
+  TAG_BRAND_IDENTITY,
+  TAG_GET_PATIENT_CARDS,
+  TAG_PATIENT_CONVERSATIONS,
 } from "@/types/baseApiTags";
 
 export const baseApi = createApi({
@@ -71,10 +81,20 @@ export const baseApi = createApi({
     TAG_GET_LAB_ORDER,
     TAG_GET_NOTES,
     TAG_GET_STATES,
-    TAG_GET_PROJECTS
+    TAG_GET_PROJECTS,
+    TAG_GET_PRODUCT_VARIATIONS_LIST,
+    TAG_PAYMENT_PROCESSOR,
+    TAG_GET_TAGS,
+    TAG_GET_PAYMENT_METHODS,
+    TAG_AFFILIATE_DETAILS,
+    TAG_GET_TEMPLATES,
+    TAG_GET_TEAM_MANAGEMENT,
+    TAG_BRAND_IDENTITY,
+    TAG_GET_PATIENT_CARDS,
+    TAG_PATIENT_CONVERSATIONS,
   ],
   baseQuery: fetchBaseQuery({
-    baseUrl:  "http://localhost:7009",
+    baseUrl: `${import.meta.env.VITE_BASE_BACKEND_URL}/v2` || "http://localhost:7009",
     prepareHeaders: (headers, { getState }) => {
       const masterKey = import.meta.env.VITE_MASTER_KEY;
       const token = (getState() as RootState)?.auth?.token;

@@ -104,7 +104,7 @@ export function organizationCouponColumns(): ColumnDef<CouponDetails>[] {
         };
         return (
           <Badge variant={getVariant(status)}>
-            {status.charAt(0).toUpperCase() + status.slice(1)}
+            {status.toUpperCase()}
           </Badge>
         );
       },

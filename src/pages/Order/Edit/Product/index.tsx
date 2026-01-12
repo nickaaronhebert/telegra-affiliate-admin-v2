@@ -35,7 +35,7 @@ export default function EcommerceOrderProductVariation({
   const data = product.productVariations.map((item) => {
     return {
       label: item.productName,
-      value: `${item.productVariation}?${item.pricePerUnitOverride}?${item.productName}`,
+      value: `${item.productVariation}`,
     };
   });
 

@@ -23,32 +23,16 @@ import {
 } from "@/components/ui/form";
 import { Plus } from "lucide-react";
 import { PRODUCT_TYPES } from "@/constants";
+import {
+  PRODUCT_TYPE_OPTIONS,
+  SUBSCRIPTION_PERIOD_OPTIONS,
+  INTERVAL_OPTIONS,
+  generateSubscriptionLengthOptions,
+  variationSchema,
+} from "@/constants/productOptions";
 
-// Constants
-export const PRODUCT_TYPE_OPTIONS = [
-  { label: "One Time", value: PRODUCT_TYPES.ONE_TIME },
-  { label: "Subscription Fixed", value: PRODUCT_TYPES.SUBSCRIPTION_FIXED },
-  {
-    label: "Subscription Variable",
-    value: PRODUCT_TYPES.SUBSCRIPTION_VARIABLE,
-  },
-];
-
-export const SUBSCRIPTION_PERIOD_OPTIONS = [
-  { label: "Day", value: "day" },
-  { label: "Week", value: "week" },
-  { label: "Month", value: "month" },
-  { label: "Year", value: "year" },
-];
-
-// Variation schema for SUBSCRIPTION_VARIABLE
-const variationSchema = z.object({
-  name: z.string().min(1, "Name is required"),
-  regularPrice: z.string().min(1, "Price is required"),
-  subscriptionPeriod: z.string().default("month"),
-  periodLength: z.string().default("1"),
-  subscriptionLength: z.string().default("0"),
-});
+// Export constants for use in other components
+export { PRODUCT_TYPE_OPTIONS, SUBSCRIPTION_PERIOD_OPTIONS, INTERVAL_OPTIONS };
 
 // Dynamic form schema based on product type
 const createAddProductSchema = (productType: string) => {
@@ -122,17 +106,21 @@ interface AddProductDetailsProps {
   onCancel: () => void;
   onContinue: (data: AddProductFormValues) => void;
   isSubmitting?: boolean;
+  initialData?: AddProductFormValues | null;
+  isEditMode?: boolean;
 }
 
 const AddProductDetails = ({
   onCancel,
   onContinue,
   isSubmitting = false,
+  initialData = null,
+  isEditMode = false,
 }: AddProductDetailsProps) => {
   const form = useForm({
     resolver: zodResolver(addProductSchema),
     mode: "onSubmit", // Only validate after field is touched and loses focus
-    defaultValues: {
+    defaultValues: initialData || {
       name: "",
       description: "",
       sku: "",
@@ -155,6 +143,21 @@ const AddProductDetails = ({
   } = form;
 
   const selectedProductType = watch("productType");
+  const subscriptionPeriod = watch("subscriptionPeriod");
+  const subscriptionPeriodInterval = watch("subscriptionPeriodInterval");
+
+  // Generate subscription length options based on current interval and period
+  const subscriptionLengthOptions = generateSubscriptionLengthOptions(
+    subscriptionPeriodInterval || "",
+    subscriptionPeriod || ""
+  );
+
+  // Populate form with initial data when component mounts or initialData changes
+  useEffect(() => {
+    if (initialData && isEditMode) {
+      form.reset(initialData);
+    }
+  }, [initialData, isEditMode, form]);
 
   // Update form validation schema when product type changes
   useEffect(() => {
@@ -213,7 +216,7 @@ const AddProductDetails = ({
   return (
     <div className="max-w-2xl mx-auto">
       <div className="mb-6">
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="text-lg font-semibold">
           Add Product Details
         </h2>
       </div>
@@ -226,7 +229,7 @@ const AddProductDetails = ({
             name="name"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium text-gray-700">
+                <FormLabel className="text-sm font-medium">
                   Product Name <span className="text-red-500">*</span>
                 </FormLabel>
                 <FormControl>
@@ -234,6 +237,8 @@ const AddProductDetails = ({
                     {...field}
                     placeholder="Metformin"
                     className="w-full"
+                    readOnly={isEditMode}
+                    disabled={isEditMode}
                   />
                 </FormControl>
                 <FormMessage />
@@ -247,7 +252,7 @@ const AddProductDetails = ({
             name="description"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-sm font-medium text-gray-700">
+                <FormLabel className="text-sm font-medium">
                   Product Description
                 </FormLabel>
                 <FormControl>
@@ -270,11 +275,11 @@ const AddProductDetails = ({
               name="sku"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium text-gray-700">
+                  <FormLabel className="text-sm font-medium">
                     SKU <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
-                    <Input {...field} placeholder="MET-50" className="w-full" />
+                    <Input {...field} placeholder="MET-50" className="w-full" readOnly={isEditMode} disabled={isEditMode} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -287,10 +292,10 @@ const AddProductDetails = ({
               name="productType"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium text-gray-700">
+                  <FormLabel className="text-sm font-medium">
                     Product Type <span className="text-red-500">*</span>
                   </FormLabel>
-                  <Select onValueChange={field.onChange} value={field.value}>
+                  <Select onValueChange={field.onChange} value={field.value} disabled={isEditMode}>
                     <FormControl>
                       <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select Product Type" />
@@ -317,7 +322,7 @@ const AddProductDetails = ({
               name="regularPrice"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel className="text-sm font-medium text-gray-700">
+                  <FormLabel className="text-sm font-medium">
                     Regular Price <span className="text-red-500">*</span>
                   </FormLabel>
                   <FormControl>
@@ -336,36 +341,105 @@ const AddProductDetails = ({
 
           {selectedProductType === PRODUCT_TYPES.SUBSCRIPTION_FIXED && (
             <>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="regularPrice"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium text-gray-700">
-                        Regular Price <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="50"
-                          type="number"
-                          className="w-full"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                {/* Price – 50% */}
+                <div className="md:col-span-6">
+                  <FormField
+                    control={form.control}
+                    name="regularPrice"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium">
+                          Subscription price ($) <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <FormControl>
+                          <Input
+                            {...field}
+                            placeholder="50"
+                            type="number"
+                            className="w-full"/>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="md:col-span-3">
+                  <FormField
+                    control={form.control}
+                    name="subscriptionPeriodInterval"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium">
+                          Interval <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select Interval" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {INTERVAL_OPTIONS.map((option) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className="md:col-span-3">
+                  <FormField
+                    control={form.control}
+                    name="subscriptionPeriod"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel className="text-sm font-medium">
+                          Subscription Period{" "}
+                          <span className="text-red-500">*</span>
+                        </FormLabel>
+                        <Select
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <FormControl>
+                            <SelectTrigger className="w-full">
+                              <SelectValue placeholder="Select Period" />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {SUBSCRIPTION_PERIOD_OPTIONS.map((option) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              <div className="grid gap-4">
 
                 <FormField
                   control={form.control}
-                  name="subscriptionPeriod"
+                  name="subscriptionLength"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-sm font-medium text-gray-700">
-                        Subscription Period{" "}
-                        <span className="text-red-500">*</span>
+                      <FormLabel className="text-sm font-medium">
+                        Stop renewing after <span className="text-red-500">*</span>
                       </FormLabel>
                       <Select
                         onValueChange={field.onChange}
@@ -373,11 +447,11 @@ const AddProductDetails = ({
                       >
                         <FormControl>
                           <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select Period" />
+                            <SelectValue placeholder="Select Length" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {SUBSCRIPTION_PERIOD_OPTIONS.map((option) => (
+                          {subscriptionLengthOptions.map((option) => (
                             <SelectItem key={option.value} value={option.value}>
                               {option.label}
                             </SelectItem>
@@ -389,75 +463,32 @@ const AddProductDetails = ({
                   )}
                 />
               </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <FormField
-                  control={form.control}
-                  name="subscriptionPeriodInterval"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium text-gray-700">
-                        Period Interval <span className="text-red-500">*</span>
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="1"
-                          type="number"
-                          className="w-full"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="subscriptionLength"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="text-sm font-medium text-gray-700">
-                        Subscription Length
-                      </FormLabel>
-                      <FormControl>
-                        <Input
-                          {...field}
-                          placeholder="0"
-                          type="number"
-                          className="w-full"
-                        />
-                      </FormControl>
-                      <p className="text-xs text-gray-500 mt-1">
-                        0 means unlimited
-                      </p>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </div>
             </>
           )}
 
           {selectedProductType === PRODUCT_TYPES.SUBSCRIPTION_VARIABLE && (
-            <div className="space-y-6">
+            <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <h3 className="text-base font-medium text-gray-900">
+                <h3 className="text-base font-medium">
                   Subscription Variations
                 </h3>
               </div>
-
-              <div className="flex justify-end mb-0">
-                <Button
-                  type="button"
-                  variant="ghost"
-                  onClick={addVariation}
-                  className="text-sm font-medium cursor-pointer"
-                  style={{ color: "var(--primary)" }}
-                >
-                  <Plus className="w-4 h-4 mr-1" />
-                  Add Product Variation
-                </Button>
+              <div className="flex items-center justify-between mb-0">
+                <div className="text-sm text-[#3E4D61]">
+                  <p>minimum 1 required</p>
+                </div>
+                <div className="">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    onClick={addVariation}
+                    className="text-sm font-medium cursor-pointer"
+                    style={{ color: "var(--primary)" }}
+                  >
+                    <Plus className="" />
+                    Add Product Variation
+                  </Button>
+                </div>
               </div>
 
               {fields.map((field, index) => (
@@ -466,7 +497,7 @@ const AddProductDetails = ({
                   className=" rounded-lg p-4 space-y-4 bg-[#FCF9FF]"
                 >
                   <div className="flex items-center justify-between">
-                    <h4 className="text-sm font-medium text-gray-900">
+                    <h4 className="text-sm font-medium">
                       Variation {index + 1}
                     </h4>
                     {fields.length > 1 && (
@@ -487,14 +518,14 @@ const AddProductDetails = ({
                     name={`variations.${index}.name`}
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-sm font-medium text-gray-700">
+                        <FormLabel className="text-sm font-medium">
                           Variation Name <span className="text-red-500">*</span>
                         </FormLabel>
                         <FormControl>
                           <Input
                             {...field}
                             placeholder="Metformin - 50mg"
-                            className="w-full"
+                            className="w-full bg-white"
                           />
                         </FormControl>
                         <FormMessage />
@@ -502,54 +533,131 @@ const AddProductDetails = ({
                     )}
                   />
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <FormField
-                      control={form.control}
-                      name={`variations.${index}.regularPrice`}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-sm font-medium text-gray-700">
-                            Regular Price{" "}
-                            <span className="text-red-500">*</span>
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              placeholder="50"
-                              type="number"
-                              className="w-full"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                  <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
+                    {/* Price – 50% */}
+                    <div className="md:col-span-6">
+                      <FormField
+                        control={form.control}
+                        name={`variations.${index}.regularPrice`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-sm font-medium">
+                              Regular Price{" "}
+                              <span className="text-red-500">*</span>
+                            </FormLabel>
+                            <FormControl>
+                              <Input
+                                {...field}
+                                placeholder="50"
+                                type="number"
+                                className="w-full bg-white"
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
 
-                    <FormField
-                      control={form.control}
-                      name={`variations.${index}.subscriptionPeriod`}
-                      render={({ field }) => (
+                    <div className="md:col-span-3">
+                      <FormField
+                        control={form.control}
+                        name={`variations.${index}.periodLength`}
+                        render={({ field }) => (
+                          <FormItem className="w-[48%]">
+                            <FormLabel className="text-sm font-medium">
+                              Interval{" "}
+                              <span className="text-red-500">*</span>
+                            </FormLabel>
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value}
+                              required
+                            >
+                              <FormControl>
+                                <SelectTrigger className="w-full bg-white">
+                                  <SelectValue placeholder="Select Interval" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {INTERVAL_OPTIONS.map((option) => (
+                                  <SelectItem
+                                    key={option.value}
+                                    value={option.value}
+                                  >
+                                    {option.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div className="md:col-span-3">
+                      <FormField
+                        control={form.control}
+                        name={`variations.${index}.subscriptionPeriod`}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-sm font-medium">
+                              Subscription Period{" "}
+                              <span className="text-red-500">*</span>
+                            </FormLabel>
+                            <Select
+                              onValueChange={field.onChange}
+                              value={field.value}
+                              required
+                            >
+                              <FormControl>
+                                <SelectTrigger className="w-full bg-white">
+                                  <SelectValue placeholder="Select Period" />
+                                </SelectTrigger>
+                              </FormControl>
+                              <SelectContent>
+                                {SUBSCRIPTION_PERIOD_OPTIONS.map((option) => (
+                                  <SelectItem
+                                    key={option.value}
+                                    value={option.value}
+                                  >
+                                    {option.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                  </div>
+
+                  <FormField
+                    control={form.control}
+                    name={`variations.${index}.subscriptionLength`}
+                    render={({ field }) => {
+                      const periodLength = form.watch(`variations.${index}.periodLength`);
+                      const period = form.watch(`variations.${index}.subscriptionPeriod`);
+                      const lengthOptions = generateSubscriptionLengthOptions(periodLength || "", period || "");
+
+                      return (
                         <FormItem>
-                          <FormLabel className="text-sm font-medium text-gray-700">
-                            Subscription Period{" "}
-                            <span className="text-red-500">*</span>
+                          <FormLabel className="text-sm font-medium">
+                            Stop renewing after
                           </FormLabel>
                           <Select
                             onValueChange={field.onChange}
                             value={field.value}
-                            required
                           >
                             <FormControl>
-                              <SelectTrigger className="w-full">
-                                <SelectValue placeholder="Select Period" />
+                              <SelectTrigger className="w-full bg-white">
+                                <SelectValue placeholder="Select Length" />
                               </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                              {SUBSCRIPTION_PERIOD_OPTIONS.map((option) => (
-                                <SelectItem
-                                  key={option.value}
-                                  value={option.value}
-                                >
+                              {lengthOptions.map((option) => (
+                                <SelectItem key={option.value} value={option.value}>
                                   {option.label}
                                 </SelectItem>
                               ))}
@@ -557,58 +665,9 @@ const AddProductDetails = ({
                           </Select>
                           <FormMessage />
                         </FormItem>
-                      )}
-                    />
-                  </div>
-
-                  <div className="flex items-start justify-between">
-                    <FormField
-                      control={form.control}
-                      name={`variations.${index}.periodLength`}
-                      render={({ field }) => (
-                        <FormItem className="w-[48%]">
-                          <FormLabel className="text-sm font-medium text-gray-700">
-                            Period Length{" "}
-                            <span className="text-red-500">*</span>
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              placeholder="1"
-                              type="number"
-                              min="1"
-                              className="w-full"
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name={`variations.${index}.subscriptionLength`}
-                      render={({ field }) => (
-                        <FormItem className="w-[48%]">
-                          <FormLabel className="text-sm font-medium text-gray-700">
-                            Subscription Length
-                          </FormLabel>
-                          <FormControl>
-                            <Input
-                              {...field}
-                              placeholder="0"
-                              type="number"
-                              className="w-full"
-                            />
-                          </FormControl>
-                          <p className="text-xs text-gray-500 mt-1">
-                            0 means unlimited
-                          </p>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-                  </div>
+                      );
+                    }}
+                  />
                 </div>
               ))}
             </div>

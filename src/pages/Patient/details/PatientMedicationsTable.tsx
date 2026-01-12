@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { Trash2, Edit, Plus } from "lucide-react";
 import { type ColumnDef } from "@tanstack/react-table";
 import PatientMedicationModal from "./PatientMedicationModal";
+import { ConfirmDialog } from "@/components/common/Dialog";
 
 interface PatientMedicationsTableProps {
   patient: PatientDetail;
@@ -29,6 +30,13 @@ export function PatientMedicationsTable({
   const [editingMedication, setEditingMedication] = useState<
     (PatientMedication & { index?: number }) | null
   >(null);
+  const [deleteConfirmDialog, setDeleteConfirmDialog] = useState<{
+    isOpen: boolean;
+    index: number | null;
+  }>({
+    isOpen: false,
+    index: null,
+  });
 
   const columns = useMemo<ColumnDef<PatientMedication>[]>(
     () => [
@@ -86,7 +94,9 @@ export function PatientMedicationsTable({
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => handleDeleteMedication(medicationIndex)}
+                onClick={() =>
+                  setDeleteConfirmDialog({ isOpen: true, index: medicationIndex })
+                }
                 disabled={isLoading}
                 className="p-1 h-8 w-8 cursor-pointer"
               >
@@ -122,7 +132,7 @@ export function PatientMedicationsTable({
       ...(patient?.patientMedications || []),
       newMedication,
     ];
-    updateMedications(updatedMedications);
+    updateMedications(updatedMedications, "Medication added successfully!");
   };
 
   const handleEditMedication = (
@@ -138,10 +148,13 @@ export function PatientMedicationsTable({
     const updatedMedications = (patient?.patientMedications || []).filter(
       (_, i) => i !== index
     );
-    updateMedications(updatedMedications);
+    updateMedications(updatedMedications, "Medication deleted successfully!");
   };
 
-  const updateMedications = async (medications: PatientMedication[]) => {
+  const updateMedications = async (
+    medications: PatientMedication[],
+    successMessage = "Medications updated successfully!"
+  ) => {
     try {
       await updatePatientMedications({
         id: patient?.id,
@@ -150,7 +163,7 @@ export function PatientMedicationsTable({
           medicationsConfirmationDate: new Date().toISOString(),
         },
       }).unwrap();
-      toast.success("Medications updated successfully!");
+      toast.success(successMessage);
     } catch (error: any) {
       toast.error(error?.data?.message || "Failed to update medications");
     }
@@ -210,6 +223,25 @@ export function PatientMedicationsTable({
           }
         }}
         isLoading={isLoading}
+      />
+
+      <ConfirmDialog
+        open={deleteConfirmDialog.isOpen}
+        onOpenChange={(isOpen) =>
+          setDeleteConfirmDialog({ ...deleteConfirmDialog, isOpen })
+        }
+        title="Delete Medication"
+        description="Are you sure you want to delete this medication? This action cannot be undone."
+        onConfirm={() => {
+          if (deleteConfirmDialog.index !== null) {
+            handleDeleteMedication(deleteConfirmDialog.index);
+            setDeleteConfirmDialog({ isOpen: false, index: null });
+          }
+        }}
+        confirmText="Delete"
+        cancelText="Cancel"
+        confirmTextVariant="destructive"
+        cancelTextVariant="outline"
       />
     </div>
   );

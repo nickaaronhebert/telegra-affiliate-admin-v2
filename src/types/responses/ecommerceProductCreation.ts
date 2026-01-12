@@ -186,3 +186,69 @@ export interface ProductMappingResponse {
   success: boolean;
   message?: string;
 }
+
+// Update Ecommerce Product Request Types
+export interface UpdateEcommerceProductBaseRequest {
+  affiliate: string;
+  name: string;
+  sku: string;
+  productType: string;
+  description?: string;
+}
+
+export interface UpdateOneTimeProductRequest extends UpdateEcommerceProductBaseRequest {
+  regularPrice: number;
+}
+
+export interface UpdateSubscriptionFixedProductRequest extends UpdateEcommerceProductBaseRequest {
+  regularPrice: number;
+  subscriptionPeriod: string;
+  subscriptionPeriodInterval: number;
+  subscriptionLength?: number;
+}
+
+export interface UpdateSubscriptionVariableProductRequest extends UpdateEcommerceProductBaseRequest {
+  variations: Array<{
+    name: string;
+    regularPrice: number;
+    subscriptionPeriod: string;
+    subscriptionPeriodInterval: number;
+    subscriptionLength?: number;
+  }>;
+}
+
+export type UpdateEcommerceProductRequest =
+  | UpdateOneTimeProductRequest
+  | UpdateSubscriptionFixedProductRequest
+  | UpdateSubscriptionVariableProductRequest;
+
+// Get Single Ecommerce Product Response
+export interface EcommerceProductDetailResponse {
+  id: string;
+  name: string;
+  productType: string;
+  regularPrice?: number;
+  currentPrice?: number;
+  currency: string;
+  isSubscription: boolean;
+  ecommerceProductVariations: string[];
+  createdAt: string;
+  updatedAt: string;
+  description: string;
+  sku: string;
+  subscriptionPeriod?: string;
+  subscriptionPeriodInterval?: number;
+  subscriptionLength?: number;
+  subscriptionSignUpFee?: number;
+  variations: Array<{
+    name: string;
+    regularPrice: number;
+    subscriptionPeriod?: string;
+    subscriptionPeriodInterval?: number;
+    subscriptionLength?: number;
+  }>;
+  ecommercePlatform: string;
+  ecommerceProductId: string;
+  metadata?: EcommerceProductMetadata;
+  imageUrl?: string;
+}

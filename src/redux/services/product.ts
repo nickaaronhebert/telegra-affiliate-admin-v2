@@ -13,10 +13,12 @@ import type {
   CreateEcommerceProductResponse,
   ProductMappingRequest,
   ProductMappingResponse,
+  EcommerceProductDetailResponse,
 } from "@/types/responses/ecommerceProductCreation";
 import type { IViewAllProductsInterface } from "@/types/responses/IViewAllProducts";
 import type { EcommerceProductsResponse } from "@/types/responses/ecommerceProducts";
 import { TAG_GET_PRODUCTS } from "@/types/baseApiTags";
+import type { IViewAllEncounterProductPayload } from "@/types/requests/IViewAllEncounterProduct";
 
 const productApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
@@ -54,11 +56,11 @@ const productApi = baseApi.injectEndpoints({
         });
 
         if (name) {
-          params.append('name', name);
+          params.append("name", name);
         }
 
         if (productType) {
-          params.append('productType', productType);
+          params.append("productType", productType);
         }
 
         return {
@@ -79,10 +81,7 @@ const productApi = baseApi.injectEndpoints({
       },
     }),
 
-    viewEcommerceProductById: builder.query<
-      any,
-      string
-    >({
+    viewEcommerceProductById: builder.query<EcommerceProductDetailResponse, string>({
       query: (id) => {
         return {
           url: `/ecommerceProducts/${id}`,
@@ -112,6 +111,20 @@ const productApi = baseApi.injectEndpoints({
               { type: TAG_GET_PRODUCTS, id: "LIST" },
             ]
           : [{ type: TAG_GET_PRODUCTS, id: "LIST" }];
+      },
+    }),
+
+    viewAllEncounterProducts: builder.query<
+      { id: string; title: string }[],
+      IViewAllEncounterProductPayload
+    >({
+      query: ({ page, perPage, q = "", affiliate }) => {
+        return {
+          url: `/products?page=${page}&limit=${perPage}&affiliate=${affiliate}&q=${
+            q || ""
+          }`,
+          method: "GET",
+        };
       },
     }),
 
@@ -170,10 +183,7 @@ const productApi = baseApi.injectEndpoints({
         result ? [{ type: TAG_GET_PRODUCTS, id: "LIST" }] : [],
     }),
 
-    updateEcommerceProduct: builder.mutation<
-      any,
-      { id: string; data: any }
-    >({
+    updateEcommerceProduct: builder.mutation<EcommerceProductDetailResponse, { id: string; data: any }>({
       query: ({ id, data }) => {
         return {
           url: `/ecommerceProducts/${id}`,
@@ -182,10 +192,12 @@ const productApi = baseApi.injectEndpoints({
         };
       },
       invalidatesTags: (result, _error, { id }) =>
-        result ? [
-          { type: TAG_GET_PRODUCTS, id: "LIST" },
-          { type: TAG_GET_PRODUCTS, id },
-        ] : [],
+        result
+          ? [
+              { type: TAG_GET_PRODUCTS, id: "LIST" },
+              { type: TAG_GET_PRODUCTS, id },
+            ]
+          : [],
     }),
   }),
 });
@@ -200,6 +212,7 @@ export const {
   useCreateEcommerceProductMutation,
   useCreateProductMappingMutation,
   useUpdateEcommerceProductMutation,
+  useViewAllEncounterProductsQuery,
   //   useViewOrderByIdQuery,
   //   useCreateOrderMutation,
 } = productApi;

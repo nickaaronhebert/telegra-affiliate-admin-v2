@@ -16,6 +16,7 @@ import {
 } from "@/components/data-table/columns/coupon";
 import { useMemo } from "react";
 import { ROUTES } from "@/constants/routes";
+import SearchSvg from "@/assets/icons/Search";
 
 export default function Coupons() {
   const navigate = useNavigate();
@@ -59,6 +60,7 @@ export default function Coupons() {
             <DataTableToolbar
               table={table}
               filterFields={filterFields}
+              searchIcon={<SearchSvg />}
               className="mb-2"
             />
             <Button
@@ -72,7 +74,7 @@ export default function Coupons() {
       </div>
       <div className="mt-3.5 bg-white shadow-[0px_2px_40px_0px_#00000014] pb-[12px]">
         <DataTable table={table} isLoading={isLoading} />
-        <DataTablePagination table={table} />
+        <DataTablePagination table={table} totalRows={data?.count}/>
       </div>
     </>
   );

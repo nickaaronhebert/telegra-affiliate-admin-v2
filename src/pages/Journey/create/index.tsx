@@ -39,11 +39,21 @@ const CreateJourneyPage = () => {
         {
           productVariation: "",
           quantity: 1,
-          pricePerUnitOverride: 0,
+          pricePerUnitOverride: undefined,
           billingCycleLength: undefined,
         },
       ],
       preCheckoutQuestionnaire: [],
+      theme: {
+        layout: "GUIDED_CARDS",
+        inheritFromAffiliate: false,
+        brandColors: {
+          primary: "#5456f4",
+          accent: "#d8b8f3",
+          neutral: "#fcfcff",
+        },
+      },
+      metadata: {},
     },
   });
 
@@ -67,11 +77,21 @@ const CreateJourneyPage = () => {
         {
           productVariation: "",
           quantity: 1,
-          pricePerUnitOverride: 0,
+          pricePerUnitOverride: undefined,
           billingCycleLength: undefined,
         },
       ],
       preCheckoutQuestionnaire: [],
+      theme: {
+        layout: "GUIDED_CARDS",
+        inheritFromAffiliate: false,
+        brandColors: {
+          primary: "#5456f4",
+          accent: "#d8b8f3",
+          neutral: "#fcfcff",
+        },
+      },
+      metadata: {},
     });
 
     setCurrentStep(JOURNEY_STEPS.JOURNEY_NAME);
@@ -95,7 +115,9 @@ const CreateJourneyPage = () => {
           .map((pv) => ({
             productVariation: pv.productVariation,
             quantity: pv.quantity,
-            pricePerUnitOverride: pv.pricePerUnitOverride,
+            ...(pv.pricePerUnitOverride && {
+              pricePerUnitOverride: pv.pricePerUnitOverride,
+            }),
             ...(pv.billingCycleLength && {
               billingCycleLength: pv.billingCycleLength,
             }),
@@ -106,6 +128,8 @@ const CreateJourneyPage = () => {
             questionnaire: q.questionnaire,
             isPreAuthQuestionnaire: q.isPreAuthQuestionnaire,
           })),
+        ...(values.theme && { theme: values.theme }),
+        ...(values.metadata && { metadata: values.metadata }),
       };
       await createJourney(journeyData).unwrap();
       // Show success toast
@@ -164,13 +188,15 @@ const CreateJourneyPage = () => {
             : "Create Journey"}
         </h1>
       </div>
-      <div
-        className="mt-10  rounded-[15px]  mx-auto p-6 bg-white "
-        style={{
-          boxShadow: "0px 8px 10px 0px hsla(0, 0%, 0%, 0.08)",
-        }}
-      >
-        {renderCurrentStep()}
+      <div className="px-10">
+        <div
+          className="rounded-[15px] mx-auto p-6 "
+          // style={{
+          //   boxShadow: "0px 8px 10px 0px hsla(0, 0%, 0%, 0.08)",
+          // }}
+        >
+          {renderCurrentStep()}
+        </div>
       </div>
     </>
   );

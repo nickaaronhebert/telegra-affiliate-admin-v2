@@ -1,0 +1,9 @@
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ .Values.affiliateAdminV2Service.name }}-pdb
+spec:
+  minAvailable: {{ default 1 .Values.affiliateAdminV2Service.pdb.minAvailable }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: app-{{ .Values.affiliateAdminV2Service.name }}

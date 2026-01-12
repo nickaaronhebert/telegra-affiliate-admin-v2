@@ -13,20 +13,13 @@ interface JourneyNameProps {
 
 const JourneyName = ({ form, onSubmit }: JourneyNameProps) => {
   return (
-    <>
-      <div className="flex flex-col mb-6">
-        <span className="text-lg font-semibold ">
-          Customize your checkout process
-        </span>
-        <span className="text-base text-[#63627F]">
-          An online visit will be required if the patient needs to complete
-          additional questionnaires after purchase.
-        </span>
-      </div>
-      <BuiltInGuardrails />
+    <div>
       <Form {...form}>
         <form
-          className="w-[60%] mx-auto"
+          className="mx-auto pb-32 bg-white p-8 rounded-[15px]"
+          style={{
+            boxShadow: "0px 8px 10px 0px hsla(0, 0%, 0%, 0.08)",
+          }}
           onSubmit={(e) => {
             e.preventDefault();
             const nameValue = form.getValues("name");
@@ -35,25 +28,47 @@ const JourneyName = ({ form, onSubmit }: JourneyNameProps) => {
             }
           }}
         >
-          <div>
-            <InputElement
-              name="name"
-              label="Journey Name"
-              placeholder="Eg.Weight loss journey"
-            />
+          <div className="" >
+            <div className="flex flex-col mb-6">
+              <span className="text-2xl font-semibold ">
+                Customize your checkout process
+              </span>
+              <span className="text-base text-[#63627F]">
+                An online visit will be required if the patient needs to complete
+                additional questionnaires after purchase.
+              </span>
+            </div>
+            <div className="w-[60%] space-y-6 mx-auto">
+              <BuiltInGuardrails />
+              <div>
+                <InputElement
+                  name="name"
+                  label="Journey Name"
+                  placeholder="Eg. Weight loss journey"
+                />
+              </div>
+            </div>
           </div>
-          <div className="flex justify-end mt-6 items-center gap-2.5">
+
+          {/* FIXED FOOTER */}
+          <div className="fixed bottom-0 left-0 right-0 bg-white px-8 py-6 flex justify-end">
             <Button
-              type="submit"
+              type="button"
+              onClick={() => {
+                const nameValue = form.getValues("name");
+                if (nameValue && nameValue.trim() !== "") {
+                  onSubmit(form.getValues());
+                }
+              }}
               disabled={!form.watch("name") || form.watch("name").trim() === ""}
-              className="rounded-full min-h-[48px] min-w-[130px] text-[14px] font-semibold text-white mt-6 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-[20px] py-[5px] min-h-[40px] cursor-pointer rounded-[50px] bg-primary text-white font-semibold leading-[16px]"
             >
               Next
             </Button>
           </div>
         </form>
       </Form>
-    </>
+    </div>
   );
 };
 

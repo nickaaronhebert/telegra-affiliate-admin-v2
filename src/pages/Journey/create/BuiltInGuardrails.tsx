@@ -6,7 +6,7 @@ import WarningSVG from "@/assets/icons/Warning";
 const BuiltInGuardrails = () => {
   return (
     <div className="my-5">
-      <Card className="w-[60%] bg-[#FFF4CC] border border-[#F5D769]  hover:shadow-md m-auto">
+      <Card className="bg-[#FFF4CC] border border-[#F5D769]  hover:shadow-md m-auto">
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 gap-1">
             <div className="flex flex-col ">

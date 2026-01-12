@@ -120,7 +120,7 @@ export function organizationInvoiceColumns(): ColumnDef<PharmacyInvoiceDetails>[
         return (
           <Link
             to={`/org/transmissions/${row.original.transmission.id}`}
-            className="flex justify-center items-center py-1 px-5 w-[85px] h-[36px] rounded-[50px] border border-primary-foreground "
+            className="flex justify-center items-center py-1 px-5 w-21.25 h-9 rounded-[50px] border border-primary-foreground "
           >
             View
           </Link>

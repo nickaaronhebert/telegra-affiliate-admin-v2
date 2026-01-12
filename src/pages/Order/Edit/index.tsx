@@ -26,8 +26,10 @@ export interface PatientProps {
 interface EditOrderStepperProps {
   orderId: string;
   patientDetails: PatientProps;
+  existingPaymentMethodId?: string;
+  orderStatus?: string;
 }
-function EditOrderStepper({ orderId, patientDetails }: EditOrderStepperProps) {
+function EditOrderStepper({ orderId, patientDetails, existingPaymentMethodId, orderStatus }: EditOrderStepperProps) {
   const order = useTypedSelector((state) => state.order);
   return (
     <div
@@ -99,7 +101,7 @@ function EditOrderStepper({ orderId, patientDetails }: EditOrderStepperProps) {
       {order.currentStep === 2 && (
         <SelectAddress userId={order.initialStep.patient || ""} />
       )}
-      {order.currentStep === 3 && <UpdateOrder orderId={orderId} />}
+      {order.currentStep === 3 && <UpdateOrder orderId={orderId} existingPaymentMethodId={existingPaymentMethodId} orderStatus={orderStatus} />}
     </div>
   );
 }
@@ -107,14 +109,14 @@ export default function EditCommerceOrder() {
   const { id } = useParams();
   const dispatch = useAppDispatch();
   const order = useTypedSelector((state) => state.order.initialStep.patient);
-  //   const order = useTypedSelector((state) => state.order);
-  //console.log("Order State in CreateCommerceOrder:", order);
 
-  const { data, patientDetails, isLoading, isError } = useViewOrderByIdQuery(
+  const { data, patientDetails, existingPaymentMethodId, orderStatus, isLoading, isError } = useViewOrderByIdQuery(
     id as string,
     {
       skip: !id,
       selectFromResult: ({ data, isLoading, isError }) => ({
+        existingPaymentMethodId: data?.paymentIntent?.paymentMethod || "",
+        orderStatus: data?.status || "",
         data: {
           initialStep: {
             patient: data?.patient?.id || "",
@@ -138,7 +140,7 @@ export default function EditCommerceOrder() {
             ],
           },
           stepTwo: {
-            address: data?.addressId || "",
+            address: data?.address?._id || "",
           },
           selectedAddress: {
             shippingAddress: undefined,
@@ -186,7 +188,7 @@ export default function EditCommerceOrder() {
     <>
       <div className="bg-lilac py-3 px-12">
         <Link
-          to={"/org/orders"}
+          to={"/orders"}
           className="font-normal text-sm text text-muted-foreground"
         >
           {"<- Back to Orders"}
@@ -203,6 +205,8 @@ export default function EditCommerceOrder() {
         <EditOrderStepper
           orderId={id as string}
           patientDetails={patientDetails}
+          existingPaymentMethodId={existingPaymentMethodId}
+          orderStatus={orderStatus}
         />
       )}
     </>

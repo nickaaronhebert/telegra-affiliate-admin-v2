@@ -7,7 +7,7 @@ import {
 import { useCommunicationTemplate } from "@/hooks/useCommunicationTemplate";
 import type { PatientDetail } from "@/types/responses/patient";
 import type { IQuestionnaireInstance } from "@/types/communicationTemplates";
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import QuestionnaireItem from "./QuestionnaireItem";
 
 interface PatientQuestionnairesProps {
@@ -18,7 +18,7 @@ interface PatientQuestionnairesProps {
 const getStatusDisplay = (status: string, valid: boolean) => {
   const isCompleted =
     status === QuestionnaireInstanceStatuses.Completed || valid;
-  const className = `px-2 py-1 rounded text-sm ${
+  const className = `px-2 py-1 rounded text-sm flex items-center h-[30px] capitalize ${
     isCompleted
       ? "bg-green-100 text-green-800"
       : "bg-yellow-100 text-yellow-800"
@@ -45,28 +45,6 @@ const PatientQuestionnaires = ({ patient }: PatientQuestionnairesProps) => {
     return patient?.orders?.length ? "h-[350px]" : "h-[200px]";
   }, [patient?.orders?.length]);
 
-  // Placeholder functions - replace with actual implementations
-  const completeQuestionnaire = useCallback(
-    (qi: IQuestionnaireInstance, externalIdentifier?: string) => {
-      console.log("Complete questionnaire:", qi, externalIdentifier);
-    },
-    []
-  );
-
-  const openTypeFormAnswersDrawer = useCallback(
-    (qi: IQuestionnaireInstance) => {
-      console.log("Open TypeForm answers drawer:", qi);
-    },
-    []
-  );
-
-  const displayQuestionnaire = useCallback((qi: IQuestionnaireInstance) => {
-    console.log("Display questionnaire:", qi);
-  }, []);
-
-  const openConfirmationModal = useCallback((qi: IQuestionnaireInstance) => {
-    console.log("Open confirmation modal:", qi);
-  }, []);
   return (
     <div
       id="patientQuestionnairesInformation"
@@ -131,13 +109,13 @@ const PatientQuestionnaires = ({ patient }: PatientQuestionnairesProps) => {
                     statusDisplay={statusDisplay}
                     valid={valid}
                     externalIdentifier={externalIdentifier}
-                    isCompletedExternalQuestionnaireInstance={isCompletedExternalQuestionnaireInstance}
-                    isCompletedQuestionnaireInstance={isCompletedQuestionnaireInstance}
+                    isCompletedExternalQuestionnaireInstance={
+                      isCompletedExternalQuestionnaireInstance
+                    }
+                    isCompletedQuestionnaireInstance={
+                      isCompletedQuestionnaireInstance
+                    }
                     canSendToPatient={canSendToPatient}
-                    onCompleteQuestionnaire={completeQuestionnaire}
-                    onOpenTypeFormAnswersDrawer={openTypeFormAnswersDrawer}
-                    onDisplayQuestionnaire={displayQuestionnaire}
-                    onOpenConfirmationModal={openConfirmationModal}
                   />
                 );
               }

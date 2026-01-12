@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 // import { X } from "lucide-react";
 import type { ProductVariationItem } from "@/types/global/productVariationData";
 import type { Questionnaire } from "@/types/responses/questionnaire";
@@ -16,18 +15,12 @@ interface FinalReviewStepProps {
     pre: QuestionnaireItem[];
     post: QuestionnaireItem[];
   };
-  onBack: () => void;
-  onSubmit: () => void;
-  isSubmitting?: boolean;
 }
 
 const FinalReviewStep = ({
   journeyName,
   selectedProductVariations,
   selectedQuestionnaires,
-  onBack,
-  onSubmit,
-  isSubmitting,
 }: FinalReviewStepProps) => {
   const validProducts = selectedProductVariations.filter(
     (item) => item.productVariation !== null
@@ -43,15 +36,15 @@ const FinalReviewStep = ({
   return (
     <>
       <div className="flex flex-col mb-6">
-        <span className="text-lg font-semibold">Review & Publish</span>
+        <span className="text-2xl font-medium">Review & Publish</span>
         <span className="text-base text-[#63627F]">
           Review your journey configuration before publishing.
         </span>
       </div>
 
       <div className=" space-y-6">
-        <div className="bg-gray-50 rounded-lg p-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="bg-[#F5F5F5] rounded-lg p-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
               <span className="text-sm text-gray-600">Journey Name</span>
               <h3 className="text-lg font-semibold text-gray-900">
@@ -112,22 +105,16 @@ const FinalReviewStep = ({
 
         {/* PRE Purchase */}
         <div className="space-y-4">
-          <h4 className="text-sm font-medium text-gray-900">
+          <h4 className="text-base font-semibold">
             Pre-Purchase Questionnaires ({validPre.length})
           </h4>
 
           <div className="space-y-2">
             {validPre.map((item) => (
-              <div key={item.id} className="flex items-center justify-between bg-white border rounded-lg px-4 py-3">
+              <div key={item.id} className="flex items-center justify-between bg-[#F9F8FF] border border-primary rounded-lg px-4 py-2">
                 <div className="flex items-center gap-3">
-                  <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium text-white"
-                    style={{ backgroundColor: "hsl(var(--primary))" }}
-                  >
-                    {item.questionnaire?.title?.charAt(0).toUpperCase()}
-                  </div>
                   <div>
-                    <span className="text-sm font-medium text-gray-900">
+                    <span className="text-sm font-semibold text-primary">
                       {item.questionnaire?.title}
                     </span>
                   </div>
@@ -139,22 +126,16 @@ const FinalReviewStep = ({
 
         {/* POST Purchase */}
         <div className="space-y-4">
-          <h4 className="text-sm font-medium text-gray-900">
+          <h4 className="text-base font-semibold">
             Post-Purchase Questionnaires ({validPost.length})
           </h4>
 
           <div className="space-y-2">
             {validPost.map((item) => (
-              <div key={item.id} className="flex items-center justify-between bg-white border rounded-lg px-4 py-3">
+              <div key={item.id} className="flex items-center justify-between bg-[#F9F8FF] border border-primary rounded-lg px-4 py-2">
                 <div className="flex items-center gap-3">
-                  <div
-                    className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-medium text-white"
-                    style={{ backgroundColor: "hsl(var(--primary))" }}
-                  >
-                    {item.questionnaire?.title?.charAt(0).toUpperCase()}
-                  </div>
                   <div>
-                    <span className="text-sm font-medium text-gray-900">
+                    <span className="text-sm font-semibold text-primary">
                       {item.questionnaire?.title}
                     </span>
                   </div>
@@ -165,10 +146,10 @@ const FinalReviewStep = ({
         </div>
 
         <div className="space-y-4">
-          <h4 className="text-sm font-medium text-gray-900">
+          <h4 className="text-base font-semibold">
             Patient Journey Flow
           </h4>
-          <div className="flex items-center gap-3 p-4">
+          <div className="flex items-center gap-3">
             {PATIENT_JOURNEY_FLOW.map((item, index) => (
               <div key={item.step} className="flex items-center">
                 <div
@@ -200,7 +181,7 @@ const FinalReviewStep = ({
         </div>
 
         {/* Ready to Publish */}
-        <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+        <div className="bg-[#D4F4DD] border border-[#8DD3A5] rounded-lg p-4">
           <div className="flex items-start gap-3">
             <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0 mt-0.5">
               <svg
@@ -216,34 +197,15 @@ const FinalReviewStep = ({
               </svg>
             </div>
             <div>
-              <h5 className="text-sm font-medium text-green-800">
+              <h5 className="text-[15px] font-semibold text-[#0D6832]">
                 Journey is ready to publish
               </h5>
-              <p className="text-sm text-green-700 mt-1">
+              <p className="text-sm text-[#0D6832] mt-1">
                 All required configurations are complete and all guardrails are
                 satisfied.
               </p>
             </div>
           </div>
-        </div>
-
-        <div className="flex justify-between items-center mt-6 gap-2.5 border-t border-dashed border-gray-300">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={onBack}
-            className="rounded-full min-h-[48px] min-w-[130px] text-[14px] font-semibold mt-6 cursor-pointer"
-          >
-            Back
-          </Button>
-          <Button
-            type="button"
-            onClick={onSubmit}
-            disabled={isSubmitting}
-            className="rounded-full min-h-[48px] min-w-[130px] text-[14px] font-semibold text-white mt-6 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {isSubmitting ? "Publishing..." : "Publish Journey"}
-          </Button>
         </div>
       </div>
     </>

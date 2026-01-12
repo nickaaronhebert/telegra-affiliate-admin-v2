@@ -8,12 +8,15 @@ import {
 import { useSendOrderInviteMutation } from "@/redux/services/patient";
 import type { PatientDetail, PatientOrder } from "@/types/responses/patient";
 import { toast } from "sonner";
-import { Plus, Link } from "lucide-react";
+import { Plus, Link as LinkIcon } from "lucide-react";
 import { type ColumnDef } from "@tanstack/react-table";
 import { PatientOrderModal } from "./PatientOrderModal";
 import { SendInviteModal } from "./SendInviteModal";
 import OrderInformationSvg from "@/assets/icons/OrderInformation";
 import { DataTablePagination } from "@/components/data-table/data-table-pagination";
+import { Link } from "react-router-dom";
+import { useGetProjectsQuery } from "@/redux/services/projects";
+import { PAYMENT_MECHANISMS } from "@/constants";
 
 interface UserInformationProps {
   patient: PatientDetail;
@@ -22,6 +25,8 @@ interface UserInformationProps {
 const OrderInformation = ({ patient }: UserInformationProps) => {
   const [sendOrderInvite, { isLoading: isSendingInvite }] =
     useSendOrderInviteMutation();
+  const { data: projects = [], isLoading: isLoadingProjects } =
+    useGetProjectsQuery();
   const [isOrderModalOpen, setIsOrderModalOpen] = useState(false);
   const [isInviteModalOpen, setIsInviteModalOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<PatientOrder | null>(null);
@@ -34,7 +39,15 @@ const OrderInformation = ({ patient }: UserInformationProps) => {
         header: "Encounter ID",
         cell: ({ row }) => (
           <div className="text-sm text-gray-900">
-            #{row.getValue("id")?.toString().slice(-6)}
+            <Link
+              to={`${
+                import.meta.env.VITE_AFFILIATE_ADMIN_FRONTEND_URL
+              }/encounters/${row.getValue("id")}`}
+              className="font-normal text-sm text text-muted-foreground text-queued hover:underline"
+              target="_blank"
+            >
+              #{row.getValue("id")?.toString().slice(-6)}
+            </Link>
           </div>
         ),
       },
@@ -123,7 +136,7 @@ const OrderInformation = ({ patient }: UserInformationProps) => {
               disabled={isSendingInvite}
               className="bg-primary text-white text-sm font-medium cursor-pointer"
             >
-              <Link className="w-4 h-4 mr-1" />
+              <LinkIcon className="w-4 h-4 mr-1" />
               VISIT
             </Button>
           );
@@ -148,6 +161,9 @@ const OrderInformation = ({ patient }: UserInformationProps) => {
     pageCount: 1,
   });
 
+  const affiliatePayProject = projects?.some(
+    (project) => project?.paymentMechanism === PAYMENT_MECHANISMS.AffiliatePay
+  );
   const handleSendInvite = async (inviteType: "email" | "sms") => {
     if (!selectedOrder) return;
     try {
@@ -196,6 +212,9 @@ const OrderInformation = ({ patient }: UserInformationProps) => {
           <Button
             onClick={openAddModal}
             className="bg-black text-white hover:bg-gray-800 rounded-lg px-4 py-2 cursor-pointer"
+            disabled={
+              isLoadingProjects || affiliatePayProject || !patient?.payment?.length
+            }
           >
             <Plus className="w-4 h-4 mx-1" />
             ADD ORDER

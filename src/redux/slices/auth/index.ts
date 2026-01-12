@@ -45,6 +45,18 @@ const authSlice = createSlice({
         }
       }
     );
+
+    builder.addMatcher(
+      authApi.endpoints.verifyOtpCode.matchFulfilled,
+      (state, { payload }) => {
+        const token = payload?.token;
+        if (token) {
+          state.token = token;
+          setLocalStorage(LOCAL_STORAGE_KEYS.ACCESS_TOKEN, token);
+          setLocalStorage(LOCAL_STORAGE_KEYS.USER, payload.user);
+        }
+      }
+    );
   },
 });
 

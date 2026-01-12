@@ -21,7 +21,7 @@ export const SubscriptionsPage = () => {
   const [searchParams] = useSearchParams();
   const page = parseInt(searchParams.get("page") || "1", 10);
   const perPage = parseInt(searchParams.get("per_page") ?? "10", 10);
-  const searchQuery = searchParams.get("q") ?? "";
+  const searchQuery = searchParams.get("patient") ?? "";
 
   const { data, isLoading } = useViewAllSubscriptionsQuery({
     page,
@@ -70,7 +70,7 @@ export const SubscriptionsPage = () => {
       </div>
       <div className="mt-3.5 bg-white shadow-[0px_2px_40px_0px_#00000014] pb-[12px]">
         <DataTable table={table} isLoading={isLoading} />
-        <DataTablePagination table={table} />
+        <DataTablePagination table={table} totalRows={data?.count} />
       </div>
     </>
   );

@@ -6,7 +6,7 @@ import { CheckIcon, XCircle, ChevronDown, XIcon } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { Separator } from "@/components/ui/separator";
-import { Button } from "@/components/ui/button";
+// import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Popover,
@@ -185,7 +185,7 @@ export const MultiSelect = React.forwardRef<
         modal={modalPopover}
       >
         <PopoverTrigger asChild>
-          <Button
+          <button
             ref={ref}
             {...props}
             onClick={handleTogglePopover}
@@ -204,7 +204,7 @@ export const MultiSelect = React.forwardRef<
                       <Badge
                         key={value}
                         className={cn(
-                          "rounded-[4px] p-1.5 text-white",
+                          "rounded-lg p-1.5 text-white",
                           isAnimating ? "animate-bounce" : "",
                           multiSelectVariants({ variant })
                         )}
@@ -227,7 +227,7 @@ export const MultiSelect = React.forwardRef<
                   })}
 
                   {selectedValues.length > maxCount && (
-                    <Badge className="rounded-[4px] px-2 py-1 text-xs font-medium bg-muted text-foreground">
+                    <Badge className="rounded-lg px-2 py-1 text-xs font-medium bg-muted text-foreground">
                       +{selectedValues.length - maxCount} more
                     </Badge>
                   )}
@@ -255,10 +255,10 @@ export const MultiSelect = React.forwardRef<
                 <ChevronDown className="h-4 cursor-pointer text-muted-foreground mx-2" />
               </div>
             )}
-          </Button>
+          </button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-[550px] p-0"
+          className="w-full p-0"
           align="start"
           onEscapeKeyDown={() => setIsPopoverOpen(false)}
         >

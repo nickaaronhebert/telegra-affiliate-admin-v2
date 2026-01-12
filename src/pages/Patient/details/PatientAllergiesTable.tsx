@@ -14,6 +14,7 @@ import { toast } from "sonner";
 import { Trash2, Edit, Plus } from "lucide-react";
 import { type ColumnDef } from "@tanstack/react-table";
 import { PatientAllergyModal } from "./PatientAllergyModal";
+import { ConfirmDialog } from "@/components/common/Dialog";
 
 interface PatientAllergiesTableProps {
   patient: PatientDetail;
@@ -26,6 +27,13 @@ export function PatientAllergiesTable({ patient }: PatientAllergiesTableProps) {
   const [editingAllergy, setEditingAllergy] = useState<
     (MedicationAllergy & { index?: number }) | null
   >(null);
+  const [deleteConfirmDialog, setDeleteConfirmDialog] = useState<{
+    isOpen: boolean;
+    index: number | null;
+  }>({
+    isOpen: false,
+    index: null,
+  });
 
   const columns = useMemo<ColumnDef<MedicationAllergy>[]>(
     () => [
@@ -67,7 +75,9 @@ export function PatientAllergiesTable({ patient }: PatientAllergiesTableProps) {
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => handleDeleteAllergy(allergyIndex)}
+                onClick={() =>
+                  setDeleteConfirmDialog({ isOpen: true, index: allergyIndex })
+                }
                 disabled={isLoading}
                 className="p-1 h-8 w-8 cursor-pointer"
               >
@@ -101,7 +111,7 @@ export function PatientAllergiesTable({ patient }: PatientAllergiesTableProps) {
       ...(patient.medicationAllergies || []),
       newAllergy,
     ];
-    updateAllergies(updatedAllergies);
+    updateAllergies(updatedAllergies, "Allergy added successfully!");
   };
 
   const handleEditAllergy = (
@@ -117,10 +127,13 @@ export function PatientAllergiesTable({ patient }: PatientAllergiesTableProps) {
     const updatedAllergies = (patient.medicationAllergies || []).filter(
       (_, i) => i !== index
     );
-    updateAllergies(updatedAllergies);
+    updateAllergies(updatedAllergies, "Allergy deleted successfully!");
   };
 
-  const updateAllergies = async (allergies: MedicationAllergy[]) => {
+  const updateAllergies = async (
+    allergies: MedicationAllergy[],
+    successMessage = "Allergies updated successfully!"
+  ) => {
     try {
       await updatePatientAllergies({
         id: patient.id,
@@ -129,7 +142,7 @@ export function PatientAllergiesTable({ patient }: PatientAllergiesTableProps) {
           allergiesConfirmationDate: new Date().toISOString(),
         },
       }).unwrap();
-      toast.success("Allergies updated successfully!");
+      toast.success(successMessage);
     } catch (error: any) {
       toast.error(error?.data?.message || "Failed to update allergies");
     }
@@ -185,6 +198,25 @@ export function PatientAllergiesTable({ patient }: PatientAllergiesTableProps) {
           }
         }}
         isLoading={isLoading}
+      />
+
+      <ConfirmDialog
+        open={deleteConfirmDialog.isOpen}
+        onOpenChange={(isOpen) =>
+          setDeleteConfirmDialog({ ...deleteConfirmDialog, isOpen })
+        }
+        title="Delete Allergy"
+        description="Are you sure you want to delete this allergy? This action cannot be undone."
+        onConfirm={() => {
+          if (deleteConfirmDialog.index !== null) {
+            handleDeleteAllergy(deleteConfirmDialog.index);
+            setDeleteConfirmDialog({ isOpen: false, index: null });
+          }
+        }}
+        confirmText="Delete"
+        cancelText="Cancel"
+        confirmTextVariant="destructive"
+        cancelTextVariant="outline"
       />
     </div>
   );

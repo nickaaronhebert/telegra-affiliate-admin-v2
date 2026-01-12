@@ -16,7 +16,14 @@ import { subscriptionSchema } from "@/schemas/createSubscriptionProductSchema";
 import { prevStep, updateProductDetails } from "@/redux/slices/subscription";
 import { useViewAllOrdersQuery } from "@/redux/services/order";
 import { CenteredRow } from "@/components/ui/centered-row";
-import DateInputElement from "@/components/Form/DateInputElement";
+import {
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+  FormControl,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 
 interface ProductVariationProps {
   patientId: string;
@@ -103,19 +110,19 @@ export default function ProductVariation({ patientId }: ProductVariationProps) {
   async function onSubmit(values: z.input<typeof subscriptionSchema>) {
     dispatch(
       updateProductDetails({
-        order: values.order,
+        order: values?.order,
         schedule: {
-          interval: values.interval,
-          intervalCount: values.intervalCount as number,
-          startDate: values.startDate,
+          interval: values?.interval,
+          intervalCount: values?.intervalCount as number,
+          startDate: values?.startDate,
           endDate: values?.endDate,
         },
-        productVariations: values.productVariations.map((item) => {
+        productVariations: values?.productVariations.map((item) => {
           return {
-            productName: item.productName,
-            productVariation: item.productVariation,
-            pricePerUnitOverride: item.pricePerUnitOverride as number,
-            quantity: item.quantity as number,
+            productName: item?.productName,
+            productVariation: item?.productVariation,
+            pricePerUnitOverride: item?.pricePerUnitOverride as number,
+            quantity: item?.quantity as number,
           };
         }),
       })
@@ -265,7 +272,7 @@ export default function ProductVariation({ patientId }: ProductVariationProps) {
                   />
                 </CenteredRow>
 
-                <CenteredRow>
+                {/* <CenteredRow>
                   <DateInputElement
                     name={"startDate"}
                     label="Start Date"
@@ -285,7 +292,46 @@ export default function ProductVariation({ patientId }: ProductVariationProps) {
                     reserveSpace={true}
                     messageClassName="text-right"
                   />
+                </CenteredRow> */}
+                <CenteredRow>
+                  <FormField
+                    control={form.control}
+                    name="startDate"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col w-full">
+                        <FormLabel className="font-semibold" >Start Date</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="date"
+                            {...field}
+                            className="w-[230px] min-h-14"
+                            required
+                          />
+                        </FormControl>
+                        <FormMessage className="text-right" />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="endDate"
+                    render={({ field }) => (
+                      <FormItem className="flex flex-col w-full">
+                        <FormLabel className="font-semibold">End Date</FormLabel>
+                        <FormControl>
+                          <Input
+                            type="date"
+                            {...field}
+                            className="w-[230px] min-h-14"
+                          />
+                        </FormControl>
+                        <FormMessage className="text-right" />
+                      </FormItem>
+                    )}
+                  />
                 </CenteredRow>
+
               </div>
             </div>
           </div>
@@ -302,7 +348,7 @@ export default function ProductVariation({ patientId }: ProductVariationProps) {
             <Button
               type="submit"
               className="rounded-full min-h-12 min-w-[130px] text-[14px] font-semibold text-white cursor-pointer"
-              //   disabled={!form.formState.isValid}
+            //   disabled={!form.formState.isValid}
             >
               Next
             </Button>

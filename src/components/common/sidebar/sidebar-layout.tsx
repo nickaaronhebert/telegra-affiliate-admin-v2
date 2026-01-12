@@ -3,16 +3,37 @@ import { AppSidebar } from "@/components/common/sidebar/app-sidebar";
 import Navbar from "./navbar";
 import { Outlet, useLocation, useMatch } from "react-router-dom";
 import { cn } from "@/lib/utils";
+import { useEffect } from "react";
+import { useGetAffiliateMeQuery } from "@/redux/services/affiliate";
+import { useAppDispatch } from "@/redux/store";
+import { setAffiliateData } from "@/redux/slices/affiliate";
 
 export default function SidebarLayout() {
   const { pathname } = useLocation();
-  const noPaddingRoutes = ["/login", "/register", "/coupons/create", "/journeys/create", "/journeys/:id/edit"];
+  const dispatch = useAppDispatch();
+  
+  // Fetch affiliate data on component mount (page refresh or after login)
+  const { data: affiliateData } = useGetAffiliateMeQuery();
+
+  useEffect(() => {
+    if (affiliateData) {
+      dispatch(setAffiliateData(affiliateData));
+    }
+  }, [affiliateData, dispatch]);
+  const noPaddingRoutes = ["/login", "/register", "/coupons/create", "/journeys/create", "/journeys/:id/edit", "/settings/product-list", "/settings/financial-management", "/settings/workflow-settings", "/settings/organization-identity", "/products/create"];
   const editJourneyMatch = useMatch("/journeys/:id/edit");
   if (editJourneyMatch) {
     noPaddingRoutes.push(editJourneyMatch.pathname);
   }
   const editCouponMatch = useMatch("/coupons/:id/edit");
-  const shouldHavePadding = !noPaddingRoutes.includes(pathname) && !editCouponMatch;
+  if (editCouponMatch) {
+    noPaddingRoutes.push(editCouponMatch.pathname);
+  }
+  const editProductMatch = useMatch("/products/:id");
+  if (editProductMatch) {
+    noPaddingRoutes.push(editProductMatch.pathname);
+  }
+  const shouldHavePadding = !noPaddingRoutes.includes(pathname);
   return (
     <SidebarProvider
       style={{
@@ -21,7 +42,7 @@ export default function SidebarLayout() {
       }}
     >
       <AppSidebar />
-      <main className="relative w-full ">
+      <main className="flex-1 min-w-0 transition-all duration-200 ease-linear">
         <Navbar />
         <div className={cn(shouldHavePadding && "p-7.5")}>
           <Outlet />

@@ -32,8 +32,9 @@ export function organizationJourneyColumns(): ColumnDef<JourneyDetails>[] {
       header: "Status",
       cell: ({ row }) => {
         const status = row.getValue("status") as string;
+        console.log("Journey Status:", status);
         return (
-          <Badge variant={status ? (status as any) : "active"}>
+          <Badge variant={status ? (status.toLowerCase() as any) : "active"}>
             {status ? status.toUpperCase() : "PUBLISHED"}
           </Badge>
         );
@@ -112,7 +113,7 @@ export function organizationJourneyColumns(): ColumnDef<JourneyDetails>[] {
       accessorKey: "id",
       header: "Action",
       cell: ({ row }) => {
-        const name = row.getValue("name");
+        const name = row.getValue("id");
 
         return (
           <div className="flex items-center space-x-3 pt-3">

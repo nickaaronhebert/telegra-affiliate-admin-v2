@@ -1,6 +1,6 @@
 import { baseApi } from ".";
-import type { IViewAllPatientsRequest, IUpdatePatientMedicationsRequest, IUpdatePatientAllergiesRequest, ISendOrderInviteRequest, IUpdatePatientRequest, IViewPatientOrdersRequest, IUploadPatientFileRequest } from "@/types/requests/patient";
-import type { PatientsResponse, PatientDetail, PatientOrdersResponse } from "@/types/responses/patient";
+import type { IViewAllPatientsRequest, ISearchPatientsRequest, IUpdatePatientMedicationsRequest, IUpdatePatientAllergiesRequest, ISendOrderInviteRequest, IUpdatePatientRequest, IViewPatientOrdersRequest } from "@/types/requests/patient";
+import type { PatientsResponse, SearchPatientsResponse, PatientDetail, PatientOrdersResponse, PaymentMethod } from "@/types/responses/patient";
 import { TAG_GET_PATIENTS } from "@/types/baseApiTags";
 
 const patientApi = baseApi.injectEndpoints({
@@ -35,6 +35,30 @@ const patientApi = baseApi.injectEndpoints({
       },
     }),
 
+    searchPatients: builder.query<SearchPatientsResponse, ISearchPatientsRequest>({
+      query: ({ patient }) => {
+        const params = new URLSearchParams();
+        if (patient) {
+          params.append('patient', patient);
+        }
+        return {
+          url: `/patients/search?${params.toString()}`,
+          method: "GET",
+        };
+      },
+      providesTags: (result) => {
+        return result
+          ? [
+            ...result?.data?.map(({ id }) => ({
+              type: TAG_GET_PATIENTS,
+              id,
+            })),
+            { type: TAG_GET_PATIENTS, id: "SEARCH" },
+          ]
+          : [{ type: TAG_GET_PATIENTS, id: "SEARCH" }];
+      },
+    }),
+
     viewPatientById: builder.query<PatientDetail, string>({
       query: (id) => {
         return {
@@ -59,8 +83,22 @@ const patientApi = baseApi.injectEndpoints({
               })
             );
           }
+
+          // Fetch available payment methods after orders
+          const paymentResult = await dispatch(
+            patientApi.endpoints.getAvailablePaymentMethods.initiate({ patientId: id })
+          );
+
+          if (paymentResult.data) {
+            // Update the patient cache with payment methods data
+            dispatch(
+              patientApi.util.updateQueryData('viewPatientById', id, (draft) => {
+                draft.payment = paymentResult.data;
+              })
+            );
+          }
         } catch {
-          // If orders fetch fails, patient data will still be available
+          // If orders or payment fetch fails, patient data will still be available
         }
       },
     }),
@@ -76,6 +114,24 @@ const patientApi = baseApi.injectEndpoints({
           method: "GET",
         };
       },
+      providesTags: (_result, _error, { patientId }) => [
+        { type: TAG_GET_PATIENTS, id: `${patientId}-orders` },
+      ],
+    }),
+
+    getAvailablePaymentMethods: builder.query<PaymentMethod[], { patientId: string }>({
+      query: ({ patientId }) => {
+        const params = new URLSearchParams({
+          patient: patientId,
+        });
+        return {
+          url: `/billingDetails/actions/getAvailablePaymentMethods?${params.toString()}`,
+          method: "GET",
+        };
+      },
+      providesTags: (_result, _error, { patientId }) => [
+        { type: TAG_GET_PATIENTS, id: `${patientId}-payment` },
+      ],
     }),
 
     createPatient: builder.mutation<any, any>({
@@ -171,15 +227,30 @@ const patientApi = baseApi.injectEndpoints({
       }),
     }),
 
-    uploadPatientFile: builder.mutation<any, { patientId: string; data: IUploadPatientFileRequest }>({
-      query: ({ patientId, data }) => {
-        const formData = new FormData();
-        formData.append('file', data.file);
+    sendQuestionnaireInvite: builder.mutation<any, { patientId: string; questionnaireId: string; data: { inviteType: 'email' | 'sms' } }>({
+      query: ({ patientId, questionnaireId, data }) => ({
+        url: `/patients/${patientId}/inviteCompleteQuestionnaire`,
+        method: "POST",
+        body: {
+          id: patientId,
+          questionnaire: questionnaireId,
+          inviteType: data.inviteType,
+        },
+      }),
+    }),
 
+    uploadPatientFile: builder.mutation<any, { patientId: string; data: { fileData: string; fileName: string } }>({
+      query: ({ patientId, data }) => {
         return {
           url: `/patients/${patientId}/uploadFile`,
           method: "POST",
-          body: formData,
+          body: {
+            patientId,
+            data: {
+              fileData: data.fileData,
+              fileName: data.fileName,
+            },
+          },
         };
       },
       async onQueryStarted({ patientId }, { dispatch, queryFulfilled }) {
@@ -199,13 +270,16 @@ const patientApi = baseApi.injectEndpoints({
 
 export const {
   useViewAllPatientsQuery,
+  useSearchPatientsQuery,
   useViewPatientByIdQuery,
   useViewPatientOrdersQuery,
+  useGetAvailablePaymentMethodsQuery,
   useCreatePatientMutation,
   useUpdatePatientMutation,
   useUpdatePatientMedicationsMutation,
   useUpdatePatientAllergiesMutation,
   useSendOrderInviteMutation,
+  useSendQuestionnaireInviteMutation,
   useUploadPatientFileMutation,
 } = patientApi;
 

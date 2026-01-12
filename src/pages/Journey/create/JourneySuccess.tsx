@@ -9,7 +9,12 @@ interface JourneySuccessProps {
 const JourneySuccess = ({ onCreateAnother }: JourneySuccessProps) => {
   const content = useMemo(
     () => (
-      <div className="flex flex-col items-center justify-center py-16 px-8">
+      <div
+        className="flex flex-col items-center justify-center py-16 px-8 bg-white rounded-[15px]"
+        style={{
+          boxShadow: "0px 8px 10px 0px hsla(0, 0%, 0%, 0.08)",
+        }}
+      >
         <div className="w-16 h-16 rounded-full flex items-center justify-center mb-6">
           <Check />
         </div>
