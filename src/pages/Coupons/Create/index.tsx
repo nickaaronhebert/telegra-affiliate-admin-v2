@@ -21,13 +21,13 @@ export default function CreateCoupon() {
     defaultValues: {
       code: "",
       discountType: "percent",
-      amount: 0,
+      amount: 10,
       description: "",
       usageLimit: undefined,
       usageLimitPerUser: undefined,
-      minimumAmount: undefined,
-      maximumAmount: undefined,
-      dateExpires: "",
+      minimumAmount: 50,
+      maximumAmount: 5000,
+      dateExpires: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
       status: "active",
     },
   });
@@ -210,7 +210,7 @@ export default function CreateCoupon() {
                             <Input
                               className="w-full"
                               type="number"
-                              placeholder="0"
+                              placeholder="Unlimited"
                               {...field}
                               onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
                               min="0"
@@ -232,7 +232,7 @@ export default function CreateCoupon() {
                             <Input
                                 className="w-full"
                               type="number"
-                              placeholder="0"
+                              placeholder="Unlimited"
                               {...field}
                               onChange={(e) => field.onChange(e.target.value ? parseInt(e.target.value) : undefined)}
                               min="0"
