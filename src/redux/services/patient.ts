@@ -1,6 +1,6 @@
 import { baseApi } from ".";
-import type { IViewAllPatientsRequest, IUpdatePatientMedicationsRequest, IUpdatePatientAllergiesRequest, ISendOrderInviteRequest, IUpdatePatientRequest, IViewPatientOrdersRequest } from "@/types/requests/patient";
-import type { PatientsResponse, PatientDetail, PatientOrdersResponse, PaymentMethod } from "@/types/responses/patient";
+import type { IViewAllPatientsRequest, ISearchPatientsRequest, IUpdatePatientMedicationsRequest, IUpdatePatientAllergiesRequest, ISendOrderInviteRequest, IUpdatePatientRequest, IViewPatientOrdersRequest } from "@/types/requests/patient";
+import type { PatientsResponse, SearchPatientsResponse, PatientDetail, PatientOrdersResponse, PaymentMethod } from "@/types/responses/patient";
 import { TAG_GET_PATIENTS } from "@/types/baseApiTags";
 
 const patientApi = baseApi.injectEndpoints({
@@ -32,6 +32,30 @@ const patientApi = baseApi.injectEndpoints({
             { type: TAG_GET_PATIENTS, id: "LIST" },
           ]
           : [{ type: TAG_GET_PATIENTS, id: "LIST" }];
+      },
+    }),
+
+    searchPatients: builder.query<SearchPatientsResponse, ISearchPatientsRequest>({
+      query: ({ patient }) => {
+        const params = new URLSearchParams();
+        if (patient) {
+          params.append('patient', patient);
+        }
+        return {
+          url: `/patients/search?${params.toString()}`,
+          method: "GET",
+        };
+      },
+      providesTags: (result) => {
+        return result
+          ? [
+            ...result?.data?.map(({ id }) => ({
+              type: TAG_GET_PATIENTS,
+              id,
+            })),
+            { type: TAG_GET_PATIENTS, id: "SEARCH" },
+          ]
+          : [{ type: TAG_GET_PATIENTS, id: "SEARCH" }];
       },
     }),
 
@@ -246,6 +270,7 @@ const patientApi = baseApi.injectEndpoints({
 
 export const {
   useViewAllPatientsQuery,
+  useSearchPatientsQuery,
   useViewPatientByIdQuery,
   useViewPatientOrdersQuery,
   useGetAvailablePaymentMethodsQuery,
