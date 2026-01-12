@@ -32,7 +32,6 @@ export function organizationJourneyColumns(): ColumnDef<JourneyDetails>[] {
       header: "Status",
       cell: ({ row }) => {
         const status = row.getValue("status") as string;
-        console.log("Journey Status:", status);
         return (
           <Badge variant={status ? (status.toLowerCase() as any) : "active"}>
             {status ? status.toUpperCase() : "PUBLISHED"}
