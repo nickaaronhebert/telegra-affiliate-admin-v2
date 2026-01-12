@@ -6,7 +6,7 @@ import {
   useViewSubscriptionByIdQuery,
 } from "@/redux/services/subscription";
 import { Activity, Pill, Users, Box } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import CubeSVG from "@/assets/icons/Cube";
 import { Button } from "@/components/ui/button";
@@ -59,6 +59,7 @@ function SubscriptionLoader() {
 export default function SubscriptionDetail() {
   const [cancelSubscription, { isLoading: isCancelSubscriptionLoading }] =
     useCancelSubscriptionMutation();
+  const [isCancelled, setIsCancelled] = useState(false);
   const [isCancelOpen, setIsCancelOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<
     "subscriptionOverview" | "orderOverview" | "patientOverview"
@@ -83,6 +84,13 @@ export default function SubscriptionDetail() {
       isLoading,
     }),
   });
+
+  useEffect(() => {
+    if (data?.status === "cancelled" || data?.status === "pending-cancel") {
+      setIsCancelled(true);
+    }
+  }, [data?.status]);
+  
   return (
     <div>
       <Header
@@ -97,6 +105,7 @@ export default function SubscriptionDetail() {
           >
             Edit Subscription
           </Link>
+          {!isCancelled ? (
           <Button
             variant={"transparent"}
             className="border-destructive text-destructive"
@@ -104,6 +113,15 @@ export default function SubscriptionDetail() {
           >
             Cancel Subscription
           </Button>
+          ) : 
+          <Button
+            variant={"transparent"}
+            className="border-destructive text-destructive cursor-not-allowed"
+            disabled={true}
+          >
+            Cancelled
+          </Button>
+          }
         </div>
       </Header>
       <div className="flex gap-8 px-14 mt-6">
@@ -331,6 +349,7 @@ export default function SubscriptionDetail() {
                 toast.success(data?.message || "Order Cancelled Successfully", {
                   duration: 1500,
                 });
+                setIsCancelled(true);
                 setIsCancelOpen(false);
               })
               .catch((err) => {
