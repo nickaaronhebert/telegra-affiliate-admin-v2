@@ -14,7 +14,7 @@ import { getLocalStorage } from "@/lib/utils";
 import { LOCAL_STORAGE_KEYS } from "@/constants";
 
 export type JourneyDetails = JourneyTemplate;
-const REACT_APP_SHOP_FRONTEND_URL = "https://dev-commerce.telegramd.com/";
+const REACT_APP_SHOP_FRONTEND_URL = import.meta.env.VITE_SHOP_FRONTEND_URL;
 const affiliate = getLocalStorage(LOCAL_STORAGE_KEYS.USER);
 export function organizationJourneyColumns(): ColumnDef<JourneyDetails>[] {
   return [
@@ -57,43 +57,6 @@ export function organizationJourneyColumns(): ColumnDef<JourneyDetails>[] {
         );
       },
     },
-    // {
-    //   accessorKey: "productVariations",
-    //   header: "Products",
-    //   cell: ({ row }) => {
-    //     const productVariations = row.getValue("productVariations") as any[];
-    //     return (
-    //       <div>
-    //         <p className="text-xs font-medium">{productVariations?.length || 0} Products</p>
-    //         {productVariations?.slice(0, 2).map((variation, index) => (
-    //           <p className="text-xs text-slate-400" key={index}>
-    //             ${variation.pricePerUnitOverride} (Qty: {variation.quantity})
-    //           </p>
-    //         ))}
-    //         {productVariations?.length > 2 && (
-    //           <p className="text-xs text-slate-400">+{productVariations.length - 2} more</p>
-    //         )}
-    //       </div>
-    //     );
-    //   },
-    // },
-    // {
-    //   accessorKey: "preCheckoutQuestionnaire",
-    //   header: "Questionnaires",
-    //   cell: ({ row }) => {
-    //     const questionnaires = row.getValue("preCheckoutQuestionnaire") as any[];
-    //     return (
-    //       <div>
-    //         <p className="text-xs font-medium">{questionnaires?.length || 0} Questionnaires</p>
-    //         {questionnaires?.map((q, index) => (
-    //           <p className="text-xs text-slate-400" key={index}>
-    //             {q.isPreAuthQuestionnaire ? 'Pre-Auth' : 'Standard'}
-    //           </p>
-    //         ))}
-    //       </div>
-    //     );
-    //   },
-    // },
     {
       accessorKey: "updatedAt",
       header: "Last Updated",
