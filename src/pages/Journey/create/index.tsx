@@ -59,7 +59,6 @@ const CreateJourneyPage = () => {
 
   function handleJourneyNameNext(values: z.infer<typeof journeySchema>) {
     if (!values.name || values.name.trim() === "") {
-      console.log("Name validation failed");
       return;
     }
     setCurrentStep(JOURNEY_STEPS.LOADING);

@@ -407,3 +407,11 @@ export const COMMUNICATION_TEMPLATE_KEYS = {
   PRESCRIPTION_SENT_TO_PHARMACY: "PRESCRIPTION_SENT_TO_PHARMACY",
   SHIPPING_DETAILS_SET: "SHIPPING_DETAILS_SET",
 };
+
+export const TAG_TARGET_MODELS = [
+  { label: "Order", value: "Order" },
+  { label: "Journey Template", value: "JourneyTemplate" },
+  { label: "Ecommerce Product", value: "EcommerceProduct" },
+] as const;
+
+export type TagTargetModel = (typeof TAG_TARGET_MODELS)[number]["value"];

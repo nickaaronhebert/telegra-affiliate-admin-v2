@@ -1,5 +1,6 @@
 // Types for the new ecommerce products API
 import type { ProductType } from "@/constants";
+import type { ICompactTag } from "./tag";
 
 export interface ProductVariation {
   _id: string;
@@ -35,6 +36,7 @@ export interface EcommerceProduct {
   createdAt: string;
   updatedAt: string;
   productVariations?: ProductVariation[];
+  tags?: ICompactTag[];
 }
 
 export interface EcommerceProductsResponse {

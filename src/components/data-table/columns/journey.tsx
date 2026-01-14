@@ -1,9 +1,10 @@
 import type { ColumnDef } from "@tanstack/react-table";
 import { Link } from "react-router-dom";
 import type { JourneyTemplate } from "@/types/responses/IViewAllJourney";
+import type { ICompactTag } from "@/types/responses/tag";
 import dayjs from "dayjs";
 import { Badge } from "@/components/ui/badge";
-import { Pencil } from "lucide-react";
+import { Pencil, Tag } from "lucide-react";
 import {
   Tooltip,
   TooltipTrigger,
@@ -16,7 +17,57 @@ import { LOCAL_STORAGE_KEYS } from "@/constants";
 export type JourneyDetails = JourneyTemplate;
 const REACT_APP_SHOP_FRONTEND_URL = import.meta.env.VITE_SHOP_FRONTEND_URL;
 const affiliate = getLocalStorage(LOCAL_STORAGE_KEYS.USER);
-export function organizationJourneyColumns(): ColumnDef<JourneyDetails>[] {
+
+// Tag cell component props
+interface TagsCellProps {
+  tags: ICompactTag[];
+  journeyId: string;
+  onAssignTags: (journeyId: string, journeyName: string, tags: ICompactTag[]) => void;
+  journeyName: string;
+}
+
+// Tags cell component for Journey
+function JourneyTagsCell({ tags, journeyId, onAssignTags, journeyName }: TagsCellProps) {
+  if (!tags || tags.length === 0) {
+    return (
+      <button
+        onClick={() => onAssignTags(journeyId, journeyName, [])}
+        className="flex items-center gap-1 text-xs text-[#5456AD] hover:underline cursor-pointer"
+      >
+        <Tag className="h-3 w-3" />
+        Assign Tag
+      </button>
+    );
+  }
+
+  return (
+    <div
+      className="flex flex-wrap gap-1 cursor-pointer"
+      onClick={() => onAssignTags(journeyId, journeyName, tags)}
+    >
+      {tags.slice(0, 3).map((tag) => (
+        <span
+          key={tag.id}
+          className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
+          style={{
+            backgroundColor: `${tag.color}20`,
+            color: tag.color,
+            border: `1px solid ${tag.color}40`,
+          }}
+        >
+          {tag.name}
+        </span>
+      ))}
+      {tags.length > 3 && (
+        <span className="text-xs text-gray-500">+{tags.length - 3}</span>
+      )}
+    </div>
+  );
+}
+
+export function organizationJourneyColumns(
+  onAssignTags?: (journeyId: string, journeyName: string, tags: ICompactTag[]) => void
+): ColumnDef<JourneyDetails>[] {
   return [
     {
       accessorKey: "name",
@@ -26,6 +77,24 @@ export function organizationJourneyColumns(): ColumnDef<JourneyDetails>[] {
       },
       enableSorting: false,
       enableHiding: false,
+    },
+    {
+      accessorKey: "tags",
+      header: "Tags",
+      cell: ({ row }) => {
+        const tags = (row.original.tags || []) as ICompactTag[];
+        const journeyId = row.original.id;
+        const journeyName = row.original.name;
+
+        return (
+          <JourneyTagsCell
+            tags={tags}
+            journeyId={journeyId}
+            journeyName={journeyName}
+            onAssignTags={onAssignTags || (() => {})}
+          />
+        );
+      },
     },
     {
       accessorKey: "status",

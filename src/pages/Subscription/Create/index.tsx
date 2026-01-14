@@ -9,7 +9,6 @@ import SubscriptionAddress from "./Address";
 
 export default function CreateSubscription() {
   const subscriptionDetails = useTypedSelector((state) => state.subscription);
-  //   console.log("****", subscriptionDetails);
   return (
     <div>
       <Header

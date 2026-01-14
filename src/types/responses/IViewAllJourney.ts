@@ -28,6 +28,8 @@ export interface JourneyTemplate {
   steps: any[];
   createdAt: string;
   updatedAt: string;
+  status?: string;
+  tags?: { id: string; name: string; color: string }[];
 }
 
 export interface IViewAllJourneyInterface {

@@ -10,11 +10,20 @@ import {
 import { useViewAllEcommerceProductsQuery } from "@/redux/services/product";
 import { useSearchParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { useMemo } from "react";
+import { useMemo, useState, useCallback } from "react";
 import type { EcommerceProduct } from "@/types/responses/ecommerceProducts";
+import type { ICompactTag } from "@/types/responses/tag";
 import { PRODUCT_TYPES } from "@/constants";
 import { Plus } from "lucide-react";
 import { ROUTES } from "@/constants/routes";
+import { TagAssignModal } from "@/components/TagAssignModal";
+
+interface TagModalState {
+  isOpen: boolean;
+  targetId: string;
+  targetName: string;
+  currentTags: ICompactTag[];
+}
 
 export default function Products() {
   const navigate = useNavigate();
@@ -30,7 +39,38 @@ export default function Products() {
     ...(productType && { productType }),
   });
 
-  const columns = useMemo(() => ecommerceProductColumns(), []);
+  const [tagModal, setTagModal] = useState<TagModalState>({
+    isOpen: false,
+    targetId: "",
+    targetName: "",
+    currentTags: [],
+  });
+
+  const handleAssignTags = useCallback(
+    (productId: string, productName: string, tags: ICompactTag[]) => {
+      setTagModal({
+        isOpen: true,
+        targetId: productId,
+        targetName: productName,
+        currentTags: tags,
+      });
+    },
+    []
+  );
+
+  const handleCloseTagModal = useCallback(() => {
+    setTagModal({
+      isOpen: false,
+      targetId: "",
+      targetName: "",
+      currentTags: [],
+    });
+  }, []);
+
+  const columns = useMemo(
+    () => ecommerceProductColumns(handleAssignTags),
+    [handleAssignTags]
+  );
 
   const filterFields: DataTableFilterField<EcommerceProduct>[] = [
     {
@@ -86,6 +126,15 @@ export default function Products() {
         <DataTable table={table} isLoading={isLoading} />
         <DataTablePagination table={table} totalRows={data?.count}/>
       </div>
+
+      <TagAssignModal
+        isOpen={tagModal.isOpen}
+        onClose={handleCloseTagModal}
+        targetId={tagModal.targetId}
+        targetName={tagModal.targetName}
+        targetModel="EcommerceProduct"
+        currentTags={tagModal.currentTags}
+      />
     </div>
   );
 }

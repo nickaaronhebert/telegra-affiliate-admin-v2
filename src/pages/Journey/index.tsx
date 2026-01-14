@@ -13,8 +13,17 @@ import {
   organizationJourneyColumns,
   type JourneyDetails,
 } from "@/components/data-table/columns/journey";
-import { useMemo } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { ROUTES } from "@/constants/routes";
+import { TagAssignModal } from "@/components/TagAssignModal";
+import type { ICompactTag } from "@/types/responses/tag";
+
+interface TagModalState {
+  isOpen: boolean;
+  targetId: string;
+  targetName: string;
+  currentTags: ICompactTag[];
+}
 
 export default function Journey() {
   const navigate = useNavigate();
@@ -31,7 +40,38 @@ export default function Journey() {
     name,
   });
 
-  const columns = useMemo(() => organizationJourneyColumns(), []);
+  const [tagModal, setTagModal] = useState<TagModalState>({
+    isOpen: false,
+    targetId: "",
+    targetName: "",
+    currentTags: [],
+  });
+
+  const handleAssignTags = useCallback(
+    (journeyId: string, journeyName: string, tags: ICompactTag[]) => {
+      setTagModal({
+        isOpen: true,
+        targetId: journeyId,
+        targetName: journeyName,
+        currentTags: tags,
+      });
+    },
+    []
+  );
+
+  const handleCloseTagModal = useCallback(() => {
+    setTagModal({
+      isOpen: false,
+      targetId: "",
+      targetName: "",
+      currentTags: [],
+    });
+  }, []);
+
+  const columns = useMemo(
+    () => organizationJourneyColumns(handleAssignTags),
+    [handleAssignTags]
+  );
 
   const filterFields: DataTableFilterField<JourneyDetails>[] = [
     {
@@ -77,6 +117,15 @@ export default function Journey() {
 
         <DataTablePagination table={table} totalRows={data?.count}/>
       </div>
+
+      <TagAssignModal
+        isOpen={tagModal.isOpen}
+        onClose={handleCloseTagModal}
+        targetId={tagModal.targetId}
+        targetName={tagModal.targetName}
+        targetModel="JourneyTemplate"
+        currentTags={tagModal.currentTags}
+      />
     </>
   );
 }

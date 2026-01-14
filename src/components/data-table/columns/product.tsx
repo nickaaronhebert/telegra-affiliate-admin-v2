@@ -3,11 +3,62 @@ import { Link } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import type { ProductVariation } from "@/types/responses/IViewAllProducts";
 import type { EcommerceProduct } from "@/types/responses/ecommerceProducts";
+import type { ICompactTag } from "@/types/responses/tag";
 import { PRODUCT_TYPE_VARIANTS } from "@/constants";
+import { Tag } from "lucide-react";
 
 export type ProductDetails = ProductVariation;
 
-export function ecommerceProductColumns(): ColumnDef<EcommerceProduct>[] {
+// Tag cell component props
+interface TagsCellProps {
+  tags: ICompactTag[];
+  productId: string;
+  onAssignTags: (productId: string, productName: string, tags: ICompactTag[]) => void;
+  productName: string;
+}
+
+// Tags cell component
+function TagsCell({ tags, productId, onAssignTags, productName }: TagsCellProps) {
+  if (!tags || tags.length === 0) {
+    return (
+      <button
+        onClick={() => onAssignTags(productId, productName, [])}
+        className="flex items-center gap-1 text-xs text-[#5456AD]  hover:underline cursor-pointer"
+      >
+        <Tag className="h-3 w-3" />
+        Assign Tag
+      </button>
+    );
+  }
+
+  return (
+    <div
+      className="flex flex-wrap gap-1 cursor-pointer"
+      onClick={() => onAssignTags(productId, productName, tags)}
+    >
+      {tags.slice(0, 3).map((tag) => (
+        <span
+          key={tag.id}
+          className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium"
+          style={{
+            backgroundColor: `${tag.color}20`,
+            color: tag.color,
+            border: `1px solid ${tag.color}40`,
+          }}
+        >
+          {tag.name}
+        </span>
+      ))}
+      {tags.length > 3 && (
+        <span className="text-xs text-gray-500">+{tags.length - 3}</span>
+      )}
+    </div>
+  );
+}
+
+export function ecommerceProductColumns(
+  onAssignTags?: (productId: string, productName: string, tags: ICompactTag[]) => void
+): ColumnDef<EcommerceProduct>[] {
   return [
     {
       accessorKey: "name",
@@ -25,6 +76,24 @@ export function ecommerceProductColumns(): ColumnDef<EcommerceProduct>[] {
       },
       enableSorting: false,
       enableHiding: false,
+    },
+    {
+      accessorKey: "tags",
+      header: "Tags",
+      cell: ({ row }) => {
+        const tags = row.original.tags || [];
+        const productId = row.original.id;
+        const productName = row.original.name;
+
+        return (
+          <TagsCell
+            tags={tags}
+            productId={productId}
+            productName={productName}
+            onAssignTags={onAssignTags || (() => {})}
+          />
+        );
+      },
     },
     {
       accessorKey: "productType",
