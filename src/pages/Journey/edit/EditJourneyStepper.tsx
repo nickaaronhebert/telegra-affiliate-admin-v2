@@ -205,8 +205,6 @@ const EditJourneyStepper = ({
       form.setValue("preCheckoutQuestionnaire", questionnaires);
 
       const formValues = form.getValues();
-      console.log("Final form values being submitted:", formValues);
-      console.log("Final theme value:", formValues.theme);
       onSubmit(formValues);
     }
   };

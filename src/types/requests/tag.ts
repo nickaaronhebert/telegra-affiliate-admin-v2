@@ -16,3 +16,14 @@ export interface ICreateTagRequest {
 export interface IUpdateTagRequest extends Partial<ICreateTagRequest> {
   id: string;
 }
+
+export interface IGetCompactTagsRequest {
+  targetModel: string;
+  mode?: string;
+}
+
+export interface IAssignTagsRequest {
+  targetModel: string;
+  targetId: string;
+  tagIds: string[];
+}

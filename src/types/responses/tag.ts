@@ -29,3 +29,17 @@ export interface ICreateTagResponse {
   createdAt: string;
   updatedAt: string;
 }
+
+// Compact tag type for product tags
+export interface ICompactTag {
+  id: string;
+  name: string;
+  color: string;
+}
+
+export type ICompactTagsResponse = ICompactTag[];
+
+export interface IAssignTagsResponse {
+  success: boolean;
+  message?: string;
+}

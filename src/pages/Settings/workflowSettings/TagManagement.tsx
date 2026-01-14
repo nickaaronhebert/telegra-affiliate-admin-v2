@@ -25,6 +25,7 @@ import {
 import TagSVG from "@/assets/icons/Tag";
 import { BlueEdit } from "@/assets/icons/BlueEdit";
 import { Delete } from "@/assets/icons/Delete";
+import { TAG_TARGET_MODELS } from "@/constants";
 import type { ITag } from "@/types/responses/tag";
 import type {
     ICreateTagRequest,
@@ -132,7 +133,7 @@ export default function TagManagementSection({
             description: tag.description || "",
             color: tag.color,
             scope: {
-                ...tag.scope,
+                targetModel: tag.scope.targetModel || "Order",
                 owner: {
                     ...tag.scope.owner,
                     model: tag.scope.owner.model.toLowerCase(),
@@ -167,7 +168,7 @@ export default function TagManagementSection({
                     color: form.color,
                     description: form.description,
                     scope: {
-                        ...form.scope,
+                        targetModel: form.scope.targetModel,
                         owner: {
                             ...form.scope.owner,
                             model: form.scope.owner.model === "affiliate" ? "Affiliate" : "User",
@@ -180,7 +181,7 @@ export default function TagManagementSection({
                 const createPayload: ICreateTagRequest = {
                     ...form,
                     scope: {
-                        ...form.scope,
+                        targetModel: form.scope.targetModel,
                         owner: {
                             ...form.scope.owner,
                             model: form.scope.owner.model === "affiliate" ? "Affiliate" : "User",
@@ -222,7 +223,7 @@ export default function TagManagementSection({
                 </div>
 
 
-                <div className="p-4 space-y-3">
+                <div className="p-4 space-y-3 h-[300px] overflow-y-auto">
                     {isLoading && <div className="py-8 text-center text-sm text-muted-foreground">Loading tags...   </div>}
 
                     {!isLoading && tags.length === 0 && (
@@ -247,7 +248,7 @@ export default function TagManagementSection({
                                         <Badge variant={tag.scope.owner.model === "User" ? "user" : "affiliate"}>
                                             {tag.scope.owner.model}
                                         </Badge>
-                                        <span className="text-[10px] text-queued">Type: Order</span>
+                                        <span className="text-[10px] text-queued">Type: {tag.scope.targetModel || "Order"}</span>
                                     </div>
 
                                     {tag.description && (
@@ -419,6 +420,38 @@ export default function TagManagementSection({
                                         </div>
                                     </div>
                                 </RadioGroup>
+                            </div>
+
+                            {/* Tag Model */}
+                            <div className="space-y-1">
+                                <Label className="text-sm font-semibold gap-1">Tag Type {editingTag && "(Cannot be changed)"}<span className="text-red-500">*</span></Label>
+                                <Select
+                                    value={form.scope.targetModel}
+                                    onValueChange={(v) =>
+                                        setForm((s: ICreateTagRequest) => ({
+                                            ...s,
+                                            scope: {
+                                                ...s.scope,
+                                                targetModel: v,
+                                            },
+                                        }))
+                                    }
+                                    disabled={!!editingTag}
+                                >
+                                    <SelectTrigger className="pointer w-full border-border">
+                                        <SelectValue placeholder="Select a tag model" />
+                                    </SelectTrigger>
+                                    <SelectContent className="pointer">
+                                        {TAG_TARGET_MODELS.map((model) => (
+                                            <SelectItem
+                                                key={model.value}
+                                                value={model.value}
+                                            >
+                                                {model.label}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
                             </div>
 
                             {/* Description */}
