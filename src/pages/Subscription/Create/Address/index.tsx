@@ -25,8 +25,8 @@ import SelectElement from "@/components/Form/SelectElement";
 
 interface handleSubscriptionProps {
   address?: string;
-  billingAddress?: ADDRESS;
-  shippingAddress?: ADDRESS;
+  billingDetails?: ADDRESS;
+  shippingDetails?: ADDRESS;
 }
 
 export default function SubscriptionAddress() {
@@ -129,14 +129,14 @@ export default function SubscriptionAddress() {
       if (values.shippingAddress) {
         if (!values.newBillingAddress) {
           await handleCreateSubscription({
-            billingAddress: values?.shippingAddress as ADDRESS,
-            shippingAddress: values?.shippingAddress as ADDRESS,
+            billingDetails: values?.shippingAddress as ADDRESS,
+            shippingDetails: values?.shippingAddress as ADDRESS,
           });
         } else {
           if (values.billingAddress) {
             await handleCreateSubscription({
-              billingAddress: values?.billingAddress as ADDRESS,
-              shippingAddress: values?.shippingAddress as ADDRESS,
+              billingDetails: values?.billingAddress as ADDRESS,
+              shippingDetails: values?.shippingAddress as ADDRESS,
             });
           } else {
             toast.error("Select Billing Address", {
@@ -328,6 +328,7 @@ export default function SubscriptionAddress() {
               </div>
             )}
 
+            {newShippingAddress && (
             <div>
               <div className="my-3">
                 <p className="text-sm font-semibold my-1">
@@ -452,6 +453,7 @@ export default function SubscriptionAddress() {
                 </div>
               )}
             </div>
+            )}
           </div>
           <div className="flex justify-between mt-10 border-t border-card-border border-dashed pt-10">
             <Button
