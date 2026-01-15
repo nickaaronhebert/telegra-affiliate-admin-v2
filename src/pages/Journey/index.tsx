@@ -17,6 +17,7 @@ import { useMemo, useState, useCallback } from "react";
 import { ROUTES } from "@/constants/routes";
 import { TagAssignModal } from "@/components/TagAssignModal";
 import type { ICompactTag } from "@/types/responses/tag";
+import { useGetAffiliateDetailsQuery } from "@/redux/services/organizationIdentity";
 
 interface TagModalState {
   isOpen: boolean;
@@ -28,6 +29,7 @@ interface TagModalState {
 export default function Journey() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { data: affiliateDetails } = useGetAffiliateDetailsQuery();
 
   const page = parseInt(searchParams.get("page") || "1", 10);
   const perPage = parseInt(searchParams.get("per_page") ?? "10", 10);
@@ -69,8 +71,8 @@ export default function Journey() {
   }, []);
 
   const columns = useMemo(
-    () => organizationJourneyColumns(handleAssignTags),
-    [handleAssignTags]
+    () => organizationJourneyColumns(handleAssignTags,`${affiliateDetails?.shopFrontendUrl}/`),
+    [handleAssignTags,affiliateDetails]
   );
 
   const filterFields: DataTableFilterField<JourneyDetails>[] = [

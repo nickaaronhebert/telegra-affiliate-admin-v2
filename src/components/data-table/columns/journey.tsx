@@ -11,23 +11,29 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip";
 import { ROUTES } from "@/constants/routes";
-import { getLocalStorage } from "@/lib/utils";
-import { LOCAL_STORAGE_KEYS } from "@/constants";
 
 export type JourneyDetails = JourneyTemplate;
 const REACT_APP_SHOP_FRONTEND_URL = import.meta.env.VITE_SHOP_FRONTEND_URL;
-const affiliate = getLocalStorage(LOCAL_STORAGE_KEYS.USER);
 
 // Tag cell component props
 interface TagsCellProps {
   tags: ICompactTag[];
   journeyId: string;
-  onAssignTags: (journeyId: string, journeyName: string, tags: ICompactTag[]) => void;
+  onAssignTags: (
+    journeyId: string,
+    journeyName: string,
+    tags: ICompactTag[]
+  ) => void;
   journeyName: string;
 }
 
 // Tags cell component for Journey
-function JourneyTagsCell({ tags, journeyId, onAssignTags, journeyName }: TagsCellProps) {
+function JourneyTagsCell({
+  tags,
+  journeyId,
+  onAssignTags,
+  journeyName,
+}: TagsCellProps) {
   if (!tags || tags.length === 0) {
     return (
       <button
@@ -66,7 +72,12 @@ function JourneyTagsCell({ tags, journeyId, onAssignTags, journeyName }: TagsCel
 }
 
 export function organizationJourneyColumns(
-  onAssignTags?: (journeyId: string, journeyName: string, tags: ICompactTag[]) => void
+  onAssignTags?: (
+    journeyId: string,
+    journeyName: string,
+    tags: ICompactTag[]
+  ) => void,
+  shopFrontendUrl?: string
 ): ColumnDef<JourneyDetails>[] {
   return [
     {
@@ -115,7 +126,7 @@ export function organizationJourneyColumns(
         return (
           <Link
             to={`${
-              affiliate?.shopFrontendUrl || REACT_APP_SHOP_FRONTEND_URL
+              shopFrontendUrl || REACT_APP_SHOP_FRONTEND_URL
             }${row.getValue("slug")}`}
             className="text-xs font-normal text-[#5456AD]"
             target="_blank"
