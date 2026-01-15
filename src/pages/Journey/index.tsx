@@ -15,10 +15,12 @@ import {
 } from "@/components/data-table/columns/journey";
 import { useMemo } from "react";
 import { ROUTES } from "@/constants/routes";
+import { useGetAffiliateDetailsQuery } from "@/redux/services/organizationIdentity";
 
 export default function Journey() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+    const { data: affiliateDetails } = useGetAffiliateDetailsQuery();
 
   const page = parseInt(searchParams.get("page") || "1", 10);
   const perPage = parseInt(searchParams.get("per_page") ?? "10", 10);
@@ -31,7 +33,8 @@ export default function Journey() {
     name,
   });
 
-  const columns = useMemo(() => organizationJourneyColumns(), []);
+  const columns = useMemo(() => organizationJourneyColumns(`${affiliateDetails?.shopFrontendUrl}/`),
+    [affiliateDetails]);
 
   const filterFields: DataTableFilterField<JourneyDetails>[] = [
     {

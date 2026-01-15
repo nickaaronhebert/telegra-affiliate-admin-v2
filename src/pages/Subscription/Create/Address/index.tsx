@@ -25,8 +25,8 @@ import SelectElement from "@/components/Form/SelectElement";
 
 interface handleSubscriptionProps {
   address?: string;
-  billingAddress?: ADDRESS;
-  shippingAddress?: ADDRESS;
+  billingDetails?: ADDRESS;
+  shippingDetails?: ADDRESS;
 }
 
 export default function SubscriptionAddress() {
@@ -129,14 +129,14 @@ export default function SubscriptionAddress() {
       if (values.shippingAddress) {
         if (!values.newBillingAddress) {
           await handleCreateSubscription({
-            billingAddress: values?.shippingAddress as ADDRESS,
-            shippingAddress: values?.shippingAddress as ADDRESS,
+            billingDetails: values?.shippingAddress as ADDRESS,
+            shippingDetails: values?.shippingAddress as ADDRESS,
           });
         } else {
           if (values.billingAddress) {
             await handleCreateSubscription({
-              billingAddress: values?.billingAddress as ADDRESS,
-              shippingAddress: values?.shippingAddress as ADDRESS,
+              billingDetails: values?.billingAddress as ADDRESS,
+              shippingDetails: values?.shippingAddress as ADDRESS,
             });
           } else {
             toast.error("Select Billing Address", {
@@ -328,130 +328,132 @@ export default function SubscriptionAddress() {
               </div>
             )}
 
-            <div>
-              <div className="my-3">
-                <p className="text-sm font-semibold my-1">
-                  Billing Address <span className="text-red-500">*</span>
-                </p>
-              </div>
-
-              <div className="flex items-center gap-3 my-4">
-                <Checkbox
-                  id="billing_address"
-                  checked={billingAddress}
-                  onCheckedChange={(checked) => {
-                    if (!checked) {
-                      form.setValue("billingAddress", {
-                        address1: "",
-                        address2: "",
-                        city: "",
-                        state: "",
-                        zipcode: "",
-                        country: "",
-                      });
-                      form.setValue("newBillingAddress", true);
-                      setSelectedAddress("");
-                    } else {
-                      form.setValue("billingAddress", undefined);
-                      form.setValue("newBillingAddress", false);
-                    }
-                    setBillingAddress(checked as boolean);
-                  }}
-                />
-                <Label htmlFor="billing_address">
-                  Same as Shipping address
-                </Label>
-              </div>
-
-              {newBillingAddress && (
-                <div>
-                  <CenteredRow>
-                    <InputElement
-                      name={`billingAddress.address1`}
-                      className="w-60 "
-                      label="Address Line 1"
-                      isRequired={true}
-                      messageClassName="text-right"
-                      placeholder="1247 Broadway Street"
-                      inputClassName="border-border !h-[46px] placeholder:text-[#C3C1C6]"
-                      reserveSpace={true}
-                    />
-
-                    <InputElement
-                      name={`billingAddress.address2`}
-                      className="w-60 "
-                      label="Address Line 2"
-                      isRequired={true}
-                      messageClassName="text-right"
-                      placeholder="1247 Broadway Street"
-                      inputClassName="border-border !h-[46px] placeholder:text-[#C3C1C6]"
-                      reserveSpace={true}
-                    />
-                  </CenteredRow>
-
-                  <CenteredRow>
-                    <InputElement
-                      name={`billingAddress.city`}
-                      className="w-60 "
-                      label="City"
-                      isRequired={true}
-                      messageClassName="text-right"
-                      placeholder="1247 Broadway Street"
-                      reserveSpace={true}
-                      inputClassName="border-border !h-[46px] placeholder:text-[#C3C1C6]"
-                    />
-
-                    {/* <InputElement
-                      name={`billingAddress.state`}
-                      className="w-60 "
-                      label="State"
-                      isRequired={true}
-                      messageClassName="text-right"
-                      placeholder="1247 Broadway Street"
-                      reserveSpace={true}
-                      inputClassName="border-border !h-[46px] placeholder:text-[#C3C1C6]"
-                    /> */}
-                    <SelectElement
-                      options={statesData || []}
-                      name={`billingAddress.state`}
-                      className="w-60"
-                      label="State"
-                      isRequired={true}
-                      errorClassName="text-right"
-                      placeholder="Select State"
-                      reserveSpace={true}
-                      triggerClassName="border border-border"
-                      labelClassName="!placeholder:text-muted-foreground"
-                      // className="border-border !h-[46px] placeholder:text-[#C3C1C6]"
-                    />
-                  </CenteredRow>
-
-                  <CenteredRow>
-                    <InputElement
-                      name={`billingAddress.zipcode`}
-                      className="w-60 "
-                      label="Zipcode"
-                      isRequired={true}
-                      messageClassName="text-right"
-                      placeholder="1247 Broadway Street"
-                      reserveSpace={true}
-                      inputClassName="border-border !h-[46px] placeholder:text-[#C3C1C6]"
-                    />
-
-                    <InputElement
-                      name={`billingAddress.country`}
-                      className="w-60 "
-                      label="Country"
-                      isRequired={true}
-                      messageClassName="text-right"
-                      placeholder="1247 Broadway Street"
-                      reserveSpace={true}
-                      inputClassName="border-border !h-[46px] placeholder:text-[#C3C1C6]"
-                    />
-                  </CenteredRow>
+            {newShippingAddress && (
+              <div>
+                <div className="my-3">
+                  <p className="text-sm font-semibold my-1">
+                    Billing Address <span className="text-red-500">*</span>
+                  </p>
                 </div>
-              )}
-            </div>
+
+                <div className="flex items-center gap-3 my-4">
+                  <Checkbox
+                    id="billing_address"
+                    checked={billingAddress}
+                    onCheckedChange={(checked) => {
+                      if (!checked) {
+                        form.setValue("billingAddress", {
+                          address1: "",
+                          address2: "",
+                          city: "",
+                          state: "",
+                          zipcode: "",
+                          country: "",
+                        });
+                        form.setValue("newBillingAddress", true);
+                        setSelectedAddress("");
+                      } else {
+                        form.setValue("billingAddress", undefined);
+                        form.setValue("newBillingAddress", false);
+                      }
+                      setBillingAddress(checked as boolean);
+                    }}
+                  />
+                  <Label htmlFor="billing_address">
+                    Same as Shipping address
+                  </Label>
+                </div>
+
+                {newBillingAddress && (
+                  <div>
+                    <CenteredRow>
+                      <InputElement
+                        name={`billingAddress.address1`}
+                        className="w-60 "
+                        label="Address Line 1"
+                        isRequired={true}
+                        messageClassName="text-right"
+                        placeholder="1247 Broadway Street"
+                        inputClassName="border-border !h-[46px] placeholder:text-[#C3C1C6]"
+                        reserveSpace={true}
+                      />
+
+                      <InputElement
+                        name={`billingAddress.address2`}
+                        className="w-60 "
+                        label="Address Line 2"
+                        isRequired={true}
+                        messageClassName="text-right"
+                        placeholder="1247 Broadway Street"
+                        inputClassName="border-border !h-[46px] placeholder:text-[#C3C1C6]"
+                        reserveSpace={true}
+                      />
+                    </CenteredRow>
+
+                    <CenteredRow>
+                      <InputElement
+                        name={`billingAddress.city`}
+                        className="w-60 "
+                        label="City"
+                        isRequired={true}
+                        messageClassName="text-right"
+                        placeholder="1247 Broadway Street"
+                        reserveSpace={true}
+                        inputClassName="border-border !h-[46px] placeholder:text-[#C3C1C6]"
+                      />
+
+                      {/* <InputElement
+                        name={`billingAddress.state`}
+                        className="w-60 "
+                        label="State"
+                        isRequired={true}
+                        messageClassName="text-right"
+                        placeholder="1247 Broadway Street"
+                        reserveSpace={true}
+                        inputClassName="border-border !h-[46px] placeholder:text-[#C3C1C6]"
+                      /> */}
+                      <SelectElement
+                        options={statesData || []}
+                        name={`billingAddress.state`}
+                        className="w-60"
+                        label="State"
+                        isRequired={true}
+                        errorClassName="text-right"
+                        placeholder="Select State"
+                        reserveSpace={true}
+                        triggerClassName="border border-border"
+                        labelClassName="!placeholder:text-muted-foreground"
+                        // className="border-border !h-[46px] placeholder:text-[#C3C1C6]"
+                      />
+                    </CenteredRow>
+
+                    <CenteredRow>
+                      <InputElement
+                        name={`billingAddress.zipcode`}
+                        className="w-60 "
+                        label="Zipcode"
+                        isRequired={true}
+                        messageClassName="text-right"
+                        placeholder="1247 Broadway Street"
+                        reserveSpace={true}
+                        inputClassName="border-border !h-[46px] placeholder:text-[#C3C1C6]"
+                      />
+
+                      <InputElement
+                        name={`billingAddress.country`}
+                        className="w-60 "
+                        label="Country"
+                        isRequired={true}
+                        messageClassName="text-right"
+                        placeholder="1247 Broadway Street"
+                        reserveSpace={true}
+                        inputClassName="border-border !h-[46px] placeholder:text-[#C3C1C6]"
+                      />
+                    </CenteredRow>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
           <div className="flex justify-between mt-10 border-t border-card-border border-dashed pt-10">
             <Button

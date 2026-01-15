@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { AlertCircle } from "lucide-react";
+import { toast } from "sonner";
 
 interface CompanyDetailsEditDialogProps {
     isOpen: boolean;
@@ -129,6 +130,10 @@ export default function CompanyDetailsEditDialog({
             }
 
             await onSave(formData);
+            toast.success("Company details updated successfully", {
+                duration: 1500,
+            });
+            onClose();
         } catch (err) {
             setError(
                 err instanceof Error ? err.message : "Failed to save changes. Please try again."

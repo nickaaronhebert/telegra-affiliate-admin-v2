@@ -10,13 +10,10 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip";
 import { ROUTES } from "@/constants/routes";
-import { getLocalStorage } from "@/lib/utils";
-import { LOCAL_STORAGE_KEYS } from "@/constants";
 
 export type JourneyDetails = JourneyTemplate;
 const REACT_APP_SHOP_FRONTEND_URL = import.meta.env.VITE_SHOP_FRONTEND_URL;
-const affiliate = getLocalStorage(LOCAL_STORAGE_KEYS.USER);
-export function organizationJourneyColumns(): ColumnDef<JourneyDetails>[] {
+export function organizationJourneyColumns(shopFrontendUrl?: string): ColumnDef<JourneyDetails>[] {
   return [
     {
       accessorKey: "name",
@@ -46,7 +43,7 @@ export function organizationJourneyColumns(): ColumnDef<JourneyDetails>[] {
         return (
           <Link
             to={`${
-              affiliate?.shopFrontendUrl || REACT_APP_SHOP_FRONTEND_URL
+              shopFrontendUrl || REACT_APP_SHOP_FRONTEND_URL
             }${row.getValue("slug")}`}
             className="text-xs font-normal text-[#5456AD]"
             target="_blank"
