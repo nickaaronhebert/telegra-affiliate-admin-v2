@@ -85,6 +85,7 @@ export interface IGetAffiliateDetailsResponse {
   email: string;
   createdAt: string;
   status: string;
+  shopFrontendUrl: string;
 }
 
 export interface IUpdateAffiliateDetailsResponse extends IGetAffiliateDetailsResponse {}
