@@ -143,6 +143,7 @@ export default function ProductVariation({ patientId }: ProductVariationProps) {
               <div className=" flex justify-between mb-3">
                 <p className="text-[20px] font-semibold">Select Medication</p>
                 <Button
+                  type="button"
                   variant={"link"}
                   //disabled={disabled}
                   className="cursor-pointer !hover:no-underline"

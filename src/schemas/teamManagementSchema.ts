@@ -31,6 +31,6 @@ export const teamManagementSchema = z.object({
       message: "Please enter a valid email address.",
     }),
   role: z.string().min(1, {
-    message: "Last name is required.",
+    message: "Role is required.",
   }),
 });

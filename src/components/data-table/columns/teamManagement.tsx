@@ -75,7 +75,7 @@ export function teamManagementColumns(): ColumnDef<AffiliateAdminDetails>[] {
               isLoading={isLoading}
               open={isActiveModalOpen}
               onOpenChange={setIsActiveModalOpen}
-              title={`Deactivate ${name}`}
+              title={ status === "active" ? `Deactivate ${name}` : `Activate ${name}`}
               description={
                 status === "active"
                   ? `This action will deactivate ${name}`

@@ -446,8 +446,10 @@ export function EncounterLabOrderModal({
                                       <SelectItem
                                         key={state.id}
                                         value={state.id}
-                                      >
-                                        {state.name}
+                                      >                                    
+                                        <span className="block max-w-[200px] truncate">
+                                          {state.name}
+                                        </span>
                                       </SelectItem>
                                     ))}
                                   </SelectContent>
