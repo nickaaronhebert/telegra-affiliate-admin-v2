@@ -234,12 +234,12 @@ function PatientDetail({
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7 p-5">
         {fields.map(({ label, value, capitalize }) => (
-          <div key={label}>
-            <h4 className="text-sm font-normal text-muted-foreground">
+          <div key={label} className="min-w-0">
+            <h4 className="text-sm font-normal text-muted-foreground truncate">
               {label}
             </h4>
             <span
-              className={`text-sm font-semibold text-primary-foreground mt-2 ${
+              className={`text-sm truncate font-semibold text-primary-foreground mt-2 block ${
                 capitalize ? "capitalize" : ""
               }`}
             >
@@ -291,13 +291,13 @@ function DetailsCard({
       </h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-7 p-5">
         {fields.map(({ label, value, capitalize }) => (
-          <div key={label}>
+          <div key={label} className="min-w-0">
             <h4 className="text-sm font-light text-muted-foreground">
               {label}
             </h4>
 
             <span
-              className={`text-sm font-semibold text-primary-foreground mt-2 ${
+              className={`text-sm font-semibold text-primary-foreground mt-2 block truncate ${
                 capitalize ? "capitalize" : ""
               }`}
             >

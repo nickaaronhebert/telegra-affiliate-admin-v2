@@ -26,7 +26,7 @@ export function organizationSubscriptionColumns(): ColumnDef<SubscriptionDetails
             </Link>
             <span className="text-xs text-[#3E4D61]"> for </span>
             <Link
-              to="#"
+              to={'/patients/' + patient?.id}
               className="text-xs font-medium text-[#008CE3] underline"
             >
               {" "}

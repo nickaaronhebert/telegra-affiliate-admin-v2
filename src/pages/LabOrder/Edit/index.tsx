@@ -303,7 +303,7 @@ export default function EditLabOrders({
                     isRequired={true}
                     errorClassName="text-right "
                     //   placeholder="1247 Broadway Street"
-                    className="min-w-45 border-border placeholder:text-[#C3C1C6]"
+                    className="min-w-45 border-border placeholder:text-[#C3C1C6] truncate"
                     reserveSpace={true}
                   />
                 </CenteredRow>
