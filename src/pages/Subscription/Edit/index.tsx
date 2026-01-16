@@ -136,8 +136,8 @@ export default function EditSubscription() {
             address: data?.address?._id || "",
           },
           selectedAddress: {
-            shippingAddress: undefined,
-            billingAddress: undefined,
+            shippingDetails: undefined,
+            billingDetails: undefined,
             newBillingAddress: false,
             newShippingAddress: false,
           },
